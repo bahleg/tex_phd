@@ -1,16 +1,15 @@
 
 Задача оптимизации гиперпараметров зависит как от критерия выбора модели, так и от метода оптимизации параметров модели.
-Проиллюстрируем задачу оптимизации гиперпараметров \textit{двусвзяным байесовским выводом}. Для дальнейшей формализации задачи в общем виде введем переобозначение:
+Проиллюстрируем задачу оптимизации гиперпараметров \textit{двусвзяным байесовским выводом}. Для дальнейшей формализации задачи положим:
 \begin{equation}
 \label{eq:bayes0}
-	\boldsymbol{\theta} = \mathbf{w}, \quad \mathbf{h} = [\alpha_1, \dots, \alpha_u],	
+	\boldsymbol{\theta} = \mathbf{W}, \quad \mathbf{h} = \text{diag}(\mathbf{A}) = [\alpha_1, \dots, \alpha_u].
 \end{equation}
-где $\boldsymbol{\theta}$ --- множество оптимизируемых параметров модели, $\mathbf{h}$ --- множество гиперпараметров модели.
 
-На \textit{первом уровне} байесовского вывода производится оптимизация параметров модели $f$ по заданной выборке $\mathfrak{D}$:
+На \textit{первом уровне} байесовского вывода производится оптимизация параметров модели $\mathbf{f}$ по заданной выборке $\mathfrak{D}$:
 \begin{equation}
 \label{eq:bayes1}
-\hat{\boldsymbol{\theta}} = \argmax \bigl(-L(\boldsymbol{\theta}, \mathbf{h})\bigr) = p(\mathbf{w}|\mathbf{X}, \mathbf{y}, \mathbf{A}) = \frac{p(\mathbf{y}|\mathbf{X},\mathbf{w})p(\mathbf{w}|\mathbf{A})}{p(\mathbf{y}|\mathbf{X},\mathbf{A})}.
+\hat{\boldsymbol{\theta}} = \argmax \bigl(-L(\boldsymbol{\theta}, \mathbf{h})\bigr) = p(\mathbf{W}|\mathbf{X}, \mathbf{y}, \mathbf{A}) = \frac{p(\mathbf{y}|\mathbf{X},\mathbf{W})p(\mathbf{W}|\mathbf{A})}{p(\mathbf{y}|\mathbf{X},\mathbf{A})}.
 \end{equation}
 
 На \textit{втором уровне} производится оптимизация апостериорного распределения гиперпараметров $\mathbf{h}$:
@@ -22,41 +21,20 @@ p(\mathbf{A}|\mathbf{X}, \mathbf{y}) \propto p(\mathbf{y}|\mathbf{X},\mathbf{A})
 Полагая распределение параметров $p(\mathbf{A})$ равномерным на некоторой большой окрестности, получим задачу оптимизации гиперпараметров:
 \begin{equation}
 \label{eq:bayes2}
-	Q(\boldsymbol{\theta}, \mathbf{h}) = p(\mathbf{y}|\mathbf{X},\mathbf{A}) = \int_{\mathbf{w} \in \mathbb{R}^u} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) p(\mathbf{w}|\mathbf{A}) \to \max_{[\alpha_1, \dots, \alpha_u] \in \mathbb{R}^{n}}.
+	Q(\boldsymbol{\theta}, \mathbf{h}) = p(\mathbf{y}|\mathbf{X},\mathbf{A}) = \int_{\mathbf{W} \in \mathbb{R}^u} p(\mathbf{y}|\mathbf{X}, \mathbf{W}) p(\mathbf{W}|\mathbf{A}) \to \max_{[\alpha_1, \dots, \alpha_u] \in \mathbb{R}^{n}}.
 \end{equation}
 
 
-\begin{figure}
-  \includegraphics[width=0.8\linewidth]{slide_plots/hyper.png}
-\label{fig:hyper}
-    \caption{Зависимость правдодобия модели от значения гиперпараметра $\alpha$. TODO: переделать}
- 
-   
-    \end{figure}
-
-
-Сфорумлируем задачу оптимизации гиперпараметров в общем виде. Обозначим за $\mathbf{h}  \in \mathbb{R}^h$ вектор гиперпараметров модели~\eqref{eq:bayes0}.   Обозначим за $\boldsymbol{\theta} \in \mathbb{R}^s$ множество всех оптимизируемых параметров~\eqref{eq:bayes0}. Пусть задана дифференцируемая функция потерь $L(\boldsymbol{\theta}, \mathbf{h})$, по которой производится оптимизация функции ${f}$~\eqref{eq:bayes1}. 
-Пусть также задана дифференцируемая функция $Q(\boldsymbol{\theta}, \mathbf{h})$, определяющая итоговое качество модели ${f}$ и приближающая интеграл~\eqref{eq:bayes2}.
-
-Требуется найти параметры $\hat{\boldsymbol{\theta}}$ и гиперпараметры $\hat{\mathbf{h}}$ модели, доставляющие минимум следующему функционалу:
-\begin{equation}
-\label{eq:main}
-	\hat{\mathbf{h}} = \argmax_{\mathbf{h} \in \mathbb{R}^h} Q(\hat{\boldsymbol{\theta}}(\mathbf{h}), \mathbf{h}),
-\end{equation}
-\begin{equation}
-\label{eq:main2}
-	\hat{\boldsymbol{\theta}}(\mathbf{h}) =  \argmin_{\boldsymbol{\theta} \in \mathbb{R}^s} L(\boldsymbol{\theta}, \mathbf{h}).
-\end{equation}
-
+В общем виде задача оптимизации гиперпараметров сводится к двухуровневой задаче оптимизации~\eqref{eq:optim}.
 Рассмотрим вид переменной $\boldsymbol{\theta}$ и функций $L, Q$ для различных методов выбора модели и оптимизации ее параметров.
 
 \textbf{Базовый метод}
 Пусть оптимизация параметров и гиперпараметров производится по всей выборке $\mathfrak{D}$ по одной и той же функции:
-$$L(\boldsymbol{\theta}, \mathbf{h}) = Q(\boldsymbol{\theta}) = \text{log}p(\mathbf{y}, \mathbf{w} | \mathbf{X}, \mathbf{A}) = \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w})+\text{log}p(\mathbf{w}|\mathbf{A})$$.
+$$L(\boldsymbol{\theta}, \mathbf{h}) = Q(\boldsymbol{\theta}) = \text{log}p(\mathbf{y}, \mathbf{W} | \mathbf{X}, \mathbf{A}) = \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{W})+\text{log}p(\mathbf{W}|\mathbf{A})$$.
 
 Вспомогательная переменная $\boldsymbol{\theta}$, по которой производится оптимизация модели $f$,  соответствует параметрам модели: 
 \[
-\boldsymbol{\theta} = \mathbf{w}.
+\boldsymbol{\theta} = \mathbf{W}.
 \]
 
 \textbf{Кросс-валидация}
@@ -66,17 +44,17 @@ $$L(\boldsymbol{\theta}, \mathbf{h}) = Q(\boldsymbol{\theta}) = \text{log}p(\mat
 \]
 
 
-Запустим $k$ оптимизаций модели, каждую на своей части выборки. Положим $\boldsymbol{\theta} = [\mathbf{w}_1, \dots, \mathbf{w}_k]$, где $\mathbf{w}_1, \dots, \mathbf{w}_k$ --- параметры модели при оптимизации $k$.
+Запустим $k$ оптимизаций модели, каждую на своей части выборки. Положим $\boldsymbol{\theta} = [\mathbf{W}_1, \dots, \mathbf{W}_k]$, где $\mathbf{W}_1, \dots, \mathbf{W}_k$ --- параметры модели при оптимизации $k$.
  
 Положим функцию $L$ равной  среднему значению минус логарифма апостериорной вероятности по всем $k-1$ разбиениям $\mathfrak{D}$:
 \begin{equation}
 \label{eq:cv}
-L(\boldsymbol{\theta}, \mathbf{h}) = -\frac{1}{k}\sum_{q=1}^k \bigl(\frac{k}{k-1}\text{log}p(\mathbf{y} \setminus \mathbf{y}_q|\mathbf{X}\setminus \mathbf{X}_q, \mathbf{w}_q) + \text{log}p(\mathbf{w}_q|\mathbf{A})\bigr).
+L(\boldsymbol{\theta}, \mathbf{h}) = -\frac{1}{k}\sum_{q=1}^k \bigl(\frac{k}{k-1}\text{log}p(\mathbf{y} \setminus \mathbf{y}_q|\mathbf{X}\setminus \mathbf{X}_q, \mathbf{W}_q) + \text{log}p(\mathbf{W}_q|\mathbf{A})\bigr).
 \end{equation}
 
 Положим функцию $Q$ равной среднему значению правдоподобия выборки по частям выборки $\mathfrak{D}_q$, на которых не проходила оптимизация параметров:
 \[
-Q(\boldsymbol{\theta}, \mathbf{h}) = \frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathbf{y}_q|\mathbf{X}_q, \mathbf{w}_q).
+Q(\boldsymbol{\theta}, \mathbf{h}) = \frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathbf{y}_q|\mathbf{X}_q, \mathbf{W}_q).
 \]
 
 \textbf{Вариационная оценка правдоподобия}
@@ -85,10 +63,10 @@ Q(\boldsymbol{\theta}, \mathbf{h}) = \frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathb
 \label{eq:elbo}
 \text{log}~p(\mathbf{y}|\mathbf{X},\mathbf{A})  
 \geq 
--\text{D}_\text{KL} \bigl(q(\mathbf{w})||p(\mathbf{w}|\mathbf{A})\bigr) + \int_{\mathbf{w}} q(\mathbf{w})\text{log}~{p(\mathbf{y}|\mathbf{X},\mathbf{w},\mathbf{A})} d \mathbf{w}  \approx
+-\text{D}_\text{KL} \bigl(q(\mathbf{W})||p(\mathbf{W}|\mathbf{A})\bigr) + \int_{\mathbf{W}} q(\mathbf{W})\text{log}~{p(\mathbf{y}|\mathbf{X},\mathbf{W},\mathbf{A})} d \mathbf{W}  \approx
 \end{equation}
 \[
-\approx \sum_{i=1}^m \text{log}~p({y}_i|\mathbf{x}_i, \mathbf{w}_i) - D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{A})\bigr) = -L(\boldsymbol{\theta}, \mathbf{h}) = Q(\boldsymbol{\theta}),
+\approx \sum_{i=1}^m \text{log}~p({y}_i|\mathbf{x}_i, \mathbf{W}_i) - D_\text{KL}\bigl(q (\mathbf{W}) || p (\mathbf{W}|\mathbf{A})\bigr) = -L(\boldsymbol{\theta}, \mathbf{h}) = Q(\boldsymbol{\theta}),
 \]
 
 где $q$ --- нормальное распределение с диагональной матрицей ковариаций:
@@ -99,7 +77,7 @@ Q(\boldsymbol{\theta}, \mathbf{h}) = \frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathb
 где $\mathbf{A}_q = \text{diag}[\alpha^q_1, \dots, \alpha^q_u]^{-1}$ --- диагональная матрица ковариаций, $\boldsymbol{\mu}_q$ --- вектор средних компонент.
 Расстояние $D_\text{KL}$ между двумя гауссовыми величинами задается как 
 \[
-	D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{f})\bigr) = \frac{1}{2} \bigl( \text{Tr} [\mathbf{A}\mathbf{A}^{-1}_q] + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^\mathsf{T}\mathbf{A}(\boldsymbol{\mu} - \boldsymbol{\mu}_q) - u +\text{ln}~|\mathbf{A}^{-1}| - \text{ln}~|\mathbf{A}_q^{-1}| \bigr).
+	D_\text{KL}\bigl(q (\mathbf{W}) || p (\mathbf{W}|\mathbf{f})\bigr) = \frac{1}{2} \bigl( \text{Tr} [\mathbf{A}\mathbf{A}^{-1}_q] + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^\mathsf{T}\mathbf{A}(\boldsymbol{\mu} - \boldsymbol{\mu}_q) - u +\text{ln}~|\mathbf{A}^{-1}| - \text{ln}~|\mathbf{A}_q^{-1}| \bigr).
 \]
 
 В качестве оптимизируемых параметров $\boldsymbol{\theta}$ выступают параметры распределения $q$:
@@ -112,11 +90,6 @@ Q(\boldsymbol{\theta}, \mathbf{h}) = \frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathb
 
 \section{Градиентные методы оптимизации гиперпараметров}
 Рассмотрим случай, когда оптимизация~\eqref{eq:main2} параметров $\boldsymbol{\theta}$ производится с использованием градиентных методов. 
-
-\textbf{Определение.} Назовем оператором оптимизации алгоритм $T$ выбора вектора параметров $\boldsymbol{\theta}'$  по параметрам предыдущего шага $\boldsymbol{\theta}$:
-\[
-	\boldsymbol{\theta}' = T(\boldsymbol{\theta}, \mathbf{h}).
-\]
 
 Рассмотрим оператор градиентного спуска, производящий $\eta$ шагов оптимизации:
 \begin{equation}
@@ -209,3 +182,23 @@ T(\boldsymbol{\theta}, \mathbf{h})_\text{SGD} =\boldsymbol{\theta} - \gamma \nab
 \boldsymbol{\theta}^\tau = \boldsymbol{\theta}_{\tau_0} + \frac{\tau}{\eta} T(\boldsymbol{\theta}), \quad \tau \in \{\tau_0,\dots,\eta\}, \tau \text{ mod } \tau_k = 0,
 \end{equation}
 где $\tau_0 = [0.05 \cdot \eta]$.
+
+
+\begin{table}
+\small
+% Алгоритм & Тип алгоритм & Время & Плюсы & Минусы 
+
+\begin{tabularx}{\textwidth}{|X|X|X|X|}
+\hline
+\bf Алгоритм & \bf Тип алгоритма & \bf Сложность работы одной итерации & \bf Предположения для корректности  \\ 
+Случайный поиск & стохастический & $O(\eta s |\hat{\mathfrak{D}}|)$& -  \\ \hline
+Жадный алгоритм~\cite{hyper_greed} & градиентный & $O(\eta (s+h) |\hat{\mathfrak{D}}|)$ & $\mathbf{H}(\boldsymbol{\theta}) = \mathbf{I}$  \\ \hline
+HOAG~\cite{hyper_hoag} & градиентный & $O(\eta s |\hat{\mathfrak{D}}| + h^2 |\hat{\mathfrak{D}}| + \text{o}),$ где $o$ --- время решения уравнения пункте 3&  первые производные $Q$ и вторые производные $L$ --- липшецевы;  $\text{det}\mathbf{H} \neq \mathbf{0}$;  \\ \hline
+DrMAD~\cite{hyper_mad} & градиентный &$O(\eta s |\hat{\mathfrak{D}}|)$ & Траектория оптимизации параметров $\boldsymbol{\theta}$ = $\boldsymbol{\theta}_0, \dots \boldsymbol{\theta}_\eta$ --- линейная \\ \hline
+\end{tabularx}
+
+\caption{Основные свойства рассматриваемых алгоритмов}
+\label{table:algo_descr}
+
+\end{table}
+

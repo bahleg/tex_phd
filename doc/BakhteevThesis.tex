@@ -2,7 +2,7 @@
 \usepackage{cmap}
 \usepackage[T2A]{fontenc}
 \usepackage[utf8]{inputenc}
-
+\usepackage{tabularx}
 %\usepackage[cp1251]{inputenc}
 \renewcommand{\rmdefault}{cmr}
 \usepackage{dsfont} % for indicator function
@@ -74,7 +74,7 @@
 %\bibliographystyle{gost2008} 
 \theoremstyle{definition}
 \newtheorem{theorem}{Теорема}
-\newtheorem{lemm}{Лемма}
+\newtheorem{lemma}{Лемма}
 \newtheorem{defin}{Определение}
 \newtheorem{utv}{Утверждение}
 
@@ -157,7 +157,7 @@
 \newcommand{\tb}{{\mathbf{t}}}
 \newcommand{\ub}{{\mathbf{u}}}
 \newcommand{\vb}{{\mathbf{v}}}
-\newcommand{\wb}{{\mathbf{w}}}
+\newcommand{\wb}{{\mathbf{W}}}
 \newcommand{\xb}{{\mathbf{x}}}
 \newcommand{\xt}{{\tilde{x}}}
 \newcommand{\xbt}{\tilde{{\mathbf{x}}}}
@@ -240,12 +240,12 @@
 \newcommand{\bvec}{{\mathbf{b}}}
 \newcommand{\qvec}{{\mathbf{z}}}
 \newcommand{\pvec}{{\mathbf{p}}}
-\newcommand{\wvec}{{\mathbf{w}}}
+\newcommand{\wvec}{{\mathbf{W}}}
 \newcommand{\rvec}{{\mathbf{r}}}
 \newcommand{\thetavec}{{\mathbf{\theta}}}
 \newcommand{\y}{{\mathbf{y}}}
 \newcommand{\g}{{\mathbf{g}}}
-\newcommand{\w}{{\mathbf{w}}}
+\newcommand{\w}{{\mathbf{W}}}
 \newcommand{\m}{{\mathbf{m}}}
 
 %\renewcommand{\thesubfigure}{\asbuk{subfigure}}
@@ -282,17 +282,17 @@
 \tableofcontents{}%это оглавление
 \input{dis_intro}
 \chapter{Постановка задачи}
-\input{dis_statement}
-\chapter{Обзор}
+%\input{dis_statement}
 \input{review}
 \chapter{Выбор модели с использованием вариационного вывода}
 \input{var_inf}
 \chapter{Оптимизация гиперпараметров в задаче выбора модели}
 \input{hyperparams}
-
+\chapter{Выбор субоптимальной структуры модели}
 \chapter{Анализ прикладных задач порождения и выбора моделей глубокого обучения}
-\addcontentsline{toc}{section}{Заключение}
-\chapter*{Заключение}
+\input{applied}
+%\addcontentsline{toc}{section}{Заключение}
+%\chapter*{Заключение}
 
 
 \clearpage 
