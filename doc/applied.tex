@@ -6,10 +6,11 @@
 Для оценки качества классификации была проведена процедура скользящего контроля~\cite{cv} при соотношении числа объектов обучающей и контрольной выборки 3:1. Число нейронов на каждом слое задавалось из соотношения 10:6:3. При проведении процедуры скользящего контроля для каждого отсчета количества нейронов было произведено пять запусков. В эксперименте с использованием инструментария на базе Theano при обучении двухслойной нейронной сети проводился мультистарт~\cite{multi}, т.~е. одновременный запуск обучения сети с 8 разными стартовыми значениями параметров для предотвращения возможного застревания алгоритма обучения в локальном минимуме. При оценке качества классификации выбиралась модель с наилучшими результатами. График зависимости ошибки классификации от числа используемых нейронов изображен на рис.~\ref{fig:neurons}.
 
 
+
 \begin{figure}[tb!]
  \centering
-  \includegraphics[width=1.0\textwidth]{neurons.pdf}
- \caption{Зависимость ошибки от числа нейронов}
+  \includegraphics[width=1.0\textwidth]{plots/popova/neurons.pdf}
+ \caption{Зависимость ошибки     от числа нейронов}
  \label{fig:neurons}
 \end{figure}
 
@@ -19,7 +20,7 @@
 
 \begin{figure}[tb!]
  \centering
-  \includegraphics[width=1.0\textwidth]{samples.pdf}
+  \includegraphics[width=1.0\textwidth]{plots/popova/samples.pdf}
  \caption{Зависимость ошибки от размера обучающей выборки}
  \label{fig:samples}
 \end{figure}
@@ -40,7 +41,7 @@
 
 \begin{figure}[tb!]
  \centering
-  \includegraphics[width=0.8\textwidth]{result.pdf}
+  \includegraphics[width=0.8\textwidth]{plots/popova/result.pdf}
  \caption{Результаты эксперимента по исследованию скорости процесса обучения}
  \label{fig:speed}
 \end{figure}
@@ -110,6 +111,49 @@ $
 \end{enumerate}
 
 Для каждой модели назначались различные значения параметра $\alpha (\alpha \in \{10, \dots, 10^9\})$ и длины шага оптимизации $\gamma$, отбирались наилучшие модели. %Пример матрицы качества модели в зависимости от гиперпараметров приведена на рис.~\ref{fig:hypermatrix}.
+\begin{figure}[tbh!]
+
+
+
+\minipage{0.32\textwidth}
+ \caption*{\textit{а}}
+  \includegraphics[width=\linewidth]{./plots/var/mf.pdf}
+
+\endminipage\hfill
+\minipage{0.32\textwidth}
+\caption*{\textit{б}}
+ 
+  \includegraphics[width=\linewidth]{./plots/var/sgd.pdf}
+ \endminipage\hfill
+\minipage{0.32\textwidth}%
+ \caption*{\textit{в}}
+
+  \includegraphics[width=\linewidth]{./plots/var/lang.pdf}
+\endminipage\hfill
+  \caption{}
+\label{fig:var}
+\end{figure}
+
+\begin{figure}[tbh!]
+
+
+\minipage{0.32\textwidth}
+\caption*{\textit{а}}
+\includegraphics[width=1.0\textwidth]{./plots/var/boston/rmse_data2.pdf}
+\endminipage\hfill
+\minipage{0.32\textwidth}
+\caption*{\textit{б}}
+\includegraphics[width=1.0\textwidth]{./plots/var/protein/rmse_data2.pdf}
+
+\endminipage\hfill
+\minipage{0.32\textwidth}%
+\caption*{\textit{в}}
+\includegraphics[width=1.0\textwidth]{./plots/var/msd/rmse_data2.pdf}
+
+\endminipage
+\caption{}
+\label{fig:noise_in_data}
+\end{figure}
 
 
 
@@ -118,7 +162,7 @@ $
 \begin{table}[!htbp]
 \captionsetup{justification=raggedright,singlelinecheck=false}
 \label{table1}
-\caption*{\textbf{Таблица 1. Описание выборок для экспериментов}}
+\caption{\textbf{Описание выборок для экспериментов}}
 \footnotesize
 \centering
 
@@ -145,7 +189,7 @@ MNIST & 100  & 500 & 50 & $\hat{m} = 100$ & 50\\
 \captionsetup{justification=raggedright,singlelinecheck=false}
 \centering
 \label{table2}
-\caption*{\textbf{Таблица 2. Результаты эксперимента}}
+\caption{\textbf{Результаты эксперимента}}
 \footnotesize
 \begin{tabular}{ | c | c | c | c | c | c | c |}
 
@@ -260,39 +304,6 @@ MNIST &  1 & 6 & 3 &  13 & 3 & 25  \\
 %Для остальных выборок было проведено 5 повторений. 
 В качестве улучшаемого алгоритма рассматривался случайный поиск параметров с количеством итераций поиска, совпадающих с количеством итераций оптимизации гиперпараметров $l$: $l=50$ для синтетической выборки и выборки WISDM, $l=25$ для выборки MNIST. Рассмаитрваемые алгоритмы представлены в Табл.~\ref{table:algo_descr}. Пример поведения траекторий параметров под действием алгоритмов приведен на Рис.~\ref{fig:traj}. В качестве функций $Q$ и $L$ рассматривались функции кросс-валидации~\eqref{eq:cv} с $k=4$ и вариацонной оценки правдоподобия~\eqref{eq:elbo}. 
 
-\begin{table}
-\small
-% Алгоритм & Тип алгоритм & Время & Плюсы & Минусы 
-
-\begin{tabularx}{\textwidth}{|X|X|X|X|}
-\hline
-\bf Алгоритм & \bf Тип алгоритма & \bf Сложность работы одной итерации & \bf Предположения для корректности  \\ 
-Случайный поиск & стохастический & $O(\eta s |\hat{\mathfrak{D}}|)$& -  \\ \hline
-Жадный алгоритм~\cite{hyper_greed} & градиентный & $O(\eta (s+h) |\hat{\mathfrak{D}}|)$ & $\mathbf{H}(\boldsymbol{\theta}) = \mathbf{I}$  \\ \hline
-HOAG~\cite{hyper_hoag} & градиентный & $O(\eta s |\hat{\mathfrak{D}}| + h^2 |\hat{\mathfrak{D}}| + \text{o}),$ где $o$ --- время решения уравнения пункте 3&  первые производные $Q$ и вторые производные $L$ --- липшецевы;  $\text{det}\mathbf{H} \neq \mathbf{0}$;  \\ \hline
-DrMAD~\cite{hyper_mad} & градиентный &$O(\eta s |\hat{\mathfrak{D}}|)$ & Траектория оптимизации параметров $\boldsymbol{\theta}$ = $\boldsymbol{\theta}_0, \dots \boldsymbol{\theta}_\eta$ --- линейная \\ \hline
-\end{tabularx}
-
-\caption{Основные свойства рассматриваемых алгоритмов}
-\label{table:algo_descr}
-
-\end{table}
-
-
-\begin{figure}
-
-    \begin{subfigure}[b]{0.5\textwidth}
-    \includegraphics[width=0.8\linewidth]{slide_plots/greed_hoag.png}
-
-    \end{subfigure}
-    \begin{subfigure}[b]{0.5\textwidth}
-    \includegraphics[width=0.8\linewidth]{slide_plots/mad.png}
-
-    \end{subfigure}
-
-  \label{fig:traj}
-    \caption{Графики траекторий параметров для разных алгоритмов. TODO: переделать}
-    \end{figure}
 
 
 
@@ -432,11 +443,11 @@ HOAG & ~\eqref{eq:elbo} &  -280061.6 & 24.0 $\pm$ 0.0  &  0.0189 & ? & ?\\
     \begin{figure}
 
     \begin{subfigure}[b]{0.5\textwidth}
-    \includegraphics[width=0.8\linewidth]{plots/poly_cv.png}
+    \includegraphics[width=0.8\linewidth]{plots/hyperparams/poly_cv.png}
 
     \end{subfigure}
     \begin{subfigure}[b]{0.5\textwidth}
-    \includegraphics[width=0.8\linewidth]{plots/poly_var.png}
+    \includegraphics[width=0.8\linewidth]{plots/hyperparams/poly_var.png}
 
     \end{subfigure}
 
@@ -449,7 +460,7 @@ HOAG & ~\eqref{eq:elbo} &  -280061.6 & 24.0 $\pm$ 0.0  &  0.0189 & ? & ?\\
 
     \begin{figure}
 
-    \includegraphics[width=\linewidth]{plots/wisdm.png}
+    \includegraphics[width=\linewidth]{plots/hyperparams/wisdm.png}
 
     \caption{Графики завивисимости функции $\hat{Q}$ и качества модели от количества итераций оптимизации для кросс-валидации:  кросс-валидация (слева), вариационная оценка (справа)}
     \end{figure}
@@ -471,7 +482,7 @@ HOAG & ~\eqref{eq:elbo} &  -280061.6 & 24.0 $\pm$ 0.0  &  0.0189 & ? & ?\\
 % Как показал вычислительный эксперимент, вариационная нейросеть, полученная методом, описанным в~\cite{Graves}, позволяет значительно улучшить качество предсказаний.
 \begin{figure}[!h]
 	\centering
-	\includegraphics[width=0.5\textwidth]{Pictures/lambdas.pdf}
+	\includegraphics[width=0.5\textwidth]{plots/smerdov/lambdas.pdf}
 	\caption{Доля неудаленных параметров сети в зависимости от порогового значения $\lambda$ для скалярного~($I$) и диагонального~($D$) вида апостериорной матрицы ковариаций}
 	\label{lambdas}
 \end{figure}
@@ -556,16 +567,25 @@ $$R_{\text{rg}} = \frac{\sum_{(\textbf{x},y)\in \mathfrak{D}} \left(f(\textbf{x}
 \textbf{Wine.} Рассмотрим нейроную сеть с 13 нейронами на входе, 13 нейронами в скрытом слое и 3 нейронами на выходе.
 
 \begin{figure}[h!t]\center
-\includegraphics[width=0.8\textwidth]{results/New/WIne/All.pdf}\\
+\includegraphics[width=0.8\textwidth]{plots/grabovoy/wine_all.pdf}\\
 \caption{Качество прогноза при удаление параметров на выборке Wine}
 \label{WineAll}
 \end{figure}
 
-\begin{figure}[h!t]\center
-\subfloat[Произвольное удаление параметров]{\includegraphics[width=0.5\textwidth]{results/New/WIne/RandomNoise3D.pdf}}
-\subfloat[Оптимальное прореживание]{\includegraphics[width=0.5\textwidth]{results/New/WIne/OBDNoise3D.pdf}}\\
-\subfloat[Вариационный метод]{\includegraphics[width=0.5\textwidth]{results/New/WIne/VariationalNoise3D.pdf}}
-\caption{Влияние шума в начальных данных на шум выхода нейросети на выборке Wine}
+\begin{figure}[ht]\center
+\begin{subfigure}[а]{0.33\textwidth}
+\includegraphics[width=0.33\textwidth]{plots/grabovoy/wine_random_noise3d.pdf}
+\end{subfigure}
+\begin{subfigure}[б]{0.33\textwidth}
+{\includegraphics[width=0.33\textwidth]{plots/grabovoy/obd_noise_3d.pdf}}
+\end{subfigure}
+\begin{subfigure}[в]{0.33\textwidth}
+{\includegraphics[width=0.33\textwidth]{plots/grabovoy/var_noise_3d.pdf}}
+\end{subfigure}
+
+%\subfigure[Оптимальное прореживание]{\includegraphics[width=0.5\textwidth]{plots/grabovoy/obd_noise_3d.pdf}}\\
+%\subfigure[Вариационный метод]{\includegraphics[width=0.5\textwidth]{plots/grabovoy/var_noise_3d.pdf}}
+\caption{Влияние шума в начальных данных на шум выхода нейросети на выборке Wine: a --- Произвольное удаление параметров, б --- Оптимальное прореживание, в --- Вариационный метод}
 \label{WineNoise}
 \end{figure}
 
@@ -575,17 +595,28 @@ $$R_{\text{rg}} = \frac{\sum_{(\textbf{x},y)\in \mathfrak{D}} \left(f(\textbf{x}
 
 \textbf{Boston Housing. } Рассмотрим нейроную сеть с 13 нейронами на входе, 39 нейронами в скрытом слое и одним нейроном на выходе.
 
-\begin{figure}[h!t]\center
-\includegraphics[width=0.8\textwidth]{results/New/Boston/All.pdf}\\
+\begin{figure}[h    !t]\center
+\includegraphics[width=0.8\textwidth]{plots/grabovoy/boston_all.pdf}\\
 \caption{Качество прогноза при удаление параметров на выборке Boston}
 \label{BostonAll}
 \end{figure}
 
-\begin{figure}[h!t]\center
-\subfloat[Произвольное удаление параметров]{\includegraphics[width=0.5\textwidth]{results/New/Boston/RandomNoise3D.pdf}}
-\subfloat[Оптимальное прореживание]{\includegraphics[width=0.5\textwidth]{results/New/Boston/OBDNoise3D.pdf}}\\
-\subfloat[Вариационный метод]{\includegraphics[width=0.5\textwidth]{results/New/Boston/VariationalNoise3D.pdf}}
-\caption{Влияние шума в начальных данных на шум выхода нейросети на выборке Boston}
+
+
+\begin{figure}[ht]\center
+\begin{subfigure}[а]{0.33\textwidth}
+\includegraphics[width=0.33\textwidth]{plots/grabovoy/boston_random.pdf}
+\end{subfigure}
+\begin{subfigure}[б]{0.33\textwidth}
+{\includegraphics[width=0.33\textwidth]{plots/grabovoy/boston_obd.pdf}}
+\end{subfigure}
+\begin{subfigure}[в]{0.33\textwidth}
+{\includegraphics[width=0.33\textwidth]{plots/grabovoy/boston_var.pdf}}
+\end{subfigure}
+
+%\subfigure[Оптимальное прореживание]{\includegraphics[width=0.5\textwidth]{plots/grabovoy/obd_noise_3d.pdf}}\\
+%\subfigure[Вариационный метод]{\includegraphics[width=0.5\textwidth]{plots/grabovoy/var_noise_3d.pdf}}
+\caption{Влияние шума в начальных данных на шум выхода нейросети на выборке Boston: a --- Произвольное удаление параметров, б --- Оптимальное прореживание, в --- Вариационный метод}
 \label{BostonNoise}
 \end{figure}
 
@@ -597,19 +628,27 @@ $$R_{\text{rg}} = \frac{\sum_{(\textbf{x},y)\in \mathfrak{D}} \left(f(\textbf{x}
 \textbf{Синтетические данные. } Рассмотрим нейроную сеть с 100 нейронами на входе и одним нейроном на выходе.
 
 \begin{figure}[h!t]\center
-\includegraphics[width=0.8\textwidth]{results/New/Data1/All.pdf}\\
+\includegraphics[width=0.8\textwidth]{plots/grabovoy/synt_all.pdf}\\
 \caption{Качество прогноза при удаление параметров на синтетической выборке}
 \label{Data1All}
 \end{figure}
 
-\begin{figure}[h!t]\center
-\subfloat[Произвольное удаление параметров]{\includegraphics[width=0.5\textwidth]{results/New/Data1/RandomNoise3D.pdf}}
-\subfloat[Оптимальное прореживание]{\includegraphics[width=0.5\textwidth]{results/New/Data1/OBDNoise3D.pdf}}\\
-\subfloat[Вариационный метод]{\includegraphics[width=0.5\textwidth]{results/New/Data1/VariationalNoise3D.pdf}}
-\caption{Влияние шума в начальных данных на шум выхода нейросети на синтетической выборке}
+\begin{figure}[ht]\center
+\begin{subfigure}[а]{0.33\textwidth}
+\includegraphics[width=0.33\textwidth]{plots/grabovoy/synt_random.pdf}
+\end{subfigure}
+\begin{subfigure}[б]{0.33\textwidth}
+{\includegraphics[width=0.33\textwidth]{plots/grabovoy/synt_obd.pdf}}
+\end{subfigure}
+\begin{subfigure}[в]{0.33\textwidth}
+{\includegraphics[width=0.33\textwidth]{plots/grabovoy/synt_var.pdf}}
+\end{subfigure}
+
+%\subfigure[Оптимальное прореживание]{\includegraphics[width=0.5\textwidth]{plots/grabovoy/obd_noise_3d.pdf}}\\
+%\subfigure[Вариационный метод]{\includegraphics[width=0.5\textwidth]{plots/grabovoy/var_noise_3d.pdf}}
+\caption{Влияние шума в начальных данных на шум выхода нейросети на выборке Boston: a --- Произвольное удаление параметров, б --- Оптимальное прореживание, в --- Вариационный метод}
 \label{Data1Noise}
 \end{figure}
-
 На рис.~\ref{Data1All} показано как меняется среднеквадратическое отклонение прогноза от $\mathsf{R}_{\text{rg}}$ точного ответа при удалении параметров указанными методами. График показывает, что удаление параметров методом Белсли являеться более эффективным чем другие методы прореживания, так-как качество прогноза нейросети улучшается при удалении шумовых параметров.
 
 На рис.~\ref{Data1Noise} показаны поверхности изменения уровня шума ответов нейросети при изменении процента удаленных параметров и уровня шума входных данных для разных методов прореживания. На графиках показано, что при удалении параметров нейросети методом Белсли шум меньше, чем при удалении параметров другими методами, так-как поверхность которая соответствует методу Белсли ниже других поверхностей.
