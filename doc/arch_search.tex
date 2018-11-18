@@ -1,0 +1,344 @@
+В данной главе рассматривается задача выбора структуры модели глубокого обучения.  Требуется предложить метод выбора модели субоптимальной сложности, позволяющий проводить выбор модели в нескольких режимах (ELBO, AddDel, полный перебор, оптимизация без регуляризации и с регуляризацией).
+
+Решается задача нахождения оптимальной структуры. Предлагается ввести предположения о распределениях параметров и структуры модели. 
+Проводится градиентная оптимизация параметров и гиперпараметров модели на основе байесовского вариационного вывода.  В качестве оптимизируемой функции для гиперпараметров модели предлагается обобщенная функция правдоподобия. Показано, что данная функция позволяет проводить оптимизацию  несколькими алгоритмами: последовательным добавлением и удалением параметров, полным перебором, а также максимизацией нижней оценки правдоподобия модели. Решается двухуровневая задача оптимизации: на первом уровне проводится оптимизация нижней оценки правдоподобия модели по вариационным параметрам модели. На втором уровне проводится оптимизация гиперпараметров модели.
+
+
+
+\subsection{Постановка задачи}
+Задана выборка \begin{equation}\label{eq:dataset}\mathfrak{D} = \{(\mathbf{x}_i,y_i)\}, i = 1,\dots,m,\end{equation} состоящая из множества пар <<объект-метка>> $$\mathbf{x}_i \in \mathbf{X} \subset \mathbb{R}^n, \quad {y}_i \in \mathbf{y} \subset \mathbb{Y}.$$ Метка ${y}$  объекта $\mathbf{x}$ принадлежит либо множеству: ${y} \in \mathbb{Y} = \{1, \dots, Z\}$ в случае задачи классификации, где $Z$ --- число классов, либо некоторому подмножеству вещественных чисел ${y} \in \mathbb{Y}  \subseteq \mathbb{R}$ в случае задачи регрессии. Положим, что пары объект $(\mathbf{x}, y)$ являются реализацией некоторой случайно величины и порождены независимо.
+
+Пусть задано семейство моделей глубокого обучения $\mathfrak{F}$.
+Пусть значения каждого структурного параметра $\boldsymbol{\gamma}^{i,j}$ лежат на симплексе $\Delta^{K^{i,j}-1}$.
+Пусть для каждого структурного параметра $\boldsymbol{\gamma}^{i,j} \in \boldsymbol{\Gamma}$ определено параметрическое априорное распределение $p(\boldsymbol{\gamma}^{i,j}), \mathbf{m}^{i,j}, \text{c}_{\text{temp}}),$ где где $\mathbf{m}^{i,j}$ --- параметр средних,  $c_{\text{temp}}$ --- температура (или концентрация) распределения.
+Перечислим свойства, которыми должно обладать данное распределение:
+\begin{enumerate}
+\item $p(\boldsymbol{\gamma}^{i.j})$ является непрерывным на симплексе $\Delta^{K^{i,j}-1}$.
+\item При устремлении температуры к бесконечности распределение сходится к равномерному: $\lim_{c_{\text{temp}} \to \infty} = p(\boldsymbol{\gamma}^{i,j}), \mathbf{m}^{i,j}, \text{c}_{\text{temp}}) = \mathcal{U}(\Delta^{K^{i,j}-1}).$
+\item При устремлении температуры к нулю распределение сходится к сингулярному распределению следующего вида:
+$\lim_{c_{\text{temp}} \to 0}  p(\gamma^{i,j}_k) = m^{i,j}_k.$
+\end{enumerate}
+
+\begin{utv}
+Перечисленными свойствами обладают распределения Дирихле и Гумбель-софтмакс.
+\end{utv}
+
+Обозначим через $S$ сюрьективное отношение между параметром модели $w \in \mathbf{W}$ и весами $\boldsymbol{\gamma}$ базовых функцией $\mathbf{g}$, определенное по следующему правилу:\\
+\textit{Если $w \in \mathbf{W}$ является параметром функции $\mathbf{g}^{i,j}_k$, где $(i,j) \in E$, то $S(w) = \gamma^{i,j}_k$.}\\
+Априорное распределение параметров  зададим следующим образом:
+\[
+    \mathbf{W} \sim \mathcal{N}\left(\mathbf{0}, \mathbf{A}^{-1} \otimes S(\mathbf{W})\right).
+\]
+где $\mathbf{A}$ --- диагональная матрица с положительными элементами на диагонали.
+Пусть также определено правдоподобие выборки $p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}).$\\
+
+Задача выбора структуры модели предполагает поиск значений гиперпараметров модели $\mathbf{A}, \mathbf{m}$ доставляющих максимум правдоподобия модели:
+\begin{equation}
+\label{eq:evidence_optim}
+    \argmax_{\mathbf{A}, \mathbf{m}}  p(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, {c_\text{temp}}),
+\end{equation}
+
+а также соответствующие параметры и структуру модели:
+\begin{equation}
+\label{eq:params_optim}
+    \argmax_{\mathbf{W}, \boldsymbol{\Gamma}}  p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{X},\mathbf{y}, \mathbf{A}, \mathbf{m}, {c_\text{temp}}).
+\end{equation}
+
+TODO: схема\\.
+
+TODO: plate notation.
+
+Для определения возможных значений структуры $\boldsymbol{\Gamma}$ введем следующие обозначения.
+Обозначим через $\Delta(\boldsymbol{\Gamma})$ множество точек, лежащих внутри произведения симплексов, определенных на структурных параметрах
+$$
+\Delta(\boldsymbol{\Gamma}) =  \prod{i,j \in E}\Delta^{K^{i,j}-1}.
+$$
+Обозначим через $\bar{\Delta}(\boldsymbol{\Gamma})$ только те точки $\Delta(\boldsymbol{\Gamma})$, которые принадлежат вершинам соответствующих симплексов.
+
+
+Докажем теорему об оптимальности решения задачи~\eqref{eq:params_optim}, лежащего на вершинах симплексов $\times_{(i,j) \in E} \Delta^{K^{i,j}-1}$. 
+
+
+\textbf{Теорема.} \\
+Пусть $\boldsymbol{\Gamma}_1$ и $\boldsymbol{\Gamma}_2$ --- реализации $\boldsymbol{\Gamma}$, такие что:
+\begin{itemize}
+\item $\boldsymbol{\Gamma}_1 \in \bar{\Delta}(\boldsymbol{\Gamma})$.
+\item $\boldsymbol{\Gamma}_2 \not \in \bar{\Delta}(\boldsymbol{\Gamma})$.
+\end{itemize} 
+Тогда для любых положительно определенных матриц $\mathbf{A}_1$ и $\mathbf{A}_2$ и векторов $\mathbf{m}_1, \mathbf{m}_2, \text{min}(\mathbf{m}_1)>0$ справедлива следующее отношение апостериорных вероятностей:
+$$\lim_{c_\text{temp} \to 0} \frac{p(\boldsymbol{\Gamma}_2, \mathbf{W}_2|\mathbf{y},  \mathbf{X},\mathbf{A}_1,\mathbf{m}_2, {c_\text{temp}})}{p(\boldsymbol{\Gamma}_1,  \mathbf{W}|\mathbf{y}, \mathbf{X},\mathbf{A}_1,\mathbf{m}_1, {c_\text{temp}})} = \infty.$$
+
+\textbf{Доказательство}.\\
+По свойству априорного распределения структурных параметров
+$$p(\lim_{c_{\text{temp}} \to 0} {\gamma}^{i,j}_k  = 1) = {m}^{i,j}_k.$$
+
+Тогда:
+$$p(\lim_{c_{\text{temp}} \to 0} \boldsymbol{\gamma}^{i,j} \in \bar{\Delta}^{K^{i,j}}) = 1.$$
+
+Тогда апостериорная вероятность $\boldsymbol{\Gamma}:$ в пределе равняется нулю, если структура не лежит на произведении вершин симплекса.
+
+$$p(\boldsymbol{\Gamma}_2, \mathbf{W}+2|\mathbf{y}, \mathbf{X},\mathbf{A}_2,\mathbf{m}_2, {c_\text{temp}}) \propto p(\boldsymbol{\Gamma}) p(\mathbf{y} |\boldsymbol{\Gamma},   \mathbf{W}, \mathbf{X},\mathbf{A}_1,\mathbf{m}) \to 0,$$
+$$p(\boldsymbol{\Gamma}_1,  \mathbf{W}_1|\mathbf{y}, \mathbf{W}, \mathbf{X},\mathbf{A}_1,\mathbf{m}_1, {c_\text{temp}}) \propto p(\boldsymbol{\Gamma}) p(\mathbf{y} |\boldsymbol{\Gamma},  \mathbf{X},\mathbf{A}_1,\mathbf{m}) \to C,$$
+где $C$ --- константа, большая нуля, т.к. $ \text{min}(\mathbf{m}_1)>0$.
+что и требовалось доказать.
+
+\subsection{Решение задачи с помощью вариационного вывода}
+В общем виде получение значения интеграла~\eqref{eq:evidence} является вычислительно сложной процедурой. В качестве приближенного значения интеграла используется вариационную верхнюю оценку правдоподобия модели. 
+
+Будем приближать неизвестное апостериорное распределение апостериорные распределение параметрическим распределением $q$ с параметрами $\boldsymbol{\theta}$.
+Разница между верхней оценкой~\eqref{eq:elbo} и правдоподобием модели~\eqref{eq:evidence} определяется дивергенцией между вариацоинным распределение $q$ и апостериорным распределением $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c_{\text{temp}})$. 
+
+Зададим вариацонное распределение $q$ следующим образом. 
+Факторизуем $q$ на два распределения: 
+$$q = q_{\mathbf{W}}q_{\boldsymbol{\Gamma}}:
+q_{\mathbf{W}} \sim \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q), \quad q_{\boldsymbol{\Gamma}} = \prod_{(i,j) \in E} q_\gamma^{i,j}, \quad q_\gamma \sim \mathcal{GS}( \mathbf{m}_q^{i,j}, c_q).$$
+Обозначим за $\mathbf{m}_q$ конкатенацию всех векторов средних  $\mathbf{m}_q^{i,j}$.
+
+Для получения значения $\text{log}_q {p}(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}})$ использубися следующие методы сэмплирования:
+$$
+    \mathsf{E}_{q}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{W}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c_{\text{temp}}) \approx \frac{1}{N}\sum_{u =1}^{N} \text{log} p(\mathbf{y}|\mathbf{X},\hat{\mathbf{W}}_u, \hat{\boldsymbol{\Gamma}}_u, \mathbf{A},\mathbf{m}, c_{\text{temp}}),
+$$
+$$
+   {D_{KL}}(q||p(\mathbf{W}, \boldsymbol{\Gamma}| \mathbf{A},\mathbf{m}, c_{\text{temp}}) = {D_{KL}}(q_{\boldsymbol{\Gamma}}||p(\boldsymbol{\Gamma}| \mathbf{m}, c_{\text{temp}}) + {D_{KL}}(q_{\mathbf{W}||p(\mathbf{W}|\mathbf{A}}) \approx
+$$
+$$
+    \frac{1}{N}\sum_{u=1}^N (\text{log}~q_{\boldsymbol{\Gamma}}(\hat{\boldsymbol{\Gamma}_u}) - \text{log}p(\hat{\boldsymbol{\Gamma}_u}) + 0.5(\text{tr}(\hat{\mathbf{S}}_u(\mathbf{W})\mathbf{A}\mathbf{A}_q^{-1}) + $$
+$$+\boldsymbol{\mu}^{\text{T}}\hat{\mathbf{S}}_u(\mathbf{W})\mathbf{A}\boldsymbol{\mu} - |\mathbf{W}| + \text{log det}\hat{\mathbf{S}}_u(\mathbf{W})\mathbf{A} -  \text{log det}\mathbf{A}_q )),
+$$
+где $N$ --- количество реализаций случайных величин, $\hat{\boldsymbol{\Gamma}}_u, \hat{\mathbf{W}}_u$ --- реализации случайных величин, $\hat{S_u}(\mathbf{W})$ --- соответствие между параметрами и реализацией весов базовых функций.
+
+Сэмплирование происходит следующим образом:
+$$
+    \hat{\mathbf{W}} = \boldsymbol{\mu} + \varepsilon\mathbf{A}_q, \quad \varepsilon \in \mathcal{N}(\mathbf{0}, \mathbf{1}),
+$$
+$$
+    \hat{\boldsymbol{\gamma}}_k = \frac{\text{exp}((\text{log}{m}_k + a_k) / c )}{\sum_{i=1}^K (\text{log}{m}_i + a_i) / c )}, \quad \mathbf{a} \in -\text{log}(\text{log}(\mathcal{U}(0, 1)^K).
+$$
+Численную оценку, полученную описанным выше способом будет обозначать как 
+$$\hat{\text{log}_q} {p}(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}}) = \hat{\mathsf{E}_{q}}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{W}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c_{\text{temp}}) - \hat{D_{KL}}(q||p(\mathbf{W}, \boldsymbol{\Gamma}| \mathbf{A},\mathbf{m}, c_{\text{temp}})).$$
+
+TODO: plate-notation.
+
+
+Докажем теорему о дискретности задачи оптимизации вариационной оценки в предельном случае.\\
+\textbf{Теорема.} 
+Пусть $c = c_\text{temp}$.
+Для любых значений ковариационных матриц $\mathbf{A}, \mathbf{A}_q$, любого вектора $\boldsymbol{\mu}_q$ существуют такие точки $\mathbf{m}_q^1 \in \times_{(i,j) \in E} \bar{\Delta}^{K^{i,j}-1}, \mathbf{m}^1 \in \times_{(i,j) \in E} \bar{\Delta}^{K^{i,j}-1}$ на вершинах симплексов структуры $\boldsymbol{\Gamma}$,  что для любой точки  $\mathbf{m}_q^2  \in \times_{(i,j) \in E} \Delta^{K^{i,j}-1}$ и $\mathbf{m}^2  \in \times_{(i,j) \in E} \Delta^{K^{i,j}-1}$ внутри симплексов справедливо выражение:
+$$\lim_{c_\text{temp} \to 0}\frac{\text{log}\hat{{p}}_{q_{\mathbf{W}}q^2_{\boldsymbol{\Gamma}}}(\mathbf{y}|\mathbf{X})}{\text{log}\hat{{p}}_{q_{\mathbf{W}}q_{\boldsymbol{\Gamma}}}(\mathbf{y}|\mathbf{X})} \geq 1,\text{\quad где}
+q_{\boldsymbol{\Gamma}}^1 = \max_{c} q_{\boldsymbol{\Gamma}}( \mathbf{m}_q^1, c).$$
+
+\textbf{Доказательство.}
+По свойству предельного распределения $\mathcal{GS}$ задача сводится к задаче с сингулярным распределением на структурах.
+Расписав $\text{log}_q {p}(\mathbf{y}|\mathbf{X},\mathbf{A},\mathbf{m}, c_{\text{temp}})$ через двойную сумму находим максимальный элемент.
+
+
+\subsection{Обобщенная постановка задачи}
+Определим основные величины, которые характеризуют сложность модели. \\
+
+\textbf{Определение} Параметрической сложностью $C_{\mathbf{W}}$ модели назовем наименьшую дивергенцию вариационного распределения при условии заданного априорного распределения параметров:
+\[
+    C_{\mathbf{W}} = \argmin_\mathbf{A} D_\text{KL}\left(q|p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{A}, \mathbf{m}, {\boldsymbol{c}_\text{temp}})\right).
+\]
+
+\textbf{Определение} Структурной сложностью $C_{\boldsymbol{\Gamma}}$ модели назовем энтропию распределения структуры:
+\[
+    C_{\boldsymbol{\Gamma}} = -\mathsf{E}_{q_{\boldsymbol{\Gamma}}} \text{log}q_{\boldsymbol{\Gamma}},
+\]
+где $q_{\boldsymbol{\Gamma}}$ --- вариационное распределение структуры модели.
+
+В силу многоэкстремальности задачи~\eqref{eq:optim}, оптимизация параметров вариационных распределений $\boldsymbol{\theta}$ и априорных распределений $\mathbf{h}$ должна позволять не только находить локальный оптимум задачи~\eqref{eq:optim}, но и использовать ряд эвристических алгоритмов, таких как снижение и наращивание сложности модели. 
+Сформулируем основные требования к оптимизационной задаче и оптимизируемым функционалам:
+\begin{enumerate}
+\item Оптимизируемые функции $L,Q$ должны быть дифференцируемы.
+\item Распределение параметров модели, являющееся решением задачи оптимизации должно доставлять максимум апостериорной вероятности в некоторой окрестности.
+\item Степень регуляризации структуры $\boldsymbol{\Gamma}$ и параметров $\mathbf{W}$ должна быть контролируемой.
+\item Решение задачи оптимизации должно являться локально-оптимальным для вариационной оценки~\eqref{eq:elbo}.
+\item Оптимизация должна позволять варьировать параметрическую сложность модели $C_{\mathbf{W}}$.
+\item Оптимизация должна позволять варьировать структурную сложность ${\boldsymbol{\Gamma}}$ модели.
+\item Оптимизация должна позволять проводить полный перебор структуры $\boldsymbol{\Gamma}$.
+\end{enumerate}
+
+
+Сформулируем задачу как двухуровневую задачу оптимизации. обозначим через  $\boldsymbol{\theta}$ оптимизируемые на первом уровне величины. обозначим через $\mathbf{h}$ величины, оптимизируемые на втором уровне.
+Положим $\boldsymbol{\theta}$ равным параметрам распределений $q_{\mathbf{W}}, q_{\boldsymbol{\Gamma}}: \boldsymbol{\theta} = [\boldsymbol{\mu}_q, \mathbf{A}_q, \mathbf{m}_q, c]^\text{T}$.  
+Положим $\mathbf{h} = [\mathbf{A}, \mathbf{m}].$
+
+обозначим через $L$ функцию потерь:
+\begin{equation}
+    L = c_{\text{reg}}{\mathsf{E}_{q}}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{W}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c_{\text{temp}})
+ - {D_{KL}}(q_{\boldsymbol{\Gamma}}||p(\boldsymbol{\Gamma})) - {D_{KL}}(q_{\mathbf{W}}||p(\mathbf{w})),
+\end{equation}
+где $c_{\text{reg}}$ --- коэффициент регуляризации регуляризации структуры $\boldsymbol{\Gamma}$ и параметров $\mathbf{W}$ априорным распределением.
+
+\textbf{Лемма.}  Пусть $\mathbf{A}_q$ фиксирована и близка к нулю, $c_{\text{reg}} =1$.  Тогда максимизация $L$ эквивалентна оптимизации апостериорной вероятности параметров при $c \to 0$.\\
+\textbf{Доказательство.} 
+$L = \mathsf{E}_{q}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{W}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c_{\text{temp}}) - {D_{KL}}(q||p(\mathbf{W}, \boldsymbol{\Gamma}| \mathbf{A},\mathbf{m}, c_{\text{temp}})).$
+Полагая ковариационную матрицу близкой к нулю $$ \mathsf{E}_{q}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{W}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c_{\text{temp}}) \approx \text{log} p(\mathbf{y}|\mathbf{X},\boldsymbol{\mu}_q, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c_{\text{temp}})$$.
+
+$$
+   {D_{KL}}(q||p(\mathbf{W}, \boldsymbol{\Gamma}| \mathbf{A},\mathbf{m}, c_{\text{temp}}) = 
+$$
+$$
+    \frac{1}{N}\sum_{u=1}^N (\text{log}~q_{\boldsymbol{\Gamma}}(\hat{\boldsymbol{\Gamma}_u}) - \text{log}p(\hat{\boldsymbol{\Gamma}_u}) + 0.5(\boldsymbol{\mu}^{\text{T}}\hat{\mathbf{S}}_u(\mathbf{W})\mathbf{A}\boldsymbol{\mu} - |\mathbf{W}| + \text{log det}\hat{\mathbf{S}}_u(\mathbf{W})\mathbf{A}).
+$$
+
+Следующая теорема говорит о том, что варьируя $c_{\text{reg}}$ мы проводим оптимизацию, ассимптотически аналогичную оптимизации выборки из того же распределения, но другой мощности.
+
+\textbf{Теорема}. Пусть $c_{\text{reg}} > 0$, $c_{\text{reg}} m \in \mathbb{N}.$
+Тогда функция $L$ сходится почти наверно к вариационной нижней оценке правдоподобия для произвольной подвыборки  $\mathfrak{D}$ 
+мощностью $m_0 = \frac{m}{c_{\text{reg}}}$, поделенной на данную константу.\\
+
+\textbf{Доказательство}. Рассмотрим произвольную подвыборку $\hat{\mathfrak{D}}$ мощностью $m_0$. Нижняя оценка правдоподобия модели для подвыборки имеет вид:
+\[
+ \mathsf{E}_{q_w,q_\gamma}\text{log} p(\hat{\mathbf{y}}|\hat{\mathbf{X}},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - {D_{KL}}(q_\gamma||p(\boldsymbol{\Gamma})) - {D_{KL}}(q_{w}||p(\mathbf{w})).
+\]
+
+\[
+\text{log} p(\hat{\mathbf{y}}|\hat{\mathbf{X}},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) = \sum_i \text{log} p(\hat{\mathbf{y}_i}|\hat{\mathbf{x}_i},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) \to^{\text{п.н.}}_{m \to \infty} m_0\mathsf{E}\text{log} p(\mathbf{y}|{\mathbf{x}},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c).
+\]
+
+Таким образом, ассимптотическая формула вариационной нижней оценки правдоподобия для подвыборки мощностью $m_0$ выглядит следующим образом:
+\[
+m_0\mathsf{E}\text{log} p(\mathbf{y}|{\mathbf{x}},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - {D_{KL}}(q_\gamma||p(\boldsymbol{\Gamma})) - {D_{KL}}(q_{w}||p(\mathbf{w})).
+\]
+Домножив на выражение на $\frac{m}{m_0}$ получаем ассимптотику для $L$, что и требовалось доказать.
+
+Пусть $Q$ --- валидационная функция:
+\[
+Q = {c_\text{train}\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c_{\text{prior}})}}
+ - {c_\text{prior}\text{D}_{KL}(p(\mathbf{W}, \boldsymbol{\Gamma} |\mathbf{A}^{-1}, \mathbf{m}, c_{\text{temp}}) || q(\mathbf{W}, \boldsymbol{\Gamma}))} -\]
+\[
+{c_{\text{comb}}\sum_{p' \in \mathbf{P}} \text{D}_{KL}(\boldsymbol{\Gamma} | p')} \to \max, 
+\]
+где $\mathbf{P}$ --- множество (возможно пустое) распределений на структуре модели, $c_\text{prior}$ --- коэффициент регуляризации параметрической сложности модели, 
+$c_{\text{comb}}$ --- коэффициент перебора.
+
+Сформулируем задачу поиска оптимальной модели как двухуровневую задачу.
+\begin{equation}
+\label{eq:optim}
+	\hat{\mathbf{h}} = \argmax_{\mathbf{h} \in \mathbb{R}^h} Q( T^\eta(\boldsymbol{\theta}_0, \mathbf{h})),
+\end{equation}
+где $T$ --- оператор оптимизации, решающий задачу оптимизации:
+\[
+    L(T^\eta(\boldsymbol{\theta}_0, \mathbf{h})) \to \max.
+\]
+
+
+\textbf{Теорема}. Пусть $D_{KL}(q_w|p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c)) = 0, D_{KL}(q_\gamma|p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{A},\mathbf{m}, c)) = 0$, пусть $c_{\text{prior}} = 1, c_{\text{reg}} = 1, c_{\text{comb}} = 0$. Тогда оптимизация $\eqref{eq:optim}$ эквивалентна оптимизации $\eqref{eq:evidence}$.\\~\\
+\textbf{Доказательство.} При соблюдении условий теоремы оптимизация вариационной оценки эквивалента оптимизации правдоподобия модели.
+При $c_{\text{prior}} = 1, c_{\text{reg}} = 1, c_{\text{comb}} = 0$, функция $Q$ становится равной вариационной нижней оценке. 
+Таким образом, двухуровневая оптимизация становится эквивалентной оптимизации правдоподобия модели по $\mathbf{A},\mathbf{m}$, что и требовалось доказать.
+
+
+\subsection{О параметрической сложности}
+обозначим через $F(c_{\text{reg}}, c_{\text{train}}, c_{\text{prior}}, c_{\text{comb}}, \mathbf{P}, c_{\text{temp}})$ множество экстремумов функции $L$ при решении задачи двухуровневой оптимизации.
+
+
+\textbf{Теорема.}  
+Пусть $\mathbf{f}_1 \in F(1, 1, c_{\text{prior}}^1, 0, \varnothing,  c_{\text{temp}} ), \mathbf{f}_2 \in F(1, 1, c_{\text{prior}}^2, 0, \varnothing,  c_{\text{temp}})$, $c_{\text{prior}}^1 < c_{\text{prior}}^2$.\\
+Пусть вариационные параметры моделей $\mathbf{f}_1$ и $\mathbf{f}_2$ лежат в области $\mathsf{U}$, в которой соответствующие функции $L$ и $Q$ являются локально-выпуклыми.\\ 
+Тогда модель $\mathbf{f}_1$ имеет параметрическую сложность, не меньшую чем у $\mathbf{f}_2$.
+\[
+    C_\text{param}(\mathbf{f}_1) \geq C_\text{param}(\mathbf{f}_2).
+\]
+
+\textbf{Доказательство.}
+обозначим через $q^1, q^2$ --- вариационные распределения моделей $\mathbf{f}_1, \mathbf{f}_2$, 
+$p^1, p^2$ --- априорные распределения моделей.
+ 
+ Отсюда справедливы следующие неравенства (по единственности точек экстремума $L,Q$):
+\[
+    \mathsf{E}_{q^1}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - c_{\text{prior}}^1  D_\text{KL}(q^1||p^1)  -  \mathsf{E}_{q^2}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) + c_{\text{prior}}^1  D_\text{KL}(q^2||p^2) \geq 0,
+\]
+\[
+    \mathsf{E}_{q^2}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - c_{\text{prior}}^2  D_\text{KL}(q^2||p^2)  -  \mathsf{E}_{q^1}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) + c_{\text{prior}}^2  D_\text{KL}(q^1||p^1) \geq 0.
+\]
+
+Складывая неравенства получим:
+\[
+    D_\text{KL}(q^1||p^1) \geq D_\text{KL}(q^2||p^2),
+\]
+\[
+    \mathsf{E}_{q^2}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c)  \leq \mathsf{E}_{q^1}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) .
+\]
+
+С учетом полученных неравенств распишем доказываемое утверждение:
+\[
+    \max_p \left(-D_\text{KL}(q^1||p)\right) - \max_{p} \left(-D_\text{KL}(q^2||p^2)\right) = 
+\]
+\[ \max_p  \left(-c_{\text{prior}}^2 D_\text{KL}(q^1||p) +\mathsf{E}_{q^1}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) - \mathsf{E}_{q^1}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) \right) -
+\]
+\[  - \max_{p} \left(-c_{\text{prior}}^2 D_\text{KL}(q^2||p)  + \mathsf{E}_{q^2}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c) +\mathsf{E}_{q^2}\text{log} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{A},\mathbf{m}, c)  \right)    \leq 0,  
+\]
+что и т.д.
+\clearpage
+
+\textbf{Теорема.}
+Пусть $\mathbf{f} \in F(1, 1, c_{\text{prior}}, 0, \varnothing,  c_{\text{temp}} )$.
+При устремлении $ c_{\text{prior}}$ к бесконечности параметрическая сложность модели $\mathbf{f}$ устремляется к нулю (или сущесвтует?):
+\[
+    \lim_{c_{\text{prior}} \to \infty} C_{\text{param}}(\mathbf{f}) = 0.
+\]
+
+\textbf{Доказательство}\\
+В пределе: $Q = D_{KL}.$\\
+Минимум достигается при совпадении параметров распределений: $mu = 0$.\\
+Докажем существование решения $L$, которое удовлетворяет этому.\\
+Рассмотрим значение $L$ при $A \to 0$. Два случая: либо конечное значение, либо бесконечное.\\
+Таким образом, калибруя $A$ получаем значения, близкие к нулю. \\
+Рассмотрим последовательность. Тогда lim inf ->0.\\
+Доказано. 
+
+
+
+
+
+
+
+
+\subsection{О структурной сложности}
+\textbf{Теорема}
+Пусть для каждого ребра $(i,j)$ семейства моделей $\mathfrak{F}$ априорное распределение $$p(\boldsymbol{\gamma}_{i,j}) =  \lim_{c_{\text{temp}} \to 0} \mathcal{GS}(c_{\text{temp}}).$$
+Пусть $c_{\text{reg}} >0, c_{\text{train}} >0, c_{\text{prior}}>0$.
+Пусть $\mathbf{f} \in F(c_{\text{reg}}, c_{\text{train}}, c_{\text{prior}}, 0, \varnothing, c_{\text{temp}})$.
+Тогда структурная сложность модели $\mathbf{f}$ равняется нулю.
+\[
+    C_\text{struct}(\mathbf{f}) = 0.
+\]
+    
+\textbf{Доказательство}
+1. Доказываем, что гипер-концентрация будет лежать на вершине\\
+2. У нас получается, что $D_{KL}$ будет конечным только в случае совпадения.(???)
+3. Итого, получили.
+
+\textbf{Теорема}
+Пусть $\mathbf{f}_1 \in F(c_{\text{reg}}, c_{\text{train}},  c_{\text{prior}}, 0, \varnothing,  c^1_{\text{temp}}), \mathbf{f}_2   \in \lim_{c^2_{\text{temp}} \to \infty} F(c_{\text{reg}}, c_{\text{train}},  c_{\text{prior}}, 0, \varnothing,  c^2_{\text{temp}})$.
+Пусть вариационные параметры моделей $f_1$ и $f_2$ лежат в области $U$, в которой соответствующие функции $L$ и $Q$ являются локально-выпуклыми. 
+Тогда разница структурных сложностей моделей ограничена выражением:
+\[
+    C_\text{struct}(\mathbf{f}_1)  - C_\text{struct}(\mathbf{f}_2) \leq {\mathsf{E}_q^1 \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}. \mathbf{A}^{-1}, c^1_{\text{temp}})}} - {\mathsf{E}_q^2 \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}, \mathbf{A}^{-1})}}.
+\]
+
+\textbf{Доказательство}
+0. Доказываем равномерную сходимость.\\
+1. расписываем неравенства вида: $L_1 - DKL(q_1|p1) <L_2 - DKL(q_2|p1)$\\
+2. Замечаем, что при стремлении к бесконечности гумбель превращается в равномерное\\
+3. выражаем все в равномерном\\
+4. замечаем, что $D_KL = Entropy + const$ для равномерного
+
+
+
+
+\subsection{О переборе вариантов}
+
+
+\textbf{Утверждение (очень предварительно).} Изменение $c$ позволяет избежать ухода в локальный минимум. 
+
+\textbf{Утверждение (очень предварительно).} Изменение $c_2$ позволяет избежать ухода в локальный минимум.
+
+\textbf{Утверждение (очень предварительно).} Взаимосвязь структуры и параметров в prior позволяет получить <<хорошие>> модели.
+
+\textbf{Утверждение (предварительно).} Пусть $c_1 = c_2 = c_3 = 0$. Пусть $q_w \sim \mathcal{N}(\mathbf{0}, \sigma), \sigma \sim 0$. 
+Тогда оптимизация эквивалентна обычной оптимизации параметров с $l_2$ - регуляризацией.
+
+
