@@ -59,7 +59,7 @@ DrMAD~\cite{hyper_mad} & градиентный & Алгоритм учитыв�
 
 
 
-\section{Постановка задачи}
+\section{Постановка задачи оптимизации гиперпараметров моделей}
 Задана выборка  \begin{equation}\label{eq:dataset}\mathfrak{D} = \{(\mathbf{x}_i,y_i)\}, i = 1,\dots,m,\end{equation} состоящая из множества пар <<объект-метка>>, $$\mathbf{x}_i \in \mathbf{X} \subset \mathbb{R}^n, \quad {y}_i \in \mathbf{y} \subset \mathbb{Y},$$ где $\mathbf{X}$ --- матрица объектов,  $\mathbf{y}$ --- вектор меток зависимой переменной $y$. Метка ${y}$  объекта $\mathbf{x}$ принадлежит либо конечному множеству: ${y} \in \mathbb{Y} = \{1, \dots, Z\}$ в случае задачи классификации, где $Z$ --- число классов, либо некоторому подмножеству вещественных чисел ${y} \in  \mathbb{R}$ в случае задачи регрессии.
 
 Задана дифференцируемая по параметрам модель, приближающая зависимую переменную~$y$:
@@ -315,7 +315,7 @@ T(\boldsymbol{\theta}, \mathbf{h})_\text{SGD} =\boldsymbol{\theta} - \gamma \nab
 где $\tau_0 = [0.05 \cdot \eta]$.
 
 
-\section{Вычислительный эксперимент}
+\section{Анализ алгоритмов оптимизации гиперпараметров}
 Для анализа рассматриваемых алгоритомв оптимизации гиперпараметров был проведен ряд вычислительных экспериментов на выборках MNIST~\cite{mnist}, WISDM~\cite{wisdm}, а также на синтетических данных.
 
 Рассматривались следующие критерии качества:
@@ -548,22 +548,4 @@ HOAG & ~\eqref{eq:elbo} &  -280061.6 & 24.0 $\pm$ 0.0  & 0.981 & 0.943 & 0.819\\
 
 
 
-\section{Discussion}
-The experiments showed that each algorithm can perform effectively and therefore the appropriate hyperparameter optimization method should rely on the amount of hyperparameters and the specific of the problem. 
-
-When dealing with small amount of hyperparameters the random search showed the best results since the search procedure can be employed more effectively than gradient-based optimization in low-dimensional hyperparameters space. For the high-dimensional hyperparameter space both the  HOAG and greed algorithms showed good performance. 
-The HOAG algorithm is more preferable if the model optimization problem is expensive. On the other hand we can schedule greed hyperparameter optimization to make it less expensive as in~\cite{greed_hyper}. 
-
-The DrMad algorithm showed rather poor results on the MNIST and WISDM datasets. Perhaps it is because of high learning rate $\gamma$ we used in experiments. The large value of the learning rate can make the DrMad algorithm instable. Two improvements can be proposed. We can use more stable optimization like Adam or AdaGrad for both parameter and hyperparameter optimization. The second improvement was proposed to develop in~\cite{hyper_mad}: we can use more complicated parameter trajectory approximation to make it more similar to the original parameter trajectory. Opposing to the HOAG and greedy algorithms, the DrMad optimization has prerequisites for optimization not only hyperparameters but also the metaparameters, i.e. the parameters  of the optimization procedure. The opportunity of such optimization using reversed differentiation was shown in~\cite{hyper_mad}. 
-
-The other interesting aspect of our experiments is the relation between the model error (RMSE or Accuracy) and the value of validation loss $Q$. The models obtained by the evidence lower bound showed higher errors than the models obtained using cross-validation on the MNIST and WISDM datasets. Nevertheless these models also showed greater stability when the noise was added to the Test datasets.  The evidence lower bound showed significantly better results on the synthetic dataset, when the amount of object in the Train dataset is small. Therefore we can conclude that the evidence lower bound usage is preferable when the model tend to overfit or when the cross-validation usage is too computationally expensive.   In~\cite{nips} note that the evidence lower bound optimization required more iterations for the convergence. In our experiments we used the same number of iterations both for the cross-validation and evidence lower bound. The more accurate iteration number calibration can improve the final quality of these models. 
-
-\section{Conclusion and future work}
-The paper analyzed the gradient-based hyperparameter optimization algorithms. We adapted the analyzed algorithms for general validation functions and evaluated their performance on the  MNIST and WISDM datasets. Two model selection criteria were compared: the cross-validation and evidence lower bound. 
-
-The experiments showed that the gradient-based algorithms are effective when the number of hyperparameters is large. The results showed that models obtained using evidence lower bound have higher error rater than models obtained using cross-validation, but they are also more stable when the test dataset contain a lot of noise. 
-
-The authors  implemenetd the algorithms as a toolbox available at~\cite{pyfos}. The toolbox is developed in Python using Theano~\cite{theano} and Numpy~\cite{numpy} libraries. 
-
-In the future we are planning to develop the analyzed algorithm and to extend gradient-based algorithms to optimize not only hyperparameters, but also the parameters of the model optimization. The other object of our research will be the difference between the cross-validation and evidence lower bound and the theoretical aspects of their properties for the models with large amount of parameters.
 

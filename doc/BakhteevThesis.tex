@@ -4,6 +4,9 @@
 \usepackage[utf8]{inputenc}
 \usepackage{tabularx}
 \usepackage[noend]{algorithmic}
+\usepackage{tikz}
+\usepackage{tikz,fullpage}
+\usetikzlibrary{arrows,automata}
 
 
 %\usepackage[cp1251]{inputenc}
@@ -286,6 +289,7 @@
 \input{dis_title}
 \tableofcontents{}%это оглавление
 \input{dis_intro}
+\newpage
 \chapter{Постановка задачи последовательного выбора моделей}
 \input{review}
 \chapter{Выбор модели с использованием вариационного вывода}
@@ -297,9 +301,12 @@
 \chapter{Анализ прикладных задач порождения и выбора моделей глубокого обучения}
 \input{applied}
 \addcontentsline{toc}{section}{Заключение}
+\input{dis_conclusion}
 \chapter*{Заключение}
-
-
+\newpage
+\addcontentsline{toc}{chapter}{Список оcновных обозначений}
+\chapter*{Список оcновных обозначений}
+\input{notations}
 \clearpage 
 \addcontentsline{toc}{section}{Список иллюстраций}
 \listoffigures
