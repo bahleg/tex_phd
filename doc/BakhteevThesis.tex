@@ -7,6 +7,7 @@
 \usepackage{tikz}
 \usepackage{tikz,fullpage}
 \usepackage{lastpage}
+\usepackage[shortlabels]{enumitem}
 
 %https://tex.stackexchange.com/questions/163451/total-number-of-citations
 \usepackage{totcount}
@@ -298,21 +299,26 @@
 \input{dis_title}
 \tableofcontents{}%это оглавление
 \input{dis_intro}
-\newpage
+\clearpage
 \chapter{Постановка задачи последовательного выбора моделей}
 \input{review}
+\clearpage
 \chapter{Выбор модели с использованием вариационного вывода}
 \input{var_inf}
+\clearpage
 \chapter{Оптимизация гиперпараметров в задаче выбора модели}
 \input{hyperparams}
+\clearpage
 \chapter{Выбор субоптимальной структуры модели}
 \input{arch_search}
+\clearpage
 \chapter{Анализ прикладных задач порождения и выбора моделей глубокого обучения}
 \input{applied}
+\clearpage
 \addcontentsline{toc}{section}{Заключение}
 \input{dis_conclusion}
 \chapter*{Заключение}
-\newpage
+\clearpage
 \addcontentsline{toc}{chapter}{Список оcновных обозначений}
 \chapter*{Список оcновных обозначений}
 \input{notations}
