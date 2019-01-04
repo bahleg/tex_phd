@@ -6,6 +6,15 @@
 \usepackage[noend]{algorithmic}
 \usepackage{tikz}
 \usepackage{tikz,fullpage}
+\usepackage{lastpage}
+
+%https://tex.stackexchange.com/questions/163451/total-number-of-citations
+\usepackage{totcount}
+\newtotcounter{citnum} %From the package documentation
+\def\oldbibitem{} \let\oldbibitem=\bibitem
+\def\bibitem{\stepcounter{citnum}\oldbibitem}
+
+
 \usetikzlibrary{arrows,automata}
 
 
