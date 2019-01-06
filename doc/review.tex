@@ -4,7 +4,7 @@
 
 Формализуем описанную выше задачу.
 \begin{defin}
-\textit{Объектом} назовем пару $(\mathbf{x}, y), \mathbf{x} \in \mathbb{X} =  \mathbb{R}^n, y \in \mathbb{Y}$. В случае задачи классификации $\mathbb{Y}$ является распределением вероятностей принадлежности объекта $\mathbf{x} \in \mathbb{X}$ множеству классов $\{1, \dots, Z\}$: $\mathbb{Y} = \Delta^{Z-1}$ , где $Z$ --- число классов, $\Delta^{Z-1}$ --- симплекс на $Z-1$ вершине. В случае задачи регрессии $\mathbb{Y}$ является некоторым подмножеством вещественных чисел ${y} \in \mathbb{Y}  \subseteq \mathbb{R}$.
+\textit{Объектом} назовем пару $(\mathbf{x}, y), \mathbf{x} \in \mathbb{X} =  \mathbb{R}^n, y \in \mathbb{Y}$. В случае задачи классификации $\mathbb{Y}$ является распределением вероятностей принадлежности объекта $\mathbf{x} \in \mathbb{X}$ множеству классов $\{1, \dots, Z\}$: $\mathbb{Y} \subset [0,1]^Z$, где $Z$ --- число классов. В случае задачи регрессии $\mathbb{Y}$ является некоторым подмножеством вещественных чисел ${y} \in \mathbb{Y}  \subseteq \mathbb{R}$.
 Объект состоит из двух частей: $\mathbf{x}$  соответствует \textit{признаковому описанию объекта}, $y$ --- \textit{метке объекта}.
 \end{defin}
 
@@ -12,34 +12,31 @@
 
 
 \begin{defin}
-\textit{Моделью глубокого обучения} $\mathbf{f}$ назовем дифференцируемую по параметрам функцию из множества признаковых описаний объекта во множество меток:
+\textit{Моделью} $\mathbf{f}$ назовем дифференцируемую по параметрам функцию из множества признаковых описаний объекта во множество меток:
 \[
     \mathbf{f}: \mathbb{X} \times \mathbb{W} \to \mathbb{Y},
 \] 
 где $\mathbb{W}$ --- пространство параметров функции $\mathbf{f}$.
 \end{defin}
+Специфика задачи  выбора модели \textit{глубокого обучения} заключатеся в том, что модели глубокого обучения могут иметь значительное число параметров, что приводит к неприменимости ряда методов оптимизации и выбора модели. 
 
-Перейдем к формальному описанию семейства моделей глубокого обучения. Одним из возможных представлений структуры модели является графовое представление, в котором в качестве ребер графа выступают нелинейные функции, а в качестве вершин графа --- представление выборки под действием соответствующих нелинейных функций. 
-Данный подход к описанию модели является соответсвтует  походам, описанным в~\cite{vokov}, а также в библиотеках типа TensorFlow~\cite{tensorflow}, Theano~\cite{theano}, Pytorch~\cite{pytorch}, в которых модель рассматривается как граф, ребрами которого выступают математические операции, а вершинами --- результат их действия на выборку. 
- В то же время, существуют и другие способы представления модели. В ряде работ, посвященных байесовской оптимизации~\cite{snoek_deep,rbf_surrogate,bo_gp}, модель рассматривается как черный ящик, над которым производится ограниченный набор операций типа ``произвести оптимизацию параметров'' и ``предсказать значение зависимой переменной по независимой переменной и параметрам модели''.
-Подход, описанный в данных работах, также коррелирует с  библиотеками машинного обучения, такими как Weka~\cite{weka}, RapidMiner~\cite{rapidminer} или sklearn~\cite{sklearn}, в которых модель машинного обучения рассматривается как черный ящик.
-
+Перейдем к формальному описанию семейства моделей глубокого обучения. 
 \begin{defin}
-Пусть задан направленный граф $(V,E)$. Пусть для каждого ребра $(j,k) \in E$ определен вектор базовых функций $\mathbf{g}^{j,k}$ мощности $K^{j,k}$. Пусть также для каждой вершины $v$ определена функция аггрегации $\textbf{agg}_v$. Граф $(V, E)$ в совокупности со множестом векторов базовых функций $\{\mathbf{g}^{j,k}, (j,k) \in E\}$ и множеством функций аггрегаций $\{ \textbf{agg}_v, {v \in V}\}$ называется \textit{семейством моделей} $\mathfrak{F}$, если функция, задаваемая рекурсивно как 
+Пусть задан направленный граф $(V,E)$. Пусть для каждого ребра $(j,k) \in E$ определен вектор базовых функций  мощности $K^{j,k}$: $\mathbf{g}^{j,k} = [\mathbf{g}^{j,k}_0, \dots, \mathbf{g}^{j,k}_{K^{j,k}}]$. Пусть также для каждой вершины $v$ определена функция аггрегации $\textbf{agg}_v$. Граф $(V, E)$ в совокупности со множестом векторов базовых функций $\{\mathbf{g}^{j,k}, (j,k) \in E\}$ и множеством функций аггрегаций $\{ \textbf{agg}_v, {v \in V}\}$ называется \textit{семейством моделей} $\mathfrak{F}$, если функция, задаваемая рекурсивно как 
 \begin{equation}
 \label{eq:modelfam}
     \mathbf{f}_k(\mathbf{x}) = \textbf{agg}_v\left(\{ \langle \boldsymbol{\gamma}^{j,k}, \mathbf{g}^{j,k} \rangle \left(\mathbf{f}_j(\mathbf{x})\right)| j \in \text{Adj}(v_k)\}\right), \quad \mathbf{f}_0(\mathbf{x}) = \mathbf{x}
 \end{equation}
 является моделью при любых значениях векторов, $\boldsymbol{\gamma}^{j,k} \in [0,1]^{K^{j,k}}$.
 \end{defin}
-В качестве функции агрегации могут выступать функция суммы или функция конкатенации векторов.
+Примером функций агрегации выступают функции суммы и конкатенации векторов.
 
 \begin{defin}
-Функции $\mathbf{f}_1, \dots, \mathbf{f}_{|V|}$ из~\eqref{eq:modelfam} будем называть \textit{слоями или подмоделями} модели $\mathbf{f}$.
+Функции $\mathbf{f}_1, \dots, \mathbf{f}_{|V|}$ из~\eqref{eq:modelfam} назовем называть \textit{слоями или подмоделями} модели $\mathbf{f}$.
 \end{defin}
 
 
-Пример семейства моделей, которое описывают сверточную нейронную сеть, представлена на Рис.~\ref{fig:scheme_cnn}. Семейство задает множество моделей с двумя операциями свертки с одинаковым размером фильтра $c_0$ и различным числом каналов $c_1$ и $c_2$. Единичная свертка с $c_1$ каналами $\textbf{Conv}(\mathbf{x}, c_1, 1)$ требуется для выравнивания размерностей скрытых слоев. Каждая модель семейства задается формулой: 
+Пример семейства моделей, которое описывает сверточную нейронную сеть, представлена на Рис.~\ref{fig:scheme_cnn}. Семейство задает множество моделей с двумя операциями свертки с одинаковым размером фильтра $c_0$ и различным числом каналов $c_1$ и $c_2$. Единичная свертка с $c_1$ каналами $\textbf{Conv}(\mathbf{x}, c_1, 1)$ требуется для выравнивания размерностей скрытых слоев. Каждая модель семейства задается формулой: 
 \[
     \mathbf{f} = \textbf{agg}_2\left(\left\{\boldsymbol{\gamma}^{1,2}_0 \mathbf{g}^{1,2}_0 \left(\textbf{agg}_1 \left(\{\boldsymbol{\gamma}^{0,1}_0 \mathbf{g}^{0,1}_0(\mathbf{x}), \boldsymbol{\gamma}^{0,1}_1 \mathbf{g}^{0,1}_1(\mathbf{x})  \} \right)\right)\right\}\right).
 \]
@@ -59,11 +56,11 @@
   %\node (g11) at (6,3)                    {$\mathbf{g}^{1,1}(\mathbf{x})$};% = \text{Conv}(\mathbf{x}, 3, 32, 1)$};
   %\node (g12)  at (6,9)                   {$\mathbf{g}^{1,2}(\mathbf{x})$};% = \text{Conv}(\mathbf{x}, 4, 32, 1)$};
   \node (f1)  at (9,6)                 {$\mathbf{f}_1(\mathbf{x})$};% = \gamma^{1,1}\mathbf{g}^{1,1}(\mathbf{x}) +  \gamma^{1,2}\mathbf{g}^{1,2}(\mathbf{x})$};
-  %\node (g21) at (12,6)                   {$\mathbf{g}^{2,1}(\mathbf{x})$};% = \boldsymbol{\sigma}(\mathbf{W}^{2,1}\mathbf{x})$};
+  %\node (g21) at (12,6)                   {$\mathbf{g}^{2,1}(\mathbf{x})$};% = \boldsymbol{\sigma}(\mathbf{w}^{2,1}\mathbf{x})$};
   \node (f2)  at (15,6)                   {$\mathbf{f}_2(\mathbf{x})$};% = \gamma^{2,1}\mathbf{g}^{2,1}(\mathbf{x})$};
   \path[->]  (f0) edge [bend left=50] node {$\mathbf{g}^{0,1}_0(\mathbf{x}) = \textbf{Conv}(\mathbf{x}, c_0, c_1)$}(f1);
   \path[->] (f0)  edge[bend right=50] node[below] {$\mathbf{g}^{0,1}_1(\mathbf{x}) = \textbf{Conv}(\mathbf{x}, 1, c_1) \circ \textbf{Conv}(\mathbf{x}, c_0, c_2)$}(f1);
-  \path[->] (f1)  edge node {$\mathbf{g}^{1,2}_0(\mathbf{x}) = \textbf{softmax}(\mathbf{W}^{2,1}\mathbf{x})$}(f2);            
+  \path[->] (f1)  edge node {$\mathbf{g}^{1,2}_0(\mathbf{x}) = \textbf{softmax}(\mathbf{w}^{2,1}\mathbf{x})$}(f2);            
   \draw[->] (f1) to (f2);
  
 \end{tikzpicture}
@@ -76,14 +73,14 @@
 
 
 \begin{defin}
-\textit{Параметрами }модели $\mathbf{f}$ из семейства моделей $\mathfrak{F}$  назовем конкатенацию векторов параметров всех базовых функций $\{_{(j,k) \in E} \mathbf{g}^{j,k}\}, \mathbf{W} \in \mathbb{W}.$ Вектор параметров базовой функции $\mathbf{g}^{j,k}_t$ будем обозначать как $\mathbf{W}^{j,k}_t$.
+\textit{Параметрами }модели $\mathbf{f}$ из семейства моделей $\mathfrak{F}$  назовем конкатенацию векторов параметров всех базовых функций $\{\mathbf{g}^{j,k}| {(j,k) \in E} \}, \mathbf{w} \in \mathbb{W}.$ Вектор параметров базовой функции $\mathbf{g}^{j,k}_l$ будем обозначать как $\mathbf{w}^{j,k}_l$.
 \end{defin}
 
 
 
 \begin{defin}
-Структурой $\boldsymbol{\Gamma}$  семейства моделей $\mathfrak{F}$ назовем конкатенацию векторов $\boldsymbol{\gamma}^{j,k}$. Множество всех возможных значений структуры $\boldsymbol{\Gamma}$ будем обозначать как $\Delta(\boldsymbol{\Gamma})$.
-Векторы $\boldsymbol{\gamma}^{j,k}, (j,k) \in E$ назовем \textit{структурными параметрами семейства моделей.}
+Структурой $\boldsymbol{\Gamma}$  модели $\mathbf{f}$ из семейства моделей $\mathfrak{F}$  назовем конкатенацию векторов $\boldsymbol{\gamma}^{j,k}$. Множество всех возможных значений структуры $\boldsymbol{\Gamma}$ будем обозначать как $\mathbb{\Gamma}$.
+Векторы $\boldsymbol{\gamma}^{j,k}, (j,k) \in E$ назовем \textit{структурными параметрами модели.}
 \end{defin}
 
 \begin{defin}
@@ -92,15 +89,208 @@
 
 \textbf{TODO} Можно доказать, что для любого множества хороших (дифференцируемых?) моделей существует параметризация.
 
-Рассмотрим возможные ограничения, которые можно наложить на структурные параметры $\boldsymbol{\gamma}_{j,k}$ семейства моделей.
+Рассмотрим варианты ограничений, которые накладываются на структурные параметры $\boldsymbol{\gamma}_{j,k}$ семейства моделей. Цель данных ограничений --- уточнение архитектуры модели глубокого обучения, которую требуется получить. 
 \begin{enumerate}
 \item Структурные параметры лежат на веришнах булевого куба: $\boldsymbol{\gamma}_{j,k} \in \{0,1\}^{K^{j,k}}$. Структурные параметры  $\boldsymbol{\gamma}_{j,k}$ интерпретируются как параметр включения или выключения компонент вектора базовых функций $\mathbf{g}^{j,k}$ в итоговую модель.
 \item Структурные параметры лежат внутри булевого куба: $\boldsymbol{\gamma} \in [0,1]^{K^{j,k}}$. Релаксированная версия предыдущих ограничений, позволяющая проводить градиентную оптимизацию для структурных параметров.
-\item Структурные параметры лежат на веришнах симплекса: $\boldsymbol{\gamma}_{j,k} \in \bar{\Delta}^{K^{j,k}-1}$. Каждый вектор структурных параметров $\boldsymbol{\gamma}_{j,k}$ имеет только одну ненулевую компоненту, определяющую какая из базовых функций $\mathbf{g}^{j,k}$ войдет в итоговую модель. Примером семейства моделей, требующим такое ограничение является семейство полносвязанных нейронных сетей с одним скрытым слоем и двумя значениями коилчества нейронов на скрытом слое. Схема семейства представлена на Рис.~\ref{fig:scheme_mlp}. Данное семейство можно представить как семейство с двумя базовыми функциями вида $\mathbf{g} = \boldsymbol{\sigma}(\mathbf{W}\mathbf{x}),$ где матрицы параметров каждой из функций  $\mathbf{g}^{1,1}, \mathbf{g}^{1,2}$ имеют фиксированное число нулевых столбцов. Количество этих столбцов определяет размерность итогового скрытого пространства (невырожденного?) или числа нейронов на скрытом слое.
+\item Структурные параметры лежат на веришнах симплекса: $\boldsymbol{\gamma}_{j,k} \in \bar{\Delta}^{K^{j,k}-1}$. Каждый вектор структурных параметров $\boldsymbol{\gamma}_{j,k}$ имеет только одну ненулевую компоненту, определяющую какая из базовых функций $\mathbf{g}^{j,k}$ войдет в итоговую модель. Примером семейства моделей, требующим такое ограничение является семейство полносвязанных нейронных сетей с одним скрытым слоем и двумя значениями коилчества нейронов на скрытом слое. Схема семейства представлена на Рис.~\ref{fig:scheme_mlp}. Данное семейство можно представить как семейство с двумя базовыми функциями вида $\mathbf{g} = \boldsymbol{\sigma}(\mathbf{w}\mathbf{x}),$ где матрицы параметров каждой из функций  $\mathbf{g}^{1,1}, \mathbf{g}^{1,2}$ имеют фиксированное число нулевых столбцов. Количество этих столбцов определяет размерность итогового скрытого пространства (невырожденного?) или числа нейронов на скрытом слое.
 \item  Структурные параметры лежат внутри симплекса: $\boldsymbol{\gamma}_{j,k} \in {\Delta}^{K^{j,k}-1}$. Релаксированная версия предыдущих ограничений, позволяющая проводить градиентную оптимизацию для структурных параметров. Значений стуктурных параметров $\boldsymbol{\gamma}_{j,k}$ интерпретируются как вклад каждой компоненты вектора базовых функций $\mathbf{g}^{j,k}$ в итоговую модель. 
 \end{enumerate}
 
-В данной работе рассматривается случай, когда на структурные параметры наложено последнее ограничение.  Данные ограничения позволяют решать задачу выбора модели как для семейства моделей типа многослойных полносвязных нейронных сетей, так и для более сложных семейств~\cite{darts}. 
+Пример, иллюстрирующий представленные выше ограничения, изображен на Рис.~\ref{fig:limit_ex}.
+В данной работе рассматривается случай, когда на структурные параметры наложено ограничение 4.  Данные ограничения позволяют решать задачу выбора модели как для семейства моделей типа многослойных полносвязных нейронных сетей, так и для более сложных семейств~\cite{darts}. 
+\begin{figure}
+ \begin{minipage}[t]{.5\textwidth}
+        \centering
+%1 limit
+\begin{tikzpicture}[%
+x={(2cm,0cm)},
+y={(0cm,2cm)},
+z={({0.5*cos(45)},{0.5*sin(45)})},
+]
+
+\coordinate (A) at (0,0,0); 
+\coordinate (B) at (1,0,0) ;
+\coordinate (C) at (1,1,0); 
+\coordinate (D) at (0,1,0); 
+\coordinate (E) at (0,0,1); 
+\coordinate (F) at (1,0,1); 
+\coordinate (G) at (1,1,1); 
+\coordinate (H) at (0,1,1   );
+
+%Ecken
+\node[circle,fill=white,draw=black](Ap) at (0,0,0){};
+\node[circle,fill=white,draw=black](Bp) at (1,0,0){};
+\node[circle,fill=white,draw=black](Cp) at (1,1,0){};
+\node[circle,fill=white,draw=black](Dp) at (0,1,0){};
+\node[circle,fill=white,draw=black](Ep) at (0,0,1){};
+\node[circle,fill=white,draw=black](Fp) at (1,0,1){};
+\node[circle,fill=white,draw=black](Gp) at (1,1,1){};
+\node[circle,fill=white,draw=black](Hp) at (0,1,1){};
+\node[left= 1pt of A]{(0,0,0)};
+\node[right= 1pt of B]{(1,0,0)};
+\node[right= 1pt of C]{(1,1,0)};
+\node[left= 1pt of D]{(0,1,0)};
+\node[left= 1pt of E]{(0,0,1)};
+\node[right= 1pt of F]{(1,0,1)};
+\node[right= 1pt of G]{(1,1,1)};
+\node[left= 1pt of H]{(0,1,1)};
+
+%Kanten
+\draw[] (A)
+-- (B)  node[midway, below]{}
+-- (C)      node[midway, right]{}
+-- (D)  node[midway, above]{}
+-- (A)  node[midway, left]{};
+\draw[] (B) -- (F) -- (G) -- (C);
+\draw[] (G) -- (H) -- (D);
+\draw[densely dashed] (A) -- (E) -- (F);
+\draw[densely dashed] (E) -- (H);
+
+\end{tikzpicture}
+\subcaption{}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.5\textwidth}
+        \centering
+
+%2 limit
+\begin{tikzpicture}[%
+x={(2cm,0cm)},
+y={(0cm,2cm)},
+z={({0.5*cos(45)},{0.5*sin(45)})},
+]
+
+\coordinate (A) at (0,0,0); 
+\coordinate (B) at (1,0,0) ;
+\coordinate (C) at (1,1,0); 
+\coordinate (D) at (0,1,0); 
+\coordinate (E) at (0,0,1); 
+\coordinate (F) at (1,0,1); 
+\coordinate (G) at (1,1,1); 
+\coordinate (H) at (0,1,1   );
+
+%Ecken
+\node[left= 1pt of A]{(0,0,0)};
+\node[right= 1pt of B]{(1,0,0)};
+\node[right= 1pt of C]{};
+\node[left= 1pt of D]{(0,1,0)};
+\node[left= 1pt of E]{};
+\node[right= 1pt of F]{(1,0,1)};
+\node[right= 1pt of G]{(1,1,1)};
+\node[left= 1pt of H]{(0,1,1)};
+
+%Kanten
+\draw[fill=gray] (A)
+-- (B)  node[midway, below]{}
+-- (C)      node[midway, right]{}
+-- (D)  node[midway, above]{}
+-- (A)  node[midway, left]{};
+\draw[fill=gray] (B) -- (F) -- (G) -- (C);
+\draw[fill=gray] (G) -- (H) -- (D);
+\draw[fill=gray] (A) -- (E) -- (F);
+\draw[fill=gray] (E) -- (H);
+\draw[fill=gray] (D) -- (H) -- (G) -- (C);
+\end{tikzpicture}
+\subcaption{}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.5\textwidth}
+        \centering
+%3 limit
+\begin{tikzpicture}[%
+x={(2cm,0cm)},
+y={(0cm,2cm)},
+z={({0.5*cos(45)},{0.5*sin(45)})},
+]
+
+\coordinate (A) at (0,0,0); 
+\coordinate (B) at (1,0,0) ;
+\coordinate (C) at (1,1,0); 
+\coordinate (D) at (0,1,0); 
+\coordinate (E) at (0,0,1); 
+\coordinate (F) at (1,0,1); 
+\coordinate (G) at (1,1,1); 
+\coordinate (H) at (0,1,1   );
+
+%Ecken
+\node[circle,fill=white,draw=black](Bp) at (1,0,0){};
+\node[circle,fill=white,draw=black](Dp) at (0,1,0){};
+\node[circle,fill=white,draw=black](Ep) at (0,0,1){};
+\node[left= 1pt of A]{};
+\node[right= 1pt of B]{(1,0,0)};
+\node[right= 1pt of C]{};
+\node[left= 1pt of D]{(0,1,0)};
+\node[left= 1pt of E]{(0,0,1)};
+\node[right= 1pt of F]{};
+\node[right= 1pt of G]{};
+\node[left= 1pt of H]{};
+
+%Kanten
+\draw[] (A)
+-- (B)  node[midway, below]{}
+-- (C)      node[midway, right]{}
+-- (D)  node[midway, above]{}
+-- (A)  node[midway, left]{};
+\draw[] (B) -- (F) -- (G) -- (C);
+\draw[] (G) -- (H) -- (D);
+\draw[densely dashed] (A) -- (E) -- (F);
+\draw[densely dashed] (E) -- (H);
+
+\end{tikzpicture}
+\subcaption{}
+\end{minipage}
+\hfill
+ \begin{minipage}[t]{.5\textwidth}
+        \centering
+%4 limit
+\begin{tikzpicture}[%
+x={(2cm,0cm)},
+y={(0cm,2cm)},
+z={({0.5*cos(45)},{0.5*sin(45)})},
+]
+
+\coordinate (A) at (0,0,0); 
+\coordinate (B) at (1,0,0) ;
+\coordinate (C) at (1,1,0); 
+\coordinate (D) at (0,1,0); 
+\coordinate (E) at (0,0,1); 
+\coordinate (F) at (1,0,1); 
+\coordinate (G) at (1,1,1); 
+\coordinate (H) at (0,1,1   );
+
+%Ecken
+\node[left= 1pt of A]{};
+\node[right= 1pt of B]{(1,0,0)};
+\node[right= 1pt of C]{};
+\node[left= 1pt of D]{(0,1,0)};
+\node[left= 1pt of E]{(0,0,1)};
+\node[right= 1pt of F]{};
+\node[right= 1pt of G]{};
+\node[left= 1pt of H]{};
+
+%Kanten
+\draw[] (A)
+-- (B)  node[midway, below]{}
+-- (C)      node[midway, right]{}
+-- (D)  node[midway, above]{}
+-- (A)  node[midway, left]{};
+\draw[] (B) -- (F) -- (G) -- (C);
+\draw[] (G) -- (H) -- (D);
+\draw[densely dashed] (A) -- (E) -- (F);
+\draw[densely dashed] (E) -- (H);
+\draw[fill=gray] (B) -- (D) -- (E);
+
+
+\end{tikzpicture}
+\subcaption{}
+\end{minipage}
+
+\caption{Примеры ограничений для одного структурного параметра $\boldsymbol{\gamma}, |\boldsymbol{\gamma}| = 3$. \\
+а) структурный параметр лежит на вершинах куба, б) структурный параметр лежит внутри куба, в) структурный параметр лежит на верщинах симплекса, г) структурный параметр лежит внутри симплекса.} 
+\label{fig:limit_ex}
+\end{figure}
+
 
 
 \begin{figure}
@@ -111,75 +301,75 @@
   %\node (g11) at (6,3)                    {$\mathbf{g}^{1,1}(\mathbf{x})$};% = \text{Conv}(\mathbf{x}, 3, 32, 1)$};
   %\node (g12)  at (6,9)                   {$\mathbf{g}^{1,2}(\mathbf{x})$};% = \text{Conv}(\mathbf{x}, 4, 32, 1)$};
   \node (f1)  at (9,6)                 {$\mathbf{f}_1(\mathbf{x})$};% = \gamma^{1,1}\mathbf{g}^{1,1}(\mathbf{x}) +  \gamma^{1,2}\mathbf{g}^{1,2}(\mathbf{x})$};
-  %\node (g21) at (12,6)                   {$\mathbf{g}^{2,1}(\mathbf{x})$};% = \boldsymbol{\sigma}(\mathbf{W}^{2,1}\mathbf{x})$};
+  %\node (g21) at (12,6)                   {$\mathbf{g}^{2,1}(\mathbf{x})$};% = \boldsymbol{\sigma}(\mathbf{w}^{2,1}\mathbf{x})$};
   \node (f2)  at (15,6)                   {$\mathbf{f}_2(\mathbf{x})$};% = \gamma^{2,1}\mathbf{g}^{2,1}(\mathbf{x})$};
-  \path[->]  (f0) edge [bend left=50] node {$\mathbf{g}^{0,1}_0(\mathbf{x}) = \boldsymbol{\sigma}(\mathbf{W}^{0,1}_0\mathbf{x})$}(f1);
-  \path[->] (f0)  edge[bend right=50] node[below] {$\mathbf{g}^{0,1}_1(\mathbf{x}) = \boldsymbol{\sigma}(\mathbf{W}^{0,1}_1\mathbf{x})$}(f1);
-  \path[->] (f1)  edge node {$\mathbf{g}^{1,2}_0(\mathbf{x}) = \textbf{softmax}(\mathbf{W}^{1,2}_0\mathbf{x})$}(f2);       
+  \path[->]  (f0) edge [bend left=50] node {$\mathbf{g}^{0,1}_0(\mathbf{x}) = \boldsymbol{\sigma}(\mathbf{w}^{0,1}_0\mathbf{x})$}(f1);
+  \path[->] (f0)  edge[bend right=50] node[below] {$\mathbf{g}^{0,1}_1(\mathbf{x}) = \boldsymbol{\sigma}(\mathbf{w}^{0,1}_1\mathbf{x})$}(f1);
+  \path[->] (f1)  edge node {$\mathbf{g}^{1,2}_0(\mathbf{x}) = \textbf{softmax}(\mathbf{w}^{1,2}_0\mathbf{x})$}(f2);       
   \draw[->] (f1) to (f2);
  
 \end{tikzpicture}
-
-\caption{Пример семейства моделей глубокого обучения: семейство описывает многослойную полносвязную нейронную сеть с одним скрытым слоем и нелинейной функцией активации $\boldsymbol{\sigma}$.}
 \label{fig:scheme_mlp}
+\caption{Пример семейства моделей глубокого обучения: семейство описывает многослойную полносвязную нейронную сеть с одним скрытым слоем и нелинейной функцией активации $\boldsymbol{\sigma}$.}
+
 \end{figure}
 
 
 
 
-Для дальнейшей постановки задачи введем понятие вероятностной модели, и связанных с ним определений. Будем полагать, что для параметров модели $\mathbf{W}$ и структуры  $\boldsymbol{\Gamma}$ задано некоторое распределение $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{h})$, соответствующее предположениям о распределении структуры и параметров. 
+Для дальнейшей постановки задачи введем понятие вероятностной модели, и связанных с ним определений. Будем полагать, что для параметров модели $\mathbf{w}$ и структуры  $\boldsymbol{\Gamma}$ задано распределение $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})$, соответствующее предположениям о распределении структуры и параметров. 
 
 \begin{defin}
-\textit{Гиперпараметрами} модели $\mathbf{h}\in \mathbb{H}$ назовем параметры распределения $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{h})$.
+\textit{Гиперпараметрами} $\mathbf{h}\in \mathbb{H}$ модели  назовем параметры распределения $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})$.
 \end{defin}
 
 \begin{defin}
 \textit{Априорным распределением} параметров и структуры модели назовем вероятностное распределение, соответствующее предположениям о распределении параметров модели:
 \[
-    p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{h}): \mathbb{W} \times \Delta{\boldsymbol{\Gamma}} \times \mathbb{H} \to \mathbb{R}^{+}, 
+    p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}): \mathbb{W} \times \Delta{\boldsymbol{\Gamma}} \times \mathbb{H} \to \mathbb{R}^{+}, 
 \]
 где $\mathbb{W}$ --- множество значений параметров модели.
 \end{defin}
 
 
-Одной из возможных частных постановок задачи выбора структуры модели является двусвязный байесовский вывод. 
-На первом уровне байесовского вывода осуществуляется нахождение апостериорного распределения параметров.
+Одной из возможных частных постановок задачи выбора структуры модели является \textit{двусвязный байесовский вывод.} 
+На \textit{первом уровне} байесовского вывода  находится апостериорное распределение параметров.
 
 \begin{defin}
-\textit{Апостериорным распределением} назовем распределение вида:
+\textit{Апостериорным распределением} назовем распределение вида
 \begin{equation}
 \label{eq:posterior}
-    p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}) = \frac{p(\mathbf{y}|\mathbf{W}, \boldsymbol{\Gamma}, \mathbf{X}, \mathbf{h})p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{h})}{p(\mathbf{y}|\mathbf{X})} \propto p(\mathbf{y}|\mathbf{W},  \boldsymbol{\Gamma}, \mathbf{X}, \mathbf{h}) p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{h}).% \mathbb{W} \times \Delta{\boldsymbol{\Gamma}} \times \mathbb{X}  \times \mathbb{H}. 
+    p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}) = \frac{p(\mathbf{y}|\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{X}, \mathbf{h})p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})}{p(\mathbf{y}|\mathbf{X})} \propto p(\mathbf{y}|\mathbf{w},  \boldsymbol{\Gamma}, \mathbf{X}, \mathbf{h}) p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}).% \mathbb{W} \times \Delta{\boldsymbol{\Gamma}} \times \mathbb{X}  \times \mathbb{H}. 
 \end{equation}
 \end{defin}
 
 \begin{defin}
-\textit{Вероятностной моделью глубокого обучения} назовем совместное распределение вида:
+\textit{Вероятностной моделью глубокого обучения} назовем совместное распределение вида
 \[
-    p({y}, \mathbf{W},  \boldsymbol{\Gamma}|\mathbf{x}, \mathbf{h}) = p({y}|\mathbf{x}, \mathbf{W},  \boldsymbol{\Gamma})p( \mathbf{W},  \boldsymbol{\Gamma}|\mathbf{h}): \mathbb{Y} \times \mathbb{W}  \times \Delta{\boldsymbol{\Gamma}} \times \mathbb{R}^{+}.
+    p({y}, \mathbf{w},  \boldsymbol{\Gamma}|\mathbf{x}, \mathbf{h}) = p({y}|\mathbf{x}, \mathbf{w},  \boldsymbol{\Gamma})p( \mathbf{w},  \boldsymbol{\Gamma}|\mathbf{h}): \mathbb{Y} \times \mathbb{W}  \times \Delta{\boldsymbol{\Gamma}} \times \mathbb{R}^{+}.
 \]
 \end{defin}
 
 \begin{defin}
-\textit{Функцией правдоподбия выборки } назовем следующую величину:
+\textit{Функцией правдоподбия выборки } назовем величину
 \[
-    p(y|\mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma}): \mathbb{Y} \times \mathbb{X} \times \mathbb{W} \times \Delta(\boldsymbol{\Gamma}) \to \mathbb{R}^{+}.
+    p(y|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}): \mathbb{Y} \times \mathbb{X} \times \mathbb{W} \times \mathbb{\Gamma} \to \mathbb{R}^{+}.
 \]
 \end{defin}
-Для каждой модели определена функция правдоподобия  $p(\mathbf{y}|\mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma})$.
+Для каждой модели определена функция правдоподобия  $p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})$.
  
-На втором уровне байесовского вывода осуществляется выбор модели на основе правдоподобия модели.
+На \textit{втором уровне} байесовского вывода осуществляется выбор модели на основе правдоподобия модели.
 \begin{defin}
-\textit{Правдоподобием модели }назовем следующую величину:
+\textit{Правдоподобием модели }назовем величину
 \begin{equation}
 \label{eq:evidence}
-p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{W}, \boldsymbol{\Gamma}} p(\mathbf{y}|\mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma})p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{h})d\mathbf{W}d\boldsymbol{\Gamma}.
+p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})d\mathbf{w}d\boldsymbol{\Gamma}.
 \end{equation}
 \end{defin}
-Получение значений апостериорного распределения и правдоподобия модели сетей глубокого обучения, является вычислительно сложной процедурой. Для получения оценок на данные величины используют ряд методов, таких как аппроксимация Лапласа~\cite{tokmakova} и вариационное распределение~\cite{nips}. 
+Получение значений апостериорного распределения и правдоподобия модели сетей глубокого обучения является вычислительно сложной процедурой. Для получения оценок на данные величины используют методы, такие как аппроксимация Лапласа~\cite{tokmakova} и вариационная нижняя оценка~\cite{nips}. 
 
 \begin{defin}
-\textit{Аппроксимирующим распределением} назовем некоторое параметрическое приближение $q(\mathbf{W}, \boldsymbol{\Gamma})$ апостериорного распределения параметров и структуры $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{h}).$ 
+\textit{Аппроксимирующим распределением} назовем параметрическое распределение $q(\mathbf{w}, \boldsymbol{\Gamma})$, являющееся приближением  апостериорного распределения параметров и структуры $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{h}).$ 
 \end{defin}
 
 \begin{defin}
@@ -191,7 +381,7 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{W}, \boldsymbol{\Gamma}} p(\mathbf{y
 \textit{Функцией потерь} $L(\mathbf{X}, \mathbf{y}, \boldsymbol{\theta}, \mathbf{h})$ для модели $\mathbf{f}$ назовем дифференцируемую функцию, принимаемую за качество модели на обучающей выборки при параметрах модели, получаемых из  распределения $q$.
 \end{defin}
 
-В качестве функции $L$ может выступать логарифм правдоподобия выборки $\text{log}~p(y|\mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma})$  и логарифм апостериорной вероятности \text{log}~$p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}) $ параметров и структуры модели на обучающей выборке.
+В качестве функции $L$ может выступать логарифм правдоподобия выборки $\text{log}~p(y|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})$  и логарифм апостериорной вероятности \text{log}~$p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}) $ параметров и структуры модели на обучающей выборке.
 
 \begin{defin}
 Пусть задано аппроксимирующее распределения $q$ и функция потерь $L$. 
@@ -204,10 +394,11 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{W}, \boldsymbol{\Gamma}} p(\mathbf{y
 \label{eq:optim_problem}
 	\mathbf{h}^{*} = \argmax_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{X}, \mathbf{y}, \boldsymbol{\theta}^{*}, \mathbf{h}),
 \end{equation}
-где $\boldsymbol{\theta}^{*}$ --- решение задачи оптимизации:
-\[
+где $\boldsymbol{\theta}^{*}$ --- решение задачи оптимизации
+\begin{equation}
+\label{eq:optim_problem_in}
    \boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta} \in \mathbb{R}^u} L(\mathbf{X}, \mathbf{y}, \boldsymbol{\theta}, \mathbf{h}).
-\]
+\end{equation}
 
 \begin{defin}
 \textit{Выбором модели} $\mathbf{f}$ назовем решение двухуровневой задачи оптимизации~\eqref{eq:optim_problem}.
@@ -215,24 +406,24 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{W}, \boldsymbol{\Gamma}} p(\mathbf{y
 
 Рассмотрим для примера базовый вариант выбора модели с применением функций $q, L, Q$.
 Будем полагать, что задано разбиение выборки на обучающую $\mathfrak{D}_\text{train}$ и валидационную $\mathfrak{D}_\text{valid}$ части.
-Положим в качестве оптимизируемых параметров $\boldsymbol{\theta}$ параметры $\mathbf{W}$ и структуры $\boldsymbol{\Gamma}$ модели:
+Положим в качестве оптимизируемых параметров $\boldsymbol{\theta}$ параметры $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$ модели:
 \[
-    \boldsymbol{\theta} = [\mathbf{W}, \boldsymbol{\Gamma}].
+    \boldsymbol{\theta} = [\mathbf{w}, \boldsymbol{\Gamma}].
 \]
-Пусть также задано некоторое априорное распределение $p(\mathbf{W}, \boldsymbol{\Gamma}|\mathbf{h})$.
+Пусть также задано априорное распределение $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})$.
 Положим в качестве функции $L$ логарифм апостериорной вероятности модели:
 \[
-    L = \sum_{\mathbf{x},y \in \mathfrak{D}_\text{train}} \text{log}p(y, \mathbf{W}, \boldsymbol{\Gamma}|\mathbf{x}).
+    L = \sum_{\mathbf{x},y \in \mathfrak{D}_\text{train}} \text{log}p(y, \mathbf{w}, \boldsymbol{\Gamma}|\mathbf{x}).
 \]
-Положим в качестве функции $Q$ правдоподобия выборки при условии параметров $\mathbf{W}$ и структуры $\boldsymbol{\Gamma}$:
+Положим в качестве функции $Q$ правдоподобия выборки при условии параметров $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$:
 \[
-    Q = \sum_{\mathbf{x},y \in \mathfrak{D}_\text{valid}} \text{log}p(y|\mathbf{x}, \mathbf{W}, \boldsymbol{\Gamma}).
+    Q = \sum_{\mathbf{x},y \in \mathfrak{D}_\text{valid}} \text{log}p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}).
 \]
 Оптимизация параметров и структуры производится по обучающей выборке. Гиперпараметры $\mathbf{h}$ выступают в качестве регуляризатора, чья оптимизация производится по валидационной выборке. Подобная оптимизация позволяет предотвратить переобучение модели~\cite{hyper}.
 
 
 Частным случаем задачи выбора структуры глубокой сети является выбор обобщенно-линейных моделей. Отдельные слои полносвязанных нейросетей являются обобщенно-линейными модели. Задачу выбора обобщенно-линейной моделей сводится к задаче выбора признаков, методы решения которой делятся на три группы~\cite{feature_select}:
-\begin{enumerate}[1)]
+\begin{enumerate}
 \item Фильтрационные методы. Не используют какой-либо информации о модели, а отсекают признаки только на основе статистических показателей, учитывающих взаимосвязь признаков и меток объектов.
 \item Оберточные методы  анализируют подмножества признаков. Они выбирают не признаки, а подмножества признаков, что позволяет учесть корреляция признаков.
 \item Методы погружения оптимизируют модели и проводият выбор признаков в единой процедуре, являясь комбинацией предыдущих типов отбора признаков.
@@ -250,7 +441,7 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{W}, \boldsymbol{\Gamma}} p(\mathbf{y
     L(\boldsymbol{\theta}^{*} + \Delta\boldsymbol{\theta})  - L(\boldsymbol{\theta}^{*}) = \frac{1}{2} \Delta\boldsymbol{\theta}^{\mathsf{T}}\mathbf{H}\Delta\boldsymbol{\theta} + o(||\Delta\boldsymbol{\theta}||^{3}),
 \end{equation}
 где $\mathbf{H}$ --- гессиан функции $L$. Связь между параметрами не учитывается, поэтому гессиан матрицы $L$ является диагональным.
-Положим в качестве операции удаления параметра замену его значения на ноль. Выбор наиболее неинформативного параметра сводится к задаче условной минимизации~\eqref{eq:obd} при условиях вида:
+Положим в качестве операции удаления параметра замену его значения на ноль. Выбор наиболее неинформативного параметра сводится к задаче условной минимизации~\eqref{eq:obd} при условиях вида
 \[
     {\theta}_i + \Delta{\theta}_i = 0, \quad  {\theta}_i \in \boldsymbol{\theta}.
 \] 
@@ -267,7 +458,7 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{W}, \boldsymbol{\Gamma}} p(\mathbf{y
 В~\cite{weight_quantization, weight_quantization2,nvidia_prune} предлагаются методы компрессии параметров сетей глубокого обучения. Основным отличием задачи прореживания от задачи компрессии выступает эксплуатационное требование: если прореживание используется для получения оптимальной и наиболее устойчивой модели, то компрессия производится для уменьшения потребляемых вычислительных ресурсов при сохранении основных эксплуатационных характеристик исходной модели~\cite{weight_quantization2}.
 В~\cite{nvidia_prune}
 предлагается итеритавиное использование регуляризации типа DropOut~\cite{dropout} для прореживания модели. 
-В~\cite{weight_quantization, weight_quantization2} используются методы снижения вычислительной точности представления парамеров модели на основе кластеризации параметров $\mathbf{W}$ модели: вместо значений параметров предлагается хранить идентификатор кластера, соответствующего параметру, что существенно снижает количество требуемой памяти.
+В~\cite{weight_quantization, weight_quantization2} используются методы снижения вычислительной точности представления парамеров модели на основе кластеризации параметров $\mathbf{w}$ модели: вместо значений параметров предлагается хранить идентификатор кластера, соответствующего параметру, что существенно снижает количество требуемой памяти.
 В~\cite{weight_quantization2} предлагается метод компрессии, основанный на кластеризации значений параметров модели и представлении их в сжатом виде на основе кодов Хаффмана.
 
 \textbf{Байесовские методы прореживания параметров модели. }
@@ -284,9 +475,9 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{W}, \boldsymbol{\Gamma}} p(\mathbf{y
 
 Идея данного метода была развита в~\cite{bayes_compr}, где также используются вариационные методы.  В отличие от~\cite{nips}, в~\cite{bayes_compr} рассматривается ряд априорных распределений параметров, позволяющих прореживать модели более эффективно:
 \begin{enumerate}
-\item Нормальное распределение с лог-равномерным распределением дисперсии. Для каждого параметра $w \in \mathbf{W}$ задается группа параметров $\boldsymbol{\omega} \in \boldsymbol{\Omega}$, где $\boldsymbol{\Omega}$ --- множество всех групп параметров:
+\item Нормальное распределение с лог-равномерным распределением дисперсии. Для каждого параметра $w \in \mathbf{w}$ задается группа параметров $\boldsymbol{\omega} \in \boldsymbol{\Omega}$, где $\boldsymbol{\Omega}$ --- множество всех групп параметров:
 \[
-    p(\mathbf{W}, \mathbf{s}) \propto \prod_{\boldsymbol{\omega} \in \boldsymbol{\Omega}} \frac{1}{|\boldsymbol{\omega}|}\prod_{w \in \boldsymbol{\omega}}\mathcal{N}(w|\mathbf{0}, \boldsymbol{\omega}).
+    p(\mathbf{w}, \mathbf{s}) \propto \prod_{\boldsymbol{\omega} \in \boldsymbol{\Omega}} \frac{1}{|\boldsymbol{\omega}|}\prod_{w \in \boldsymbol{\omega}}\mathcal{N}(w|\mathbf{0}, \boldsymbol{\omega}).
 \]
 \item Априорное распределение задается произведением двух случайных величин ${s}_{\text{general}}, {s}_{jk}$ с половинным распределением Коши $\mathcal{C}^{+}$: одно ответственно за отдельный параметр, другое --- за общее распределение параметров:
 \[
@@ -297,39 +488,61 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{W}, \boldsymbol{\Gamma}} p(\mathbf{y
 \end{enumerate}
 
 \section{Оптимизация гиперпараметров модели}
-TODO: мотивация
+В данном разделе рассматриваются работы, посвященные методам оптимизации гиперпараметров. Методы, используемые для оптимизации гиперпараметров моделей глубокого обучения должны быть эффектинвыми по вычислительным затратам в силу высокой вычислительной сложности оптимизации параметров модели. 
 
 \textbf{Стохастические методы оптимизации гиперпараметров}
 
 TODO
 
-\textbf{Градиентные методы оптимизации гиперпараметров}
-
-TODO
-
+\textbf{Градиентные методы оптимизации гиперпараметров. } 
 \begin{defin} Назовем \textit{оператором оптимизации} алгоритм $T$ выбора вектора параметров $\boldsymbol{\theta}'$  по параметрам предыдущего шага $\boldsymbol{\theta}$:
-\[
-	\boldsymbol{\theta}' = T(L, \mathbf{y}, \mathbf{X}, \boldsymbol{\theta}, \mathbf{h}, \boldsymbol{\beta}),
-\]
+\begin{equation}
+\label{eq:optim_operator}
+	\boldsymbol{\theta}' = T(\boldsymbol{\theta} | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta}),
+\end{equation}
 где $\boldsymbol{\beta}$ --- параметры оператора оптимизации или \textit{метапараметры}.
 \end{defin}
 
+Пример схожего описания оптимизации модели с использованием оператора оптимизации можно найти в~\cite{early}.
+
 Частным случаем оператора оптимизации является оператор стохастического спуска:
 \[
-    T(L, \mathbf{y}, \mathbf{X}, \boldsymbol{\theta}, \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L(\hat{\mathbf{y}}, \hat{\mathbf{X}}, \boldsymbol{\theta}, \mathbf{h}),
+    T( \boldsymbol{\theta}| L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L(\hat{\mathbf{y}}, \hat{\mathbf{X}}, \boldsymbol{\theta}, \mathbf{h}),
 \]
 где $\beta_{\text{lr}}$ --- шаг градиентного спуска, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$.
+
+В случае оптимизации гиперпараметров оператор оптимизации применяется не к оптимизируемым параметрам $\boldsymbol{\theta}$, а к гиперпараметрам $\mathbf{h}$:
+\begin{equation}
+    \mathbf{h} = T(\mathbf{h} | Q, \mathbf{y}, \mathbf{X}, \boldsymbol{\theta}^{*}, \boldsymbol{\beta}),
+\end{equation}
+где $\boldsymbol{\theta}^{*}$ --- оптимизируемые параметры, полученые в ходе решения задачи оптимизации~\eqref{eq:optim_problem_in}.
+
+В случае, если для решения задачи~\eqref{eq:optim_problem_in} применяется несколько шагов оператора оптимизации~\eqref{eq:optim_operator},
+$\boldsymbol{\theta}^{*}$ рассматривается как неявная функция от начального приближения оптимизируемых параметров $\boldsymbol{\theta}^{0}$ и вектора гиперпараметров $\mathbf{h}$:
+\begin{equation}
+\label{eq:param_trace}
+    \boldsymbol{\theta}^{*} = T \circ \dots \circ T(\boldsymbol{\theta}^0 | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta}^{*}(\boldsymbol{\theta}^{0}, \mathbf{h}).
+\end{equation}
+
+Решение задачи оптимизации для функции~\eqref{eq:param_trace} является вычислительно сложным, поэтому применяются методы, аппроксимирующие применение градиентных методов к функции~\eqref{eq:param_trace}.
+
+В~\cite{hyper_bengio} рассматривается оптимизация гиперпараметров градиентными методами для квадратичной функции потерь. В~\cite{hyper} в качестве оператора оптимизации гиперпараметров выступает метод градиентного спуска с моментом. Показано, что использование момента значительно снижает количество вычислительных ресурсов, требуемых для проведения оптимизации. В~\cite{hyper_mad} предлагается аппроксимация градиентного метода, использующая предположение о линейности функции~\eqref{eq:param_trace} от начального приближения $\boldsymbol{\theta}^0$. В~\cite{hyper_hoag} предлагается использовать численные методы для приближенного вычисления оператора оптимизации гиперпараметров. В~\cite{greed_hyper} в качестве аппроксимации~\eqref{eq:param_trace} предлагается рассматривать только последний шаг оптимизации:
+\[
+    \boldsymbol{\theta}^{*} \approx T(\boldsymbol{\theta}^{\eta-1} | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta}),
+\]
+где $\eta$ --- число шагов оптимизации.
+
 
 \textbf{Суррогатный выбор моделей. }
 Идея суррогатных моделей заключается в аппроксимации модели или семейства моделей вычислительно менее сложной функцией.
 
-В работе~\cite{bo_gp} предлагается моделировать качество модели $Q$\eqref{eq:evidence} гауссовым процессом, параметрами которого выступают гиперпараметры исходной модели.
+В работе~\cite{bo_gp} предлагается моделировать качество модели $Q$~\eqref{eq:evidence} гауссовым процессом, параметрами которого выступают гиперпараметры исходной модели.
 
 Одна из основных проблем использования гауссового процесса как суррогатной модели --- кубическая сложность оптимизации. В работе~\cite{random_gaus} предлагается использовать случайные подпространства гиперпараметров для ускоренной оптимизации.  В работе~\cite{gp_tree} предлагается кобминация из множества гауссовых моделей и линейной модели, позволяющая модели нелинейные зависимости гиперпараметров, а также существенно сократить сложность оптимизации. 
 
 В работе~\cite{rbf_surrogate} предлагается рассматривать RBF-модель для аппроксимации качества $Q$ исходной модели, что позволяет ускорить процесс оптимизации суррогатной модели. В~\cite{snoek_deep} рассматривается глубокая нейронная сеть в качестве суррогатной функции. Вместо интеграла правдоподобия~\eqref{eq:evidence}, который оценивается в случае использования гауссового процесса в качестве суррогата, используется максимум апостериорной веротяности~\eqref{eq:posterior}.
 
-Важным параметром гауссовых процессов является функиия ядра гауссового процесса, полностью определяющая процесс в случае нулевого среднего. В работе~\cite{gp_fusion} предлагается функция ядра, определенная на графах:
+Одним из параметров гауссовых процессов является функиия ядра гауссового процесса, полностью определяющая процесс в случае нулевого среднего. В работе~\cite{gp_fusion} предлагается функция ядра, определенная на графах:
     \[
     k(v_1,v_2) = r(d(v_1,v_2)),
     \]
@@ -346,9 +559,16 @@ TODO
 где $\lambda_1, \lambda_2$ --- параметры функции $d_v$.
 
 \section{Порождениие и выбор структуры модели глубокого обучения}
-TODO: мотивация
-
+В данном разделе рассматриваются работы, посвященные порождению и модификации структуры моделей. В отличие от работ, описанных в предыдущих разделах, в следующих работах рассматриваемым объектом является не отдельный параметр, а подмодель или группа параметров, входящая в эту подмодель.
+ 
 \textbf{Графовое представление структуры модели. }
+Одним из возможных представлений структуры моделей глубокого обучения является графовое представление, в котором в качестве ребер графа выступают нелинейные функции, а в качестве вершин графа --- представление выборки под действием соответствующих нелинейных функций. 
+Данный подход к описанию модели является соответсвтует  походам, описанным в~\cite{vokov}, а также в библиотеках типа TensorFlow~\cite{tensorflow}, Theano~\cite{theano}, Pytorch~\cite{pytorch}, в которых модель рассматривается как граф, ребрами которого выступают математические операции, а вершинами --- результат их действия на выборку. 
+ В то же время, существуют и другие способы представления модели. В ряде работ, посвященных байесовской оптимизации~\cite{snoek_deep,rbf_surrogate,bo_gp}, модель рассматривается как черный ящик, над которым производится ограниченный набор операций типа ``произвести оптимизацию параметров'' и ``предсказать значение зависимой переменной по независимой переменной и параметрам модели''.
+Подход, описанный в данных работах, также коррелирует с  библиотеками машинного обучения, такими как Weka~\cite{weka}, RapidMiner~\cite{rapidminer} или sklearn~\cite{sklearn}, в которых модель машинного обучения рассматривается как черный ящик.
+
+В~\cite{graphs} представлен обзор по графовому описанию моделей глубокого обучения, предлагается метод фомрального описания графовых сетей (англ. Graph Network), являющийся обобщением предложенных ранее графовых описаний моделей.
+
 В работе~\cite{search_space} рассматриваются подходы к порождению моделей глубокого обучения. Предлагается формализация пространства поиска и формальное описание элементов  пространства моделей. Приведем пример описания семейства моделей, соответствующего схеме из Рис.~\ref{fig:scheme_cnn} при условии, что структурные параметры $\boldsymbol{\gamma}$ имеют только одну ненулевую компоненту:\\
 %\begin{center}
 \texttt{(Concat\\
@@ -362,7 +582,6 @@ TODO: мотивация
 %\end{center}
 TODO: в статье нет сотфмакса
 
-TODO: из обзора про графы.
 
 \textbf{Прогнозирование графовых структур. }
 В работе~\cite{jaakkola2010learning} предлагается метод прогнозирования графовой структуры на основе линейного программирования. Предлагается свести проблему поиска графовой структуры к комбинаторной проблеме.
@@ -373,19 +592,19 @@ TODO: из обзора про графы.
 Данный тип порождения предполагает, что структуры порождаются случайно в соответствие  оптимизируемым распределением, заданным на структурах $q(\boldsymbol{\Gamma})$. Затем выбирается одна, либо несколько наилучших структур с учетом валидационной функции $Q$ или внешних, возможно недиффиренециремых, критериев качества. Итоговая модель получается путем оптимизации параметров модели при выбранной структуре $\boldsymbol{\Gamma}$. 
 Заметим, что в ряде работ, одновременно порождается не только структура модели, но и итоговые параметры.
 
-В работе~\cite{cib} рассматривается порождение моделей, оптимизируемых без учителя. Модель представляется многослойным перцепротроном вида:
+В работе~\cite{cib} рассматривается порождение моделей, оптимизируемых без учителя. Модель представляется многослойным перцептроном вида:
 \[
-    \mathbf{f} = \mathbf{f}_\text{|V|} \circ \dots \circ \mathbf{f}_1 (\mathbf{x}), \quad \mathbf{f}_i(\mathbf{x}) = \boldsymbol{\sigma}(\mathbf{W}^i \odot \mathbf{H}^i \mathbf{x}),
+    \mathbf{f} = \mathbf{f}_\text{|V|} \circ \dots \circ \mathbf{f}_1 (\mathbf{x}), \quad \mathbf{f}_i(\mathbf{x}) = \boldsymbol{\sigma}(\mathbf{w}^i \odot \mathbf{H}^i \mathbf{x}),
 \]
-где $\mathbf{H}^i$ --- бинарные матрицы, определяющие вклад каждого параметра из $\mathbf{W}^i$ в итоговую модель, знаком $\odot$  обозначается покомпонентное перемножение. 
+где $\mathbf{H}^i$ --- бинарные матрицы, определяющие вклад каждого параметра из $\mathbf{w}^i$ в итоговую модель, знаком $\odot$  обозначается покомпонентное перемножение. 
 
-Порождение моделей производится с использованием композиции процессов индийский буфетов. Процесс индийского буффет заключается в итеративном построении матрицы $\mathbf{H}^i$ с ограниченным, но не заданным наперед количеством столбцов. Интепретируя количество столбцов  матрицы как размер $i$-го слоя предлагается метод, позволяющий выбирать стохастически порождать модели с разилчной размерностью скрытых слоев. 
+Порождение моделей производится с использованием композиции процессов индийский буфетов. Процесс индийского буфет заключается в итеративном построении матрицы $\mathbf{H}^i$ с ограниченным, но не заданным наперед количеством столбцов. Интепретируя количество столбцов  матрицы как размер $i$-го слоя предлагается метод, позволяющий выбирать стохастически порождать модели с разилчной размерностью скрытых слоев. 
 
 В работе~\cite{cib_simple} предлагается метод выбора модели сверточной нейронной сети. Используется функция потерь, основанная на аппроксимации априорного распределения процесса индийского буфета для каждой базовой функции $\mathbf{g}_i$, являющейся $i$-м отображением объектов:
 \[
-    L = \sum_{\mathbf{x}}||\mathbf{x} - \sum_{j=1}^K ||\mathbf{x} - \sum_{j=1}^K \mathbf{W}^j * \mathbf{g}_i(\mathbf{x})||_2^2 + \lambda^2K,
+    L = \sum_{\mathbf{x}}||\mathbf{x} - \sum_{j=1}^K ||\mathbf{x} - \sum_{j=1}^K \mathbf{w}^j * \mathbf{g}_i(\mathbf{x})||_2^2 + \lambda^2K,
 \]
-где $K$ --- параметр, отвечающий за количество сверток, $\lambda$ --- параметр алгоритма, знаком $*$ обозначается операция свертки.
+где $K$ --- параметр, отвечающий за количество сверток, $\lambda$ --- параметр алгоритма, знаком $*$ обозначается операция свертки (TODO: проверить).
 
 В работе~\cite{shirakawa2018dynamic} предлагается ввести априорное распределение Бернулли на структурные параметры $\boldsymbol{\gamma}^i$.
 
@@ -398,11 +617,11 @@ TODO: из обзора про графы.
 \]
 приводится параметризация модели, позволяющая рассматривать декомпозировать модель на слабые классификаторы.
 В~\cite{adanet} рассматривается задача выбора полносвязной нейронной сети для задачи бинарной классификации, $Z=2$. На каждом шаге построения выбирается одно из двух расширений модели, каждое из которых рассматирвается как слабый классификатор: сделать модель шире или сделать модель глубже. Пример работы AdaNet представлен на Рис.~\ref{fig:scheme_adanet}.
-Построение модели заканчивается при условии снижении радемахереовской сложности:
+Построение модели заканчивается при условии снижении радемахеровской сложности:
 \[
-    \mathfrak{R} = \frac{1}{m}\mathsf{E}_{{b}_1,\dots, {b}_{|V|}} \text{sup}_{\mathbf{W}} \sum_{i=1}^m {b}_i \argmax_{c = \{0,1\}}f_{(c)}(\mathbf{x}_i, \mathbf{W}),
+    \mathfrak{R} = \frac{1}{m}\mathsf{E}_{{b}_1,\dots, {b}_{|V|}} \text{sup}_{\mathbf{w}} \sum_{i=1}^m {b}_i \argmax_{c = \{0,1\}}f^{c}(\mathbf{x}_i, \mathbf{w}),
 \]
-где ${b}_i$ --- реализация случайной дискретной величины, равновероятно принимающей значений $-1$ и $1$, $f_{(c)}$ --- $c$-я компонента модели $\mathbf{f}$.
+где ${b}_i$ --- реализация случайной дискретной величины, равновероятно принимающей значений $-1$ и $1$, $f^{c}$ --- $c$-я компонента модели $\mathbf{f}$.
 
 \begin{figure}
 \begin{tikzpicture}[node distance=cm, auto]
@@ -414,12 +633,12 @@ TODO: из обзора про графы.
  \node (f3)  at (10,3)                  {$\mathbf{f}_3$};
  \node (f4)  at (15,3)                  {$\mathbf{f}_4$};
 
-\path[->]  (f0) edge [bend left=50] node   {$\mathbf{g}^{0,1}_0 =  \boldsymbol{\sigma}(\mathbf{W}^{0,1}_{0}\mathbf{x})$} (f1);
+\path[->]  (f0) edge [bend left=50] node   {$\mathbf{g}^{0,1}_0 =  \boldsymbol{\sigma}(\mathbf{w}^{0,1}_{0}\mathbf{x})$} (f1);
 
 
-\path[->]  (f0) edge [bend right=50] node[below]   {$\mathbf{g}^{0,2}_0 =  \boldsymbol{\sigma}(\mathbf{W}^{0,2}_{0}\mathbf{x})$} (f2);
-\path[->]  (f1) edge [bend left=50] node   {$\mathbf{g}^{1,2}_0 =  \boldsymbol{\sigma}(\mathbf{W}^{1,3}_{0}\mathbf{x})$} (f3);
-\path[->]  (f2) edge [bend right=50] node[below]   {$\mathbf{g}^{2,3}_0 =  \boldsymbol{\sigma}(\mathbf{W}^{2,3}_{0}\mathbf{x})$} (f3);
+\path[->]  (f0) edge [bend right=50] node[below]   {$\mathbf{g}^{0,2}_0 =  \boldsymbol{\sigma}(\mathbf{w}^{0,2}_{0}\mathbf{x})$} (f2);
+\path[->]  (f1) edge [bend left=50] node   {$\mathbf{g}^{1,2}_0 =  \boldsymbol{\sigma}(\mathbf{w}^{1,3}_{0}\mathbf{x})$} (f3);
+\path[->]  (f2) edge [bend right=50] node[below]   {$\mathbf{g}^{2,3}_0 =  \boldsymbol{\sigma}(\mathbf{w}^{2,3}_{0}\mathbf{x})$} (f3);
 \path[->]  (f2) edge [bend left=25] node[below]   {$\mathbf{g}^{2,3}_1 =  \mathbf{0}$} (f3);
 
 \path[->]  (f3) edge node   {$\mathbf{g}^{0,2}_0 =  \textbf{softmax}$} (f4);
@@ -451,7 +670,7 @@ TODO: из обзора про графы.
 
 
 \par{\textbf{Оптимизация структуры модели на основе обучения с подкреплением. }}
-В~\cite{reinf} предлагается итеративная схема выбора архитектуры сверточной нейросети с использованием обучения с подкреплением. Распределение структур и параметров $q(\mathbf{W}, \boldsymbol{\Gamma})$ задается рекуррентной нейронной сетью, которая определяет значение параметров модели и наличие ребер с ненулевыми операциями между вершинами графов модели. Параметры рекуррентной нейронной сети оптимизируются на основе значения функции $Q$, получаемого на каждой итерации алгоритма.
+В~\cite{reinf} предлагается итеративная схема выбора архитектуры сверточной нейросети с использованием обучения с подкреплением. Распределение структур и параметров $q(\mathbf{w}, \boldsymbol{\Gamma})$ задается рекуррентной нейронной сетью, которая определяет значение параметров модели и наличие ребер с ненулевыми операциями между вершинами графов модели. Параметры рекуррентной нейронной сети оптимизируются на основе значения функции $Q$, получаемого на каждой итерации алгоритма.
 
 
 \begin{figure}
@@ -474,8 +693,8 @@ TODO: из обзора про графы.
 
   \path[->]  (fn1) edge [bend left=50] node   {$\mathbf{g}^{|V|-1,|V|}_0(\mathbf{x})=\textbf{softmax}(\mathbf{x})$} (fn);
 
-  %\path[->] (f0)  edge[bend right=50] node[below] {$\mathbf{g}^{1,2}(\mathbf{x}) = \boldsymbol{\sigma}(\mathbf{x}\mathbf{W}^{1,2})$}(f1);
-  %\path[->] (f1)  edge node {$\mathbf{g}^{2,1}(\mathbf{x}) = \textbf{softmax}(\mathbf{x}\mathbf{W}^{2,1})$}(f2);       
+  %\path[->] (f0)  edge[bend right=50] node[below] {$\mathbf{g}^{1,2}(\mathbf{x}) = \boldsymbol{\sigma}(\mathbf{x}\mathbf{w}^{1,2})$}(f1);
+  %\path[->] (f1)  edge node {$\mathbf{g}^{2,1}(\mathbf{x}) = \textbf{softmax}(\mathbf{x}\mathbf{w}^{2,1})$}(f2);       
   %\draw[->] (f1) to (f2);
  
 \end{tikzpicture}
@@ -505,32 +724,33 @@ TODO: из обзора про графы.
 В работе~\cite{partition} предлагается метод оптимального разделения нейросети на несколько независимых сетей для уменьшения количества связей и, как следствие, уменьшения сложности оптимизации модели. В работе~\cite{net2net} предлагается метод сохранения результатов оптимизации нейросети при построении новой более глубокой или широкой нейросети. 
 В работе~\cite{morph} рассматривается задача расширения сверточной нейросети, нейросеть рассматривается как граф.
 
+В работе~\cite{darts} используется представление модели из~\cite{reinf_transfer}. Вместо обучения с подкреплением испольщуются градиентная оптимизация структуры и параметров, выполненная в единой процедуре.
 
 \section{Метаоптимизация моделей глубокого обучения}
 Задача выбора структуры модели тесно связана с раздел машинного обучения под названием \textit{метаобучение} или \textit{метаоптимизация}. Под метаобучением понимаются алгоритмы машинного обучения~\cite{metalearn}, которые:
-\begin{enumerate}
+\begin{enumerate}[1)]
 \item оценивают и сравнивают методы оптимизации моделей;
 \item оценивают возможные декомпозиции процесса оптимизации моделей;
 \item на основе полученных оценок предлагают оптимальные стратегии оптимизации моделей и отвергают неоптимальные. 
 \end{enumerate}
 
-В работе~\cite{self_rnn} предлагается подход к адаптивному изменению параметров сети. В качестве оператора оптимизации параметров рассматривается следующая величина:
+В работе~\cite{self_rnn} предлагается подход к адаптивному изменению параметров сети. В качестве оператора оптимизации параметров рассматривается величина:
 \[
-    T(L, \mathbf{y}, \mathbf{X}, \boldsymbol{\theta}, \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta} + \mathbf{f}_\text{optim}(\mathbf{f}_\text{mod}( \boldsymbol{\theta})),
+    T( \boldsymbol{\theta}| L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta} + \mathbf{f}_\text{optim}(\mathbf{f}_\text{mod}( \boldsymbol{\theta})),
 \]
 где $\mathbf{f}_\text{mod}$ --- функция, определяющая номер параметра из $\boldsymbol{\theta}$, подлежащего оптимизации, а $ \mathbf{f}_\text{optim}$ --- величина изменения параметра. 
 В~\cite{self_rnn} также предлагается подмодель $\mathbf{f}_\text{ana}$, определяющая номер параметра, подлежащего дальнейшему анализу. Подход, описанный в данной работе, предполагает оптимизацию и анализ не только самой модели $\mathbf{f}$, но и дополнительных моделей $\mathbf{f}_\text{mod}, \mathbf{f}_\text{ana}, \mathbf{f}_\text{optim}$.
 
 В работе~\cite{meta_sgd} рассматривается оптимизация метапараметров (шага градиентного спуска $\beta_{\text{lr}}$ и начального распределения параметров $\boldsymbol{\theta}^0$). Рассматривается задача оптимизации параметров модели в случае, когда количество примеров невелико. Для этого проводится оптимизация оператора оптимизации, который выглядит следующим образом:
 \[
-    T(L, \mathbf{y}, \mathbf{X}, \boldsymbol{\theta}, \mathbf{h}, \boldsymbol{\beta})  = \boldsymbol{\theta}_0 - \boldsymbol{\beta}\nabla L(\mathbf{X}, \mathbf{y},\boldsymbol{\theta}_0, \mathbf{h}),
+    T(\boldsymbol{\theta}| L, \mathbf{y}, \mathbf{X},  \mathbf{h}, \boldsymbol{\beta})  = \boldsymbol{\theta}^0 - \boldsymbol{\beta}\nabla L(\mathbf{X}, \mathbf{y},\boldsymbol{\theta}^0, \mathbf{h}),
 \]
-где векторы $\boldsymbol{\theta}_0$ и $\boldsymbol{\beta}$ являются параметрами оператора $T$. Задача оптимизации параметров оператора $T$ рассматривается как задача многзадачного обучения (англ. multitask learning), когда оператор оптимизируется с учетом нескольких различных выборок и различных функций $L$, определенных отдельно для каждой выборки.
+где векторы $\boldsymbol{\theta}^0$ и $\boldsymbol{\beta}$ являются параметрами оператора $T$. Задача оптимизации параметров оператора $T$ рассматривается как задача многзадачного обучения (англ. multitask learning), когда оператор оптимизируется с учетом нескольких различных выборок и различных функций $L$, определенных отдельно для каждой выборки.
 
 
-В работе~\cite{l2l} рассматирвается задача восстановления параметров модели по параметрам  другой модели, чьи параметры были получены оптимизацией функции потерь на выборке меньшей мощности. Задачу можно рассматривать как задачу нахождения параметров некоторого оператора оптимизации $T:\boldsymbol{\theta}_0 \to \boldsymbol{\theta},$ где $\boldsymbol{\theta}_0$ --- параметры модели, оптимизированной на небольшой выборке.  Предлагается следующая функция оптимизации:
+В работе~\cite{l2l} рассматирвается задача восстановления параметров модели по параметрам  другой модели, чьи параметры были получены оптимизацией функции потерь на выборке меньшей мощности. Задачу можно рассматривать как задачу нахождения параметров некоторого оператора оптимизации $T:\boldsymbol{\theta}^0 \to \boldsymbol{\theta},$ где $\boldsymbol{\theta}^0$ --- параметры модели, оптимизированной на небольшой выборке.  Предлагается функция оптимизации:
 \[
-    T = \argmin ||\hat{\boldsymbol{\theta}} -  \boldsymbol{\theta}_0||_2^2 + \beta_{\lambda} L(\hat{\mathbf{X}}, \hat{\mathbf{y}},\boldsymbol{\theta}, \mathbf{h}),
+    T = \argmin ||\hat{\boldsymbol{\theta}} -  \boldsymbol{\theta}^0||_2^2 + \beta_{\lambda} L(\hat{\mathbf{X}}, \hat{\mathbf{y}},\boldsymbol{\theta}, \mathbf{h}),
 \]
 где $\boldsymbol{\theta}$ --- параметры модели, обученной по полной выборке $\mathfrak{D}$, $\hat{\mathfrak{D}}$ --- выборка меньшей мощности, $\beta_{\lambda}$ --- настраиваемый метапараметр.
 
@@ -547,7 +767,7 @@ TODO: из обзора про графы.
 В работе~\cite{mixed} рассматривается оптимизация моделей нейросетей с бинарной функцией активацией. Задача оптимизации сводится к задаче mixed integer программирования, которая решается методами выпуклого анализа.
 В работе~\cite{energynet} предлагается метод построения сети глубокого обучения, структура которой выбирается с использованием обучения без учителя. Критерий оптимальности модели использует оценки энергитических функций и ограниченной машины Больцмана.
 
-В работах~\cite{pathnet, supernet} рассматривается выбор архитектуры сети с использованием \textit{суперсетей}: связанных между собой моделей, образующих граф, каждый  путь из нулевой вершины в последнюю которого определяет модель глубокого обучения. Пример графа, описывающего суперсеть представлен на Рис.~\ref{fig:supernet}. В работе~\cite{supernet} рассматриваются стохастические суперсети, позволяющие выбрать структуру нейросети за органиченное время оптимизации. 
+В работах~\cite{pathnet, supernet} рассматривается выбор архитектуры сети с использованием \textit{суперсетей}: связанных между собой подмоделей, образующих граф, каждый  путь из нулевой вершины в последнюю которого определяет модель глубокого обучения. Пример графа, описывающего суперсеть представлен на Рис.~\ref{fig:supernet}. В работе~\cite{supernet} рассматриваются стохастические суперсети, позволяющие выбрать структуру нейросети за органиченное время оптимизации. 
 Схожий подход был предложен в работе~\cite{pathnet}, где предлагается использовать эволюционные алгоритмы для запоминания оптимальных подмоделей и переноса этих моделей в другие задачи.
 
 
@@ -590,7 +810,7 @@ TODO: из обзора про графы.
 \path[->]  (f7) edge  (f5);
 \path[->]  (f7) edge  (f8);
 \end{tikzpicture}
-\caption{Пример суперсети.}
+\caption{Пример суперсети. Каждый путь из подмодели $\mathbf{f}_0$ в конечную модель $\mathbf{f}_8$ задает модель глубокого обучения.}
 \label{fig:supernet}
 
 \end{figure}
@@ -623,4 +843,3 @@ TODO: из обзора про графы.
 
 В данной работе предлагается метод последовательного порождения моделей глубокого обучения, основывающийся на применении вариационного вывода. Вариационный ввывод позволяет получить оценки правдоподобия модели с небольшими вычислительными затратами, а также проследить потенциальное начало переобучения модели без использования контрольной выборки. Для регуляризации структуры модели предлагается ввести априорное распределение на структуре, позволяющее проводить оптимизацию модели и ее структуры в различных режимах. В качестве метода оптимизации гиперпараметров выступают градиентные методы, что позволяет эффективно производить оптимизацию большого числа гиперпараметров, сопоставимого с числом параметров модели. 
 
-TODO: гиперпараметры, Горбань, графовый обзор, DARTS, критерии и сложность???
