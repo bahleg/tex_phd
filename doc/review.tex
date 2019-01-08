@@ -12,20 +12,19 @@
 
 
 \begin{defin}
-\textit{Моделью} $\mathbf{f}$ назовем дифференцируемую по параметрам функцию из множества признаковых описаний объекта во множество меток:
+\textit{Моделью} $\mathbf{f}(\mathbf{w}, \mathbf{x})$ назовем дифференцируемую по параметрам $\mathbf{w}$ функцию из множества признаковых описаний объекта во множество меток:
 \[
     \mathbf{f}: \mathbb{X} \times \mathbb{W} \to \mathbb{Y},
 \] 
 где $\mathbb{W}$ --- пространство параметров функции $\mathbf{f}$.
 \end{defin}
 Специфика задачи  выбора модели \textit{глубокого обучения} заключатеся в том, что модели глубокого обучения могут иметь значительное число параметров, что приводит к неприменимости ряда методов оптимизации и выбора модели. 
-
 Перейдем к формальному описанию семейства моделей глубокого обучения. 
 \begin{defin}
-Пусть задан направленный граф $(V,E)$. Пусть для каждого ребра $(j,k) \in E$ определен вектор базовых функций  мощности $K^{j,k}$: $\mathbf{g}^{j,k} = [\mathbf{g}^{j,k}_0, \dots, \mathbf{g}^{j,k}_{K^{j,k}}]$. Пусть также для каждой вершины $v$ определена функция аггрегации $\textbf{agg}_v$. Граф $(V, E)$ в совокупности со множестом векторов базовых функций $\{\mathbf{g}^{j,k}, (j,k) \in E\}$ и множеством функций аггрегаций $\{ \textbf{agg}_v, {v \in V}\}$ называется \textit{семейством моделей} $\mathfrak{F}$, если функция, задаваемая рекурсивно как 
+Пусть задан направленный граф $(V,E)$. Пусть для каждого ребра $(j,k) \in E$ определен вектор базовых функций  мощности $K^{j,k}$: $\mathbf{g}^{j,k} = [\mathbf{g}^{j,k}_0, \dots, \mathbf{g}^{j,k}_{K^{j,k}}]$. Пусть также для каждой вершины $v \in V$ определена функция агрегации $\textbf{agg}_v$. Граф $(V, E)$ в совокупности со множестом векторов базовых функций $\{\mathbf{g}^{j,k}, (j,k) \in E\}$ и множеством функций агрегаций $\{ \textbf{agg}_v, {v \in V}\}$ называется \textit{семейством моделей} $\mathfrak{F}$, если функция, задаваемая как 
 \begin{equation}
 \label{eq:modelfam}
-    \mathbf{f}_k(\mathbf{x}) = \textbf{agg}_v\left(\{ \langle \boldsymbol{\gamma}^{j,k}, \mathbf{g}^{j,k} \rangle \left(\mathbf{f}_j(\mathbf{x})\right)| j \in \text{Adj}(v_k)\}\right), \quad \mathbf{f}_0(\mathbf{x}) = \mathbf{x}
+    \mathbf{f}_k(\mathbf{x}) = \textbf{agg}_k\left(\{ \langle \boldsymbol{\gamma}^{j,k}, \mathbf{g}^{j,k} \rangle \left(\mathbf{f}_j(\mathbf{x})\right)| j \in \text{Adj}(v_k)\}\right), \quad \mathbf{f}_0(\mathbf{x}) = \mathbf{x}
 \end{equation}
 является моделью при любых значениях векторов, $\boldsymbol{\gamma}^{j,k} \in [0,1]^{K^{j,k}}$.
 \end{defin}
@@ -40,7 +39,7 @@
 \[
     \mathbf{f} = \textbf{agg}_2\left(\left\{\boldsymbol{\gamma}^{1,2}_0 \mathbf{g}^{1,2}_0 \left(\textbf{agg}_1 \left(\{\boldsymbol{\gamma}^{0,1}_0 \mathbf{g}^{0,1}_0(\mathbf{x}), \boldsymbol{\gamma}^{0,1}_1 \mathbf{g}^{0,1}_1(\mathbf{x})  \} \right)\right)\right\}\right).
 \]
-Положим, что функции аггрегации $ \textbf{agg}_1,  \textbf{agg}_2$ являются операциями суммы. Заметим, что к вершине ``2'' ведет только одно ребро, поэтому операцию суммы можно опустить. 
+Положим, что функции агрегации $ \textbf{agg}_1,  \textbf{agg}_2$ являются операциями суммы. Заметим, что к вершине ``2'' ведет только одно ребро, поэтому операцию суммы можно опустить. 
 Итоговая формула модели задается следующим образом:
 \[
     \mathbf{f} = \boldsymbol{\gamma}^{1,2}_0 \textbf{softmax} \left(\boldsymbol{\gamma}^{0,1}_0 \textbf{Conv}(\mathbf{x}, c_0, c_1)(\mathbf{x}) + \boldsymbol{\gamma}^{0,1}_1 \textbf{Conv}(\mathbf{x}, 1, c_1) \circ \textbf{Conv}(\mathbf{x}, c_0, c_2)(\mathbf{x}) \right).
@@ -79,7 +78,7 @@
 
 
 \begin{defin}
-Структурой $\boldsymbol{\Gamma}$  модели $\mathbf{f}$ из семейства моделей $\mathfrak{F}$  назовем конкатенацию векторов $\boldsymbol{\gamma}^{j,k}$. Множество всех возможных значений структуры $\boldsymbol{\Gamma}$ будем обозначать как $\mathbb{\Gamma}$.
+Структурой $\boldsymbol{\Gamma}$  модели $\mathbf{f}$ из семейства моделей $\mathfrak{F}$  назовем конкатенацию векторов $\boldsymbol{\gamma}^{j,k}$. Множество всех возможных значений структуры $\boldsymbol{\Gamma}$ будем обозначать как $\amsmathbb{\Gamma}$.
 Векторы $\boldsymbol{\gamma}^{j,k}, (j,k) \in E$ назовем \textit{структурными параметрами модели.}
 \end{defin}
 
@@ -119,22 +118,22 @@ z={({0.5*cos(45)},{0.5*sin(45)})},
 \coordinate (H) at (0,1,1   );
 
 %Ecken
-\node[circle,fill=white,draw=black](Ap) at (0,0,0){};
-\node[circle,fill=white,draw=black](Bp) at (1,0,0){};
-\node[circle,fill=white,draw=black](Cp) at (1,1,0){};
-\node[circle,fill=white,draw=black](Dp) at (0,1,0){};
-\node[circle,fill=white,draw=black](Ep) at (0,0,1){};
-\node[circle,fill=white,draw=black](Fp) at (1,0,1){};
-\node[circle,fill=white,draw=black](Gp) at (1,1,1){};
-\node[circle,fill=white,draw=black](Hp) at (0,1,1){};
-\node[left= 1pt of A]{(0,0,0)};
-\node[right= 1pt of B]{(1,0,0)};
-\node[right= 1pt of C]{(1,1,0)};
-\node[left= 1pt of D]{(0,1,0)};
-\node[left= 1pt of E]{(0,0,1)};
-\node[right= 1pt of F]{(1,0,1)};
-\node[right= 1pt of G]{(1,1,1)};
-\node[left= 1pt of H]{(0,1,1)};
+\node[circle,scale=0.5,fill=black,draw=black](Ap) at (0,0,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Bp) at (1,0,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Cp) at (1,1,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Dp) at (0,1,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Ep) at (0,0,1){};
+\node[circle,scale=0.5,fill=black,draw=black](Fp) at (1,0,1){};
+\node[circle,scale=0.5,fill=black,draw=black](Gp) at (1,1,1){};
+\node[circle,scale=0.5,fill=black,draw=black](Hp) at (0,1,1){};
+\node[left= 1pt of A]{[0,0,0]};
+\node[right= 1pt of B]{[1,0,0]};
+\node[right= 1pt of C]{[1,1,0]};
+\node[left= 1pt of D]{[0,1,0]};
+\node[left= 1pt of E]{[0,0,1]};
+\node[right= 1pt of F]{[1,0,1]};
+\node[right= 1pt of G]{[1,1,1]};
+\node[left= 1pt of H]{[0,1,1]};
 
 %Kanten
 \draw[] (A)
@@ -171,14 +170,14 @@ z={({0.5*cos(45)},{0.5*sin(45)})},
 \coordinate (H) at (0,1,1   );
 
 %Ecken
-\node[left= 1pt of A]{(0,0,0)};
-\node[right= 1pt of B]{(1,0,0)};
+\node[left= 1pt of A]{[0,0,0]};
+\node[right= 1pt of B]{[1,0,0]};
 \node[right= 1pt of C]{};
-\node[left= 1pt of D]{(0,1,0)};
+\node[left= 1pt of D]{[0,1,0]};
 \node[left= 1pt of E]{};
-\node[right= 1pt of F]{(1,0,1)};
-\node[right= 1pt of G]{(1,1,1)};
-\node[left= 1pt of H]{(0,1,1)};
+\node[right= 1pt of F]{[1,0,1]};
+\node[right= 1pt of G]{[1,1,1]};
+\node[left= 1pt of H]{[0,1,1]};
 
 %Kanten
 \draw[fill=gray] (A)
@@ -214,14 +213,14 @@ z={({0.5*cos(45)},{0.5*sin(45)})},
 \coordinate (H) at (0,1,1   );
 
 %Ecken
-\node[circle,fill=white,draw=black](Bp) at (1,0,0){};
-\node[circle,fill=white,draw=black](Dp) at (0,1,0){};
-\node[circle,fill=white,draw=black](Ep) at (0,0,1){};
+\node[circle,scale=0.5,fill=black,draw=black](Bp) at (1,0,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Dp) at (0,1,0){};
+\node[circle,scale=0.5,fill=black,draw=black](Ep) at (0,0,1){};
 \node[left= 1pt of A]{};
-\node[right= 1pt of B]{(1,0,0)};
+\node[right= 1pt of B]{[1,0,0]};
 \node[right= 1pt of C]{};
-\node[left= 1pt of D]{(0,1,0)};
-\node[left= 1pt of E]{(0,0,1)};
+\node[left= 1pt of D]{[0,1,0]};
+\node[left= 1pt of E]{[0,0,1]};
 \node[right= 1pt of F]{};
 \node[right= 1pt of G]{};
 \node[left= 1pt of H]{};
@@ -261,10 +260,10 @@ z={({0.5*cos(45)},{0.5*sin(45)})},
 
 %Ecken
 \node[left= 1pt of A]{};
-\node[right= 1pt of B]{(1,0,0)};
+\node[right= 1pt of B]{[1,0,0]};
 \node[right= 1pt of C]{};
-\node[left= 1pt of D]{(0,1,0)};
-\node[left= 1pt of E]{(0,0,1)};
+\node[left= 1pt of D]{[0,1,0]};
+\node[left= 1pt of E]{[0,0,1]};
 \node[right= 1pt of F]{};
 \node[right= 1pt of G]{};
 \node[left= 1pt of H]{};
@@ -373,31 +372,31 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\mathbf{y
 \end{defin}
 
 \begin{defin}
-\textit{Оптимизируемыми параметрами} модели $\boldsymbol{\theta} \in \mathbb{R}^u$ назовем параметры аппроксимирующего распределения $q$.
+\textit{ параметрами} модели $\boldsymbol{\theta} \in \mathbb{R}^u$ назовем параметры аппроксимирующего распределения $q$.
 \end{defin}
 
 \begin{defin}
 Пусть задано аппроксимирующее распределения $q$.
-\textit{Функцией потерь} $L(\mathbf{X}, \mathbf{y}, \boldsymbol{\theta}, \mathbf{h})$ для модели $\mathbf{f}$ назовем дифференцируемую функцию, принимаемую за качество модели на обучающей выборки при параметрах модели, получаемых из  распределения $q$.
+\textit{Функцией потерь} $L( \boldsymbol{\theta}, \mathbf{h}, \mathbf{X}, \mathbf{y})$ для модели $\mathbf{f}$ назовем дифференцируемую функцию, принимаемую за качество модели на обучающей выборки при параметрах модели, получаемых из  распределения $q$.
 \end{defin}
 
 В качестве функции $L$ может выступать логарифм правдоподобия выборки $\text{log}~p(y|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})$  и логарифм апостериорной вероятности \text{log}~$p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}) $ параметров и структуры модели на обучающей выборке.
 
 \begin{defin}
 Пусть задано аппроксимирующее распределения $q$ и функция потерь $L$. 
-\textit{Функцией валидации} $Q(\mathbf{X}, \mathbf{y}, \boldsymbol{\theta}, \mathbf{h})$ для модели $\mathbf{f}$ назовем дифференцируемую функцию, принимаемую за качество модели при векторе $\boldsymbol{\theta}$, заданном неявно.
+\textit{Функцией валидации} $Q(\mathbf{h}, \boldsymbol{\theta}, \mathbf{X}, \mathbf{y} )$ для модели $\mathbf{f}$ назовем дифференцируемую функцию, принимаемую за качество модели при векторе $\boldsymbol{\theta}$, заданном неявно.
 \end{defin}
  
 
 В данной работе задача выбора структуры модели и параметров модели ставится как двухуровневая задача оптимизации:
 \begin{equation}
 \label{eq:optim_problem}
-	\mathbf{h}^{*} = \argmax_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{X}, \mathbf{y}, \boldsymbol{\theta}^{*}, \mathbf{h}),
+	\mathbf{h}^{*} = \argmax_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{h},  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y} ),
 \end{equation}
 где $\boldsymbol{\theta}^{*}$ --- решение задачи оптимизации
 \begin{equation}
 \label{eq:optim_problem_in}
-   \boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta} \in \mathbb{R}^u} L(\mathbf{X}, \mathbf{y}, \boldsymbol{\theta}, \mathbf{h}).
+   \boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta} \in \mathbb{R}^u} L(\boldsymbol{\theta},  \mathbf{h},  \mathbf{X}, \mathbf{y}).
 \end{equation}
 
 \begin{defin}
@@ -489,10 +488,7 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\mathbf{y
 
 \section{Оптимизация гиперпараметров модели}
 В данном разделе рассматриваются работы, посвященные методам оптимизации гиперпараметров. Методы, используемые для оптимизации гиперпараметров моделей глубокого обучения должны быть эффектинвыми по вычислительным затратам в силу высокой вычислительной сложности оптимизации параметров модели. 
-
-\textbf{Стохастические методы оптимизации гиперпараметров}
-
-TODO
+В~\cite{random1,random2} рассматривается задача оптимизации гиперпараметров стохастическими методами. В~\cite{random1} проводится сравнение случайного поиска значений гиперпараметров с переборным алгоритмом. В~\cite{random2} производится сравнение случайного поиска и алгоритмов, основанных на вероятностных моделях.
 
 \textbf{Градиентные методы оптимизации гиперпараметров. } 
 \begin{defin} Назовем \textit{оператором оптимизации} алгоритм $T$ выбора вектора параметров $\boldsymbol{\theta}'$  по параметрам предыдущего шага $\boldsymbol{\theta}$:
@@ -507,24 +503,25 @@ TODO
 
 Частным случаем оператора оптимизации является оператор стохастического спуска:
 \[
-    T( \boldsymbol{\theta}| L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L(\hat{\mathbf{y}}, \hat{\mathbf{X}}, \boldsymbol{\theta}, \mathbf{h}),
+    T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L(\boldsymbol{\theta},   \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}),
 \]
 где $\beta_{\text{lr}}$ --- шаг градиентного спуска, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$.
 
 В случае оптимизации гиперпараметров оператор оптимизации применяется не к оптимизируемым параметрам $\boldsymbol{\theta}$, а к гиперпараметрам $\mathbf{h}$:
 \begin{equation}
-    \mathbf{h} = T(\mathbf{h} | Q, \mathbf{y}, \mathbf{X}, \boldsymbol{\theta}^{*}, \boldsymbol{\beta}),
+\label{eq:hyperoptim_operator}
+    \mathbf{h} = T(\mathbf{h} | Q,  \mathbf{X},  \mathbf{y},\boldsymbol{\theta}^{*}, \boldsymbol{\beta}),
 \end{equation}
 где $\boldsymbol{\theta}^{*}$ --- оптимизируемые параметры, полученые в ходе решения задачи оптимизации~\eqref{eq:optim_problem_in}.
 
 В случае, если для решения задачи~\eqref{eq:optim_problem_in} применяется несколько шагов оператора оптимизации~\eqref{eq:optim_operator},
-$\boldsymbol{\theta}^{*}$ рассматривается как неявная функция от начального приближения оптимизируемых параметров $\boldsymbol{\theta}^{0}$ и вектора гиперпараметров $\mathbf{h}$:
+$\boldsymbol{\theta}^{*}$ рассматривается как рекурсивная функция от начального приближения оптимизируемых параметров $\boldsymbol{\theta}^{0}$ и вектора гиперпараметров $\mathbf{h}$:
 \begin{equation}
 \label{eq:param_trace}
-    \boldsymbol{\theta}^{*} = T \circ \dots \circ T(\boldsymbol{\theta}^0 | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta}^{*}(\boldsymbol{\theta}^{0}, \mathbf{h}).
+    \boldsymbol{\theta}^{*} = T \circ \dots \circ T(\boldsymbol{\theta}^0 | L, \mathbf{X}, \mathbf{y},  \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta}^{*}(\boldsymbol{\theta}^{0}, \mathbf{h}).
 \end{equation}
 
-Решение задачи оптимизации для функции~\eqref{eq:param_trace} является вычислительно сложным, поэтому применяются методы, аппроксимирующие применение градиентных методов к функции~\eqref{eq:param_trace}.
+Решение задачи оптимизации~\eqref{eq:hyperoptim_operator} при~\eqref{eq:param_trace} является вычислительно сложным, поэтому применяются методы, аппроксимирующие применение градиентных методов при~\eqref{eq:param_trace}.
 
 В~\cite{hyper_bengio} рассматривается оптимизация гиперпараметров градиентными методами для квадратичной функции потерь. В~\cite{hyper} в качестве оператора оптимизации гиперпараметров выступает метод градиентного спуска с моментом. Показано, что использование момента значительно снижает количество вычислительных ресурсов, требуемых для проведения оптимизации. В~\cite{hyper_mad} предлагается аппроксимация градиентного метода, использующая предположение о линейности функции~\eqref{eq:param_trace} от начального приближения $\boldsymbol{\theta}^0$. В~\cite{hyper_hoag} предлагается использовать численные методы для приближенного вычисления оператора оптимизации гиперпараметров. В~\cite{greed_hyper} в качестве аппроксимации~\eqref{eq:param_trace} предлагается рассматривать только последний шаг оптимизации:
 \[
@@ -646,7 +643,7 @@ TODO: в статье нет сотфмакса
 
 \end{tikzpicture}
 
-\caption{Пример итерации алгоритма AdaNet~\cite{adanet}. Рассматривается две альтернативные модели: модель с углублением сети (соответствует занулению функции $\mathbf{f}_2$ с использованием базовой функции $\mathbf{g}^{2,3}_1$) и модель с расширением сети (соответствует базовой функции $\mathbf{g}^{2,3}_0$).} В качестве функции аггрегации для подмодели $\mathbf{f}_3$ выступает конкатенация: $\textbf{agg}_3 = \textbf{concat}$.
+\caption{Пример итерации алгоритма AdaNet~\cite{adanet}. Рассматривается две альтернативные модели: модель с углублением сети (соответствует занулению функции $\mathbf{f}_2$ с использованием базовой функции $\mathbf{g}^{2,3}_1$) и модель с расширением сети (соответствует базовой функции $\mathbf{g}^{2,3}_0$).} В качестве функции агрегации для подмодели $\mathbf{f}_3$ выступает конкатенация: $\textbf{agg}_3 = \textbf{concat}$.
 \label{fig:scheme_adanet}
 \end{figure}
 
@@ -743,14 +740,14 @@ TODO: в статье нет сотфмакса
 
 В работе~\cite{meta_sgd} рассматривается оптимизация метапараметров (шага градиентного спуска $\beta_{\text{lr}}$ и начального распределения параметров $\boldsymbol{\theta}^0$). Рассматривается задача оптимизации параметров модели в случае, когда количество примеров невелико. Для этого проводится оптимизация оператора оптимизации, который выглядит следующим образом:
 \[
-    T(\boldsymbol{\theta}| L, \mathbf{y}, \mathbf{X},  \mathbf{h}, \boldsymbol{\beta})  = \boldsymbol{\theta}^0 - \boldsymbol{\beta}\nabla L(\mathbf{X}, \mathbf{y},\boldsymbol{\theta}^0, \mathbf{h}),
+    T(\boldsymbol{\theta}| L, \mathbf{y}, \mathbf{X},  \mathbf{h}, \boldsymbol{\beta})  = \boldsymbol{\theta}^0 - \boldsymbol{\beta}\nabla L(\boldsymbol{\theta}^0, \mathbf{h}, \mathbf{X}, \mathbf{y},),
 \]
 где векторы $\boldsymbol{\theta}^0$ и $\boldsymbol{\beta}$ являются параметрами оператора $T$. Задача оптимизации параметров оператора $T$ рассматривается как задача многзадачного обучения (англ. multitask learning), когда оператор оптимизируется с учетом нескольких различных выборок и различных функций $L$, определенных отдельно для каждой выборки.
 
 
 В работе~\cite{l2l} рассматирвается задача восстановления параметров модели по параметрам  другой модели, чьи параметры были получены оптимизацией функции потерь на выборке меньшей мощности. Задачу можно рассматривать как задачу нахождения параметров некоторого оператора оптимизации $T:\boldsymbol{\theta}^0 \to \boldsymbol{\theta},$ где $\boldsymbol{\theta}^0$ --- параметры модели, оптимизированной на небольшой выборке.  Предлагается функция оптимизации:
 \[
-    T = \argmin ||\hat{\boldsymbol{\theta}} -  \boldsymbol{\theta}^0||_2^2 + \beta_{\lambda} L(\hat{\mathbf{X}}, \hat{\mathbf{y}},\boldsymbol{\theta}, \mathbf{h}),
+    T = \argmin ||\hat{\boldsymbol{\theta}} -  \boldsymbol{\theta}^0||_2^2 + \beta_{\lambda} L(\boldsymbol{\theta},  \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}),
 \]
 где $\boldsymbol{\theta}$ --- параметры модели, обученной по полной выборке $\mathfrak{D}$, $\hat{\mathfrak{D}}$ --- выборка меньшей мощности, $\beta_{\lambda}$ --- настраиваемый метапараметр.
 

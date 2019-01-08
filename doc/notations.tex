@@ -29,7 +29,7 @@ $p(y|\mathbf{X}, \mathbf{W}, \boldsymbol{\Gamma})$ --- правдоподоби�
 $p(y|\mathbf{X}, \mathbf{h})$ --- правдоподобие модели\\
 $q(\mathbf{W}, \boldsymbol{\Gamma})$ --- аппроксимирующее распределение\\
 $\boldsymbol{\theta} \in \mathbb{R}^u$ --- оптимизируемые параметры модели\\
-$L(\mathbf{X}, \mathbf{y},\boldsymbol{\theta}, \mathbf{h})$ --- функция потерь\\
-$Q(\mathbf{X}, \mathbf{y}, \boldsymbol{\theta}, \mathbf{h})$ --- валидационная функция\\
-$T(L, \mathbf{y}, \mathbf{X}, \boldsymbol{\theta}, \mathbf{h}, \boldsymbol{\beta})$ --- оператор оптимизации\\
+$L(\boldsymbol{\theta}, \mathbf{h}, \mathbf{X}, \mathbf{y})$ --- функция потерь\\
+$Q(\mathbf{h}, \boldsymbol{\theta},  \mathbf{X}, \mathbf{y})$ --- валидационная функция\\
+$T(\boldsymbol{\theta}| L, \mathbf{y}, \mathbf{X},  \mathbf{h}, \boldsymbol{\beta})$ --- оператор оптимизации\\
 $\boldsymbol{\beta}$ --- вектор метапараметров\\
