@@ -365,25 +365,25 @@ z={({0.5*cos(45)},{0.5*sin(45)})},
 p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})d\mathbf{w}d\boldsymbol{\Gamma}.
 \end{equation}
 \end{defin}
-Получение значений апостериорного распределения и правдоподобия модели сетей глубокого обучения является вычислительно сложной процедурой. Для получения оценок на данные величины используют методы, такие как аппроксимация Лапласа~\cite{tokmakova} и вариационная нижняя оценка~\cite{nips}. 
+Получение значений апостериорного распределения и правдоподобия модели сетей глубокого обучения является вычислительно сложной процедурой. Для получения оценок на данные величины используют методы, такие как аппроксимация Лапласа~\cite{tokmakova} и вариационная нижняя оценка~\cite{nips}.  В данной работе в качестве метода получения оценок правдоподобия модели выступает вариационное распределение.
 
 \begin{defin}
-\textit{Аппроксимирующим распределением} назовем параметрическое распределение $q(\mathbf{w}, \boldsymbol{\Gamma})$, являющееся приближением  апостериорного распределения параметров и структуры $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{h}).$ 
+\textit{Вариационным распределением} назовем параметрическое распределение $q(\mathbf{w}, \boldsymbol{\Gamma})$, являющееся приближением  апостериорного распределения параметров и структуры $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{X}, \mathbf{y}, \mathbf{h}).$ 
 \end{defin}
 
 \begin{defin}
-\textit{ параметрами} модели $\boldsymbol{\theta} \in \mathbb{R}^u$ назовем параметры аппроксимирующего распределения $q$.
-\end{defin}
+\textit{Вариационными параметрами} модели $\boldsymbol{\theta} \in \mathbb{R}^u$ назовем параметры вариационного распределения $q$.
+\end{defin} 
 
 \begin{defin}
-Пусть задано аппроксимирующее распределения $q$.
+Пусть задано вариационное распределения $q$.
 \textit{Функцией потерь} $L( \boldsymbol{\theta}, \mathbf{h}, \mathbf{X}, \mathbf{y})$ для модели $\mathbf{f}$ назовем дифференцируемую функцию, принимаемую за качество модели на обучающей выборки при параметрах модели, получаемых из  распределения $q$.
 \end{defin}
 
-В качестве функции $L$ может выступать логарифм правдоподобия выборки $\text{log}~p(y|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})$  и логарифм апостериорной вероятности \text{log}~$p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}) $ параметров и структуры модели на обучающей выборке.
+В качестве функции $L$ может выступать минус логарифм правдоподобия выборки $\text{log}~p(y|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})$  и логарифм апостериорной вероятности \text{log}~$p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}) $ параметров и структуры модели на обучающей выборке.
 
 \begin{defin}
-Пусть задано аппроксимирующее распределения $q$ и функция потерь $L$. 
+Пусть задано вариационное распределения $q$ и функция потерь $L$. 
 \textit{Функцией валидации} $Q(\mathbf{h}, \boldsymbol{\theta}, \mathbf{X}, \mathbf{y} )$ для модели $\mathbf{f}$ назовем дифференцируемую функцию, принимаемую за качество модели при векторе $\boldsymbol{\theta}$, заданном неявно.
 \end{defin}
  
@@ -391,12 +391,12 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\mathbf{y
 В данной работе задача выбора структуры модели и параметров модели ставится как двухуровневая задача оптимизации:
 \begin{equation}
 \label{eq:optim_problem}
-	\mathbf{h}^{*} = \argmax_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{h},  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y} ),
+	\mathbf{h}^{*} = \argmin_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{h},  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y} ),
 \end{equation}
 где $\boldsymbol{\theta}^{*}$ --- решение задачи оптимизации
 \begin{equation}
 \label{eq:optim_problem_in}
-   \boldsymbol{\theta}^{*} = \argmax_{\boldsymbol{\theta} \in \mathbb{R}^u} L(\boldsymbol{\theta},  \mathbf{h},  \mathbf{X}, \mathbf{y}).
+   \boldsymbol{\theta}^{*} = \argmin_{\boldsymbol{\theta} \in \mathbb{R}^u} L(\boldsymbol{\theta},  \mathbf{h},  \mathbf{X}, \mathbf{y}).
 \end{equation}
 
 \begin{defin}
@@ -405,18 +405,18 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\mathbf{y
 
 Рассмотрим для примера базовый вариант выбора модели с применением функций $q, L, Q$.
 Будем полагать, что задано разбиение выборки на обучающую $\mathfrak{D}_\text{train}$ и валидационную $\mathfrak{D}_\text{valid}$ части.
-Положим в качестве оптимизируемых параметров $\boldsymbol{\theta}$ параметры $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$ модели:
+Положим в качестве вариационных параметров $\boldsymbol{\theta}$ параметры $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$ модели:
 \[
     \boldsymbol{\theta} = [\mathbf{w}, \boldsymbol{\Gamma}].
 \]
 Пусть также задано априорное распределение $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})$.
-Положим в качестве функции $L$ логарифм апостериорной вероятности модели:
+Положим в качестве функции $L$ минус логарифм апостериорной вероятности модели:
 \[
-    L = \sum_{\mathbf{x},y \in \mathfrak{D}_\text{train}} \text{log}p(y, \mathbf{w}, \boldsymbol{\Gamma}|\mathbf{x}).
+    L = -\sum_{\mathbf{x},y \in \mathfrak{D}_\text{train}} \text{log}p(y, \mathbf{w}, \boldsymbol{\Gamma}|\mathbf{x}).
 \]
-Положим в качестве функции $Q$ правдоподобия выборки при условии параметров $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$:
+Положим в качестве функции $Q$  минус правдоподобие выборки при условии параметров $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$:
 \[
-    Q = \sum_{\mathbf{x},y \in \mathfrak{D}_\text{valid}} \text{log}p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}).
+    Q = -\sum_{\mathbf{x},y \in \mathfrak{D}_\text{valid}} \text{log}p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}).
 \]
 Оптимизация параметров и структуры производится по обучающей выборке. Гиперпараметры $\mathbf{h}$ выступают в качестве регуляризатора, чья оптимизация производится по валидационной выборке. Подобная оптимизация позволяет предотвратить переобучение модели~\cite{hyper}.
 
@@ -532,15 +532,15 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\mathbf{y
 \]
 где $\beta_{\text{lr}}$ --- шаг градиентного спуска, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$.
 
-В случае оптимизации гиперпараметров оператор оптимизации применяется не к оптимизируемым параметрам $\boldsymbol{\theta}$, а к гиперпараметрам $\mathbf{h}$:
+В случае оптимизации гиперпараметров оператор оптимизации применяется не к вариационным параметрам $\boldsymbol{\theta}$, а к гиперпараметрам $\mathbf{h}$:
 \begin{equation}
 \label{eq:hyperoptim_operator}
     \mathbf{h} = T(\mathbf{h} | Q,  \mathbf{X},  \mathbf{y},\boldsymbol{\theta}^{*}, \boldsymbol{\beta}),
 \end{equation}
-где $\boldsymbol{\theta}^{*}$ --- оптимизируемые параметры, полученые в ходе решения задачи оптимизации~\eqref{eq:optim_problem_in}.
+где $\boldsymbol{\theta}^{*}$ --- вариационные параметры, полученые в ходе решения задачи оптимизации~\eqref{eq:optim_problem_in}.
 
 В случае, если для решения задачи~\eqref{eq:optim_problem_in} применяется несколько шагов оператора оптимизации~\eqref{eq:optim_operator},
-$\boldsymbol{\theta}^{*}$ рассматривается как рекурсивная функция от начального приближения оптимизируемых параметров $\boldsymbol{\theta}^{0}$ и вектора гиперпараметров $\mathbf{h}$:
+$\boldsymbol{\theta}^{*}$ рассматривается как рекурсивная функция от начального приближения вариационных параметров $\boldsymbol{\theta}^{0}$ и вектора гиперпараметров $\mathbf{h}$:
 \begin{equation}
 \label{eq:param_trace}
     \boldsymbol{\theta}^{*} = T \circ \dots \circ T(\boldsymbol{\theta}^0 | L, \mathbf{X}, \mathbf{y},  \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta}^{*}(\boldsymbol{\theta}^{0}, \mathbf{h}).
@@ -614,7 +614,7 @@ TODO: в статье нет сотфмакса
 
 \par{\textbf{Стохастическое порождение структур. }}
 Одним из возможных направлений для порождения структр моделей глубокого обучения выступает стохастическое порождение структур.
-Данный тип порождения предполагает, что структуры порождаются случайно в соответствие  оптимизируемым распределением, заданным на структурах $q(\boldsymbol{\Gamma})$. Затем выбирается одна, либо несколько наилучших структур с учетом валидационной функции $Q$ или внешних, возможно недиффиренециремых, критериев качества. Итоговая модель получается путем оптимизации параметров модели при выбранной структуре $\boldsymbol{\Gamma}$. 
+Данный тип порождения предполагает, что структуры порождаются случайно в соответствие  вариационным распределением, заданным на структурах $q(\boldsymbol{\Gamma})$. Затем выбирается одна, либо несколько наилучших структур с учетом валидационной функции $Q$ или внешних, возможно недиффиренециремых, критериев качества. Итоговая модель получается путем оптимизации параметров модели при выбранной структуре $\boldsymbol{\Gamma}$. 
 Заметим, что в ряде работ, одновременно порождается не только структура модели, но и итоговые параметры.
 
 В работе~\cite{cib} рассматривается порождение моделей, оптимизируемых без учителя. Модель представляется многослойным перцептроном вида:

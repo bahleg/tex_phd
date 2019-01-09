@@ -303,16 +303,18 @@
 
 \begin{document}
 
-
+\iffalse
 \input{dis_title}
 \tableofcontents{}%это оглавление
 \input{dis_intro}
 \clearpage
 \chapter{Постановка задачи последовательного выбора моделей}
-\input{review}
+%\input{review}
 \clearpage
+\fi
 \chapter{Выбор модели с использованием вариационного вывода}
 \input{var_inf}
+\iffalse
 \clearpage
 \chapter{Оптимизация гиперпараметров в задаче выбора модели}
 \input{hyperparams}
@@ -344,6 +346,7 @@
 \addcontentsline{toc}{chapter}{Список использованных источников}
 \bibliographystyle{gost71u}
 \bibliography{dis_literature}
+\fi
 
 
 \end{document}
