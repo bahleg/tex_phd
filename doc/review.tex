@@ -527,9 +527,10 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\mathbf{y
 Пример схожего описания оптимизации модели с использованием оператора оптимизации можно найти в~\cite{early}.
 
 Частным случаем оператора оптимизации является оператор стохастического спуска:
-\[
+\begin{equation}
+\label{eq:sgd_operator}
     T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L(\boldsymbol{\theta},   \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}),
-\]
+\end{equation}
 где $\beta_{\text{lr}}$ --- шаг градиентного спуска, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$.
 
 В случае оптимизации гиперпараметров оператор оптимизации применяется не к вариационным параметрам $\boldsymbol{\theta}$, а к гиперпараметрам $\mathbf{h}$:

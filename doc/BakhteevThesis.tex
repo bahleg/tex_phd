@@ -26,6 +26,23 @@
 \usetikzlibrary{positioning}
 
 
+\def\algorithmicrequire{\textbf{Вход:}}
+\def\algorithmicensure{\textbf{Выход:}}
+\def\algorithmicif{\textbf{если}}
+\def\algorithmicthen{\textbf{то}}
+\def\algorithmicelse{\textbf{иначе}}
+\def\algorithmicelsif{\textbf{иначе если}}
+\def\algorithmicfor{\textbf{для}}
+\def\algorithmicforall{\textbf{для всех}}
+\def\algorithmicdo{}
+\def\algorithmicwhile{\textbf{пока}}
+\def\algorithmicrepeat{\textbf{повторять}}
+\def\algorithmicuntil{\textbf{пока}}
+\def\algorithmicloop{\textbf{цикл}}
+% переопределение стиля комментариев
+\def\algorithmiccomment#1{\quad// {\sl #1}}
+
+
 %\usepackage[cp1251]{inputenc}
 \renewcommand{\rmdefault}{cmr}
 \usepackage{dsfont} % for indicator function
@@ -309,9 +326,9 @@
 \input{dis_intro}
 \clearpage
 \chapter{Постановка задачи последовательного выбора моделей}
-%\input{review}
-\clearpage
 \fi
+\input{review}
+\clearpage
 \chapter{Выбор модели с использованием вариационного вывода}
 \input{var_inf}
 \iffalse
@@ -328,6 +345,7 @@
 \addcontentsline{toc}{section}{Заключение}
 \input{dis_conclusion}
 \chapter*{Заключение}
+\fi
 \clearpage
 \addcontentsline{toc}{chapter}{Список оcновных обозначений}
 \chapter*{Список оcновных обозначений}
@@ -346,7 +364,7 @@
 \addcontentsline{toc}{chapter}{Список использованных источников}
 \bibliographystyle{gost71u}
 \bibliography{dis_literature}
-\fi
+
 
 
 \end{document}
