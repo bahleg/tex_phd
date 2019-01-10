@@ -133,7 +133,7 @@ $$
 
 Оценка~\eqref{eq:var_elbo} является нижней, поэтому может давать некорректные оценки для правдоподобия~\eqref{eq:model_evidence}. Для того, чтобы оценить величину этой ошибки, докажем следующее утверждение.
 
-\begin{theorem}[~\cite{Bishop}]\label{st:st1} Пусть задано множество $\mathfrak{Q} = \{q(\mathbf{w})\}$ непрерывных распределений. Максимизация вариационной нижней оценки $$\int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~\frac{p(\mathbf{y},\mathbf{w}|\mathbf{X},\mathbf{h})}{q(\mathbf{w})}d\mathbf{w}$$  логарифма интеграла~\eqref{eq:evidence}  эквивалентна минимизации расстояния Кульбака--Лейблера между распределением $q(\mathbf{w}) \in \mathfrak{Q}$ и апостериорным распределением параметров $p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h})$:
+\begin{theorem}[\cite{Bishop}]\label{st:st1} Пусть задано множество $\mathfrak{Q} = \{q(\mathbf{w})\}$ непрерывных распределений. Максимизация вариационной нижней оценки $$\int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~\frac{p(\mathbf{y},\mathbf{w}|\mathbf{X},\mathbf{h})}{q(\mathbf{w})}d\mathbf{w}$$  логарифма интеграла~\eqref{eq:evidence}  эквивалентна минимизации расстояния Кульбака--Лейблера между распределением $q(\mathbf{w}) \in \mathfrak{Q}$ и апостериорным распределением параметров $p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h})$:
 \begin{equation}
 \label{eq:optim}
     \hat{q} = \argmax_{q \in Q} \int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~\frac{p(\mathbf{y},\mathbf{w}|\mathbf{X},\mathbf{h})}{q(\mathbf{w})}d\mathbf{w} \Leftrightarrow 	
@@ -204,8 +204,11 @@ $$
 Итоговая функция оптимизации~\eqref{eq:norm_max} имеет вид
 \begin{equation}
 \label{eq:gaus}
-	\mathbf{f} = \argmax_{\mathbf{A}_q, \boldsymbol{\mu}_q} \sum_{i=1}^m \textnormal{log}~p({y}_i|\mathbf{x}_i, \mathbf{w}_i) - D_\textnormal{KL}\bigl(q (\mathbf{w} )|| p (\mathbf{w}|\mathbf{h})\bigr).
+	\mathbf{f} = \argmax_{\mathbf{A}_q, \boldsymbol{\mu}_q} \sum_{i=1}^m \textnormal{log}~p({y}_i|\mathbf{x}_i, \mathbf{w}_i) - D_\textnormal{KL}\bigl(q (\mathbf{w} )|| p (\mathbf{w}|\mathbf{h})\bigr) =
 \end{equation}
+\[
+   = \argmin_{\boldsymbol{\theta}} L( \boldsymbol{\theta}, \mathbf{h}, \mathbf{X}, \mathbf{y}).
+\]
 
 %\begin{example_empty} 
 %\hspace{\parindent}
@@ -262,7 +265,7 @@ $$
 
 %\end{example_empty}
 \textbf{Аппроксимация с использованием градиентного метода. }
-В качестве множества распределений $\mathfrak{Q} = \{q(\mathbf{w})\}$, аппроксимирующих неизвестное распределение $\textnormal{log}~p(\mathbf{y}|\mathbf{X},\mathbf{h})$, используются распределения параметров, полученные в ходе их оптимизации. 
+В качестве множества распределений $\mathfrak{Q} = \{q(\mathbf{w})\}$, аппроксимирующих неизвестное распределение $\textnormal{log}~p(\mathbf{y}|\mathbf{X},\mathbf{h})$, используются распределения параметров, полученные в ходе их оптимизации.
 
 Представим неравенство~\eqref{eq:var_elbo}
 \begin{equation}
@@ -283,7 +286,7 @@ $\mathsf{E}_{q(\mathbf{w)}}\bigl(\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mat
 
 Запустим $r$ процедур оптимизаций модели $\mathbf{f}$ из разных начальных приближений:
 \[
-	L = -\sum_{l=1}^r \text{log}p(\mathbf{y}, \mathbf{w}^l|\mathbf{X}, \mathbf{h})  \to \min,
+	L( \boldsymbol{\theta}, \mathbf{h}, \mathbf{X}, \mathbf{y}) = -\sum_{l=1}^r \text{log}p(\mathbf{y}, \mathbf{w}^l|\mathbf{X}, \mathbf{h})  \to \min, \quad \boldsymbol{\theta} = [\mathbf{w}^1, \dots, \mathbf{w}^r],
 \] 
 где $r$ --- число оптимизаций,
 \begin{equation}
@@ -296,7 +299,7 @@ $\mathsf{E}_{q(\mathbf{w)}}\bigl(\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mat
 	\mathbf{w}^1, \dots, \mathbf{w}^r \sim q^0(\mathbf{w}). 
 \]
 
-Параметры $\mathbf{w}^1, \dots, \mathbf{w}^r$ задают вариационное распределение $q$: $$\boldsymbol{\theta} = [\mathbf{w}^1, \dots, \mathbf{w}^r].$$
+
 %Обозначим за  $\mathbf{w}^l, g \in \{1,\dots,r\}$ значения параметров $\mathbf{w}^1, \dots, \mathbf{w}^r$ на  текущем шаге оптимизации. 
 
 
@@ -305,26 +308,26 @@ $\mathsf{E}_{q(\mathbf{w)}}\bigl(\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mat
 Оператором градиентного спуска назовем оператор оптимизации вида
 \begin{equation}
 \label{eq:sgd}
-	T(\boldsymbol{\theta}) = \boldsymbol{\theta} - \beta \nabla L, 
+	T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, \boldsymbol{\beta_{\text{lr}}}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L( \boldsymbol{\theta}, \mathbf{h}, \mathbf{X}, \mathbf{y}), 
 \end{equation}
-где  $\beta$ --- длина шага градиентного спуска.
+где  $\beta_{\text{lr}}$ --- длина шага градиентного спуска.
 \end{defin}
 
 Пусть значения $\mathbf{w}^1, \dots, \mathbf{w}^r$  --- реализации случайной величины из некоторого распределения $q(\mathbf{w})$. Начальная энтропия распределения $q(\mathbf{w})$ соответствует энтропии распределения $q^0(\mathbf{w})$, из которого были порождены начальные приближения оптимизации параметров $\mathbf{w}^1, \dots, \mathbf{w}^r$. Под действием оператора $T$ распределение параметров $\mathbf{w}_1, \dots, \mathbf{w}_r$ изменяется. Для учета энтропии распределений, полученных в ходе оптимизации,
 { формализуем метод,  представленный в~\cite{early}. }
 
 \begin{theorem}~Пусть $T$ --- оператор градиентного спуска,
- $L$ --- функция потерь, градиент $\nabla L$ которой имеет константу Липшица $C_L$.  Пусть $\mathbf{w}^1,\dots,\mathbf{w}^r$ ---  начальные приближения оптимизации модели, где $r$ --- число начальных приближений. Пусть $\beta$ --- длина шага градиентного спуска, такая что
+ $L$ --- функция потерь, градиент $\nabla L$ которой имеет константу Липшица $C_L$.  Пусть $\mathbf{w}^1,\dots,\mathbf{w}^r$ ---  начальные приближения оптимизации модели, где $r$ --- число начальных приближений. Пусть $\beta_{\text{lr}}$ --- длина шага градиентного спуска, такая что
 \begin{equation}
 \label{eq:ineq}
-\beta<\frac{1}{C_L}, \quad \beta < \bigl(\max_{g \in \{1,\dots,r\}}\lambda_\textnormal{max} (\mathbf{H}(\mathbf{w}^l))\bigr)^{-1}, 
+\beta_{\text{lr}}<\frac{1}{C_L}, \quad \beta_{\text{lr}} < \bigl(\max_{g \in \{1,\dots,r\}}\lambda_\textnormal{max} (\mathbf{H}(\mathbf{w}^l))\bigr)^{-1}, 
 \end{equation}
 где $\lambda_\textnormal{max}$ --- наибольшее по модулю собственное значение гессиана  $\mathbf{H}$ функции потерь $L$.
 
 При выполнении неравенств~\eqref{eq:ineq} разность энтропий распределений $q'(\mathbf{w}), q(\mathbf{w})$ на смежных шагах почти наверное сходится к следующему выражению: 
 \begin{equation}
 \label{eq:entropy}
-	\mathsf{S}\bigl(q'(\mathbf{w})) -  \mathsf{S}\bigl(q(\mathbf{w}))  \approx  \frac{1}{r}\sum_{l=1}^r \bigl(-\beta \textnormal{Tr}[\mathbf{H}(\mathbf{w}'^l)] - \beta \textnormal{Tr}[\mathbf{H}(\mathbf{w}'^l)\mathbf{H}(\mathbf{w}'^l)]  \bigr) + o_{\beta^2 \to 0}(1),
+	\mathsf{S}\bigl(q'(\mathbf{w})) -  \mathsf{S}\bigl(q(\mathbf{w}))  \approx  \frac{1}{r}\sum_{l=1}^r \bigl(-\beta_{\text{lr}} \textnormal{Tr}[\mathbf{H}(\mathbf{w}'^l)] - \beta_{\text{lr}} \textnormal{Tr}[\mathbf{H}(\mathbf{w}'^l)\mathbf{H}(\mathbf{w}'^l)]  \bigr) + o_{\beta_{\text{lr}}^2 \to 0}(1),
 \end{equation}
 где $\mathbf{H}$ --- гессиан функции потерь $L$.
 \end{theorem}
@@ -333,9 +336,9 @@ $\mathsf{E}_{q(\mathbf{w)}}\bigl(\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mat
 
 \begin{proof}
 Предварительно приведем две леммы, требуемые для доказательства теоремы.
-\begin{lemma}[~\cite{sgd_conv}] Пусть $T$ --- оператор градиентного спуска, $L$ --- дважды дифференцируемая функция потерь, градиент $\nabla L$ которой имеет константу Липшица $C_L$.  Пусть для длины шага $\beta$ выполнено неравенство 
+\begin{lemma}[~\cite{sgd_conv}] Пусть $T$ --- оператор градиентного спуска, $L$ --- дважды дифференцируемая функция потерь, градиент $\nabla L$ которой имеет константу Липшица $C_L$.  Пусть для длины шага $\beta_{\text{lr}}$ выполнено неравенство 
 $
-	\beta<\frac{1}{C_L}.
+	\beta_{\text{lr}}<\frac{1}{C_L}.
 $
 Тогда $T$ является диффеоморфизмом.
 \end{lemma}
@@ -349,7 +352,7 @@ $
 
 
 
-Рассмотрим очередной шаг оптимизации. При $\beta<\frac{1}{C}$ оператор градиентного спуска $T$ является диффеоморфизмом, а значит, и биекцией, справедлива формула~\eqref{eq:entropy_biject}.
+Рассмотрим очередной шаг оптимизации. При $\beta_{\text{lr}}<\frac{1}{C}$ оператор градиентного спуска $T$ является диффеоморфизмом, а значит, и биекцией, справедлива формула~\eqref{eq:entropy_biject}.
 По усиленному закону больших чисел 
 \[
 	\mathsf{S}\bigl(q'(\mathbf{w})\bigr) -  \mathsf{S}\bigl(q(\mathbf{w})\bigr)  \approx  \frac{1}{r}\sum_{l=1}^r \textnormal{log}~\left|\frac{\partial{T(\mathbf{w}'^l)}}{\partial{\mathbf{w}}}\right|.
@@ -357,15 +360,15 @@ $
 Логарифм якобиана  $\textnormal{log}~\left|\frac{\partial{T(\mathbf{w}'^l)}}{\partial{\mathbf{w}}}\right|$ оператора $T$ запишем как%~\cite{early}:
 \begin{equation}
 \label{eq:to_taylor}
-	\textnormal{log}~\left|\frac{\partial{T(\mathbf{w}'^l)}}{\partial{\mathbf{w}}}\right| = \textnormal{log}~|\mathbf{I} - \beta\mathbf{H}| = \sum_{i=1}^{u} \textnormal{log}~(1-\beta\lambda_i),
+	\textnormal{log}~\left|\frac{\partial{T(\mathbf{w}'^l)}}{\partial{\mathbf{w}}}\right| = \textnormal{log}~|\mathbf{I} - \beta_{\text{lr}}\mathbf{H}| = \sum_{i=1}^{u} \textnormal{log}~(1-\beta_{\text{lr}}\lambda_i),
 \end{equation}
 где $\lambda_i$ --- $i$-е собственное значение гессиана $\mathbf{H}$.
 
-При $(\beta\lambda_i) ^ 2 \leq (\beta\lambda_\textnormal{max})^2 < 1$ выражение~\eqref{eq:to_taylor} раскладывается в ряд Тейлора:
+При $(\beta_{\text{lr}}\lambda_i) ^ 2 \leq (\beta_{\text{lr}}\lambda_\textnormal{max})^2 < 1$ выражение~\eqref{eq:to_taylor} раскладывается в ряд Тейлора:
 \[
-	 \sum_{t=1}^{u} \textnormal{log}~(1-\beta\lambda_i) =  -\beta \textnormal{Tr}[\mathbf{H}(\mathbf{w}'^l)] - \beta^2 \textnormal{Tr}[\mathbf{H}(\mathbf{w}'^l)\mathbf{H}(\mathbf{w}'^l)] + o_{\beta^2 \to 0}(1).
+	 \sum_{t=1}^{u} \textnormal{log}~(1-\beta_{\text{lr}}\lambda_i) =  -\beta_{\text{lr}} \textnormal{Tr}[\mathbf{H}(\mathbf{w}'^l)] - \beta_{\text{lr}}^2 \textnormal{Tr}[\mathbf{H}(\mathbf{w}'^l)\mathbf{H}(\mathbf{w}'^l)] + o_{\beta_{\text{lr}}^2 \to 0}(1).
 \]
-Просуммировав полученные выражения для каждой точки мультистарта и вынеся $o_{\beta^2 \to 0}(1)$ за скобки, получим выражение~\eqref{eq:entropy}, что и требовалось доказать.
+Просуммировав полученные выражения для каждой точки мультистарта и вынеся $o_{\beta_{\text{lr}}^2 \to 0}(1)$ за скобки, получим выражение~\eqref{eq:entropy}, что и требовалось доказать.
 
 \end{proof} 	
 
@@ -378,9 +381,9 @@ $
 \textnormal{log}~\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}) \approx \frac{1}{r} \sum_{g = 1}^r L(\mathbf{w}^l_\tau, \mathbf{X}, \mathbf{y})  + 
 \end{equation}
 \[
-+\mathsf{S}\big(q^0(\mathbf{w})\bigr) + \frac{1}{r}\sum_{b=1}^\tau\sum_{l=1}^r \bigl(-\beta \textnormal{Tr}[\mathbf{H}(\mathbf{w}_b^l)] - \beta^2 \textnormal{Tr}[\mathbf{H}(\mathbf{w}_b^l)\mathbf{H}(\mathbf{w}_b^l)]  \bigr) 
++\mathsf{S}\big(q^0(\mathbf{w})\bigr) + \frac{1}{r}\sum_{b=1}^\tau\sum_{l=1}^r \bigl(-\beta_{\text{lr}} \textnormal{Tr}[\mathbf{H}(\mathbf{w}_b^l)] - \beta_{\text{lr}}^2 \textnormal{Tr}[\mathbf{H}(\mathbf{w}_b^l)\mathbf{H}(\mathbf{w}_b^l)]  \bigr) 
 \]
-с точностью до слагаемых вида $o_{\beta^2 \to 0}(1)$,
+с точностью до слагаемых вида $o_{\beta_{\text{lr}}^2 \to 0}(1)$,
 где $\mathbf{w}_b^l$ --- $l$-я реализация параметров модели на шаге оптимизации $b$, $q^0(\mathbf{w})$ --- начальное распределение.
 \end{theorem}
 
@@ -391,10 +394,10 @@ $
 \mathsf{S}\bigl(q^\tau(\mathbf{w})\bigr) = \mathsf{S}\bigl(q^0(\mathbf{w})\bigr) - \mathsf{S}\bigl(q^0(\mathbf{w})\bigr) + \mathsf{S}\bigl(q^1(\mathbf{w})\bigr) - \mathsf{S}\bigl(q^1(\mathbf{w})\bigr) +\dots -
 \mathsf{S}\bigl(q^{\tau-1}(\mathbf{w})\bigr) + \mathsf{S}\bigl(q^\tau(\mathbf{w})\bigr).
 \]
-Каждая разность энтропий вида $\mathsf{S}\bigl(q^b(\mathbf{w})\bigr) - \mathsf{S}\bigl(q^{b-1}(\mathbf{w})\bigr)$ по теореме с точностью до $o_{\beta^2 \to 0}(1)$ представима в виде
+Каждая разность энтропий вида $\mathsf{S}\bigl(q^b(\mathbf{w})\bigr) - \mathsf{S}\bigl(q^{b-1}(\mathbf{w})\bigr)$ по теореме с точностью до $o_{\beta_{\text{lr}}^2 \to 0}(1)$ представима в виде
 \begin{equation}
 \label{eq:eq_sums}
-	\mathsf{S}\bigl(q^b(\mathbf{w})\bigr) -  \mathsf{S}\bigl(q^{b-1}(\mathbf{w})\bigr)  \approx  \frac{1}{r}\sum_{l=1}^r \bigl(-\beta \textnormal{Tr}[\mathbf{H}(\mathbf{w}_b^l)] - \beta^2 \textnormal{Tr}[\mathbf{H}(\mathbf{w}_b^l)\mathbf{H}(\mathbf{w}_b^l)]  \bigr).
+	\mathsf{S}\bigl(q^b(\mathbf{w})\bigr) -  \mathsf{S}\bigl(q^{b-1}(\mathbf{w})\bigr)  \approx  \frac{1}{r}\sum_{l=1}^r \bigl(-\beta_{\text{lr}} \textnormal{Tr}[\mathbf{H}(\mathbf{w}_b^l)] - \beta_{\text{lr}}^2 \textnormal{Tr}[\mathbf{H}(\mathbf{w}_b^l)\mathbf{H}(\mathbf{w}_b^l)]  \bigr).
 \end{equation}
 
 Формула~\eqref{eq:ev_grad_full} получается подстановкой в выражение~\eqref{eq:var_elbo_entropy} суммы выражений вида~\eqref{eq:eq_sums}, а также начальной энтропии $\mathsf{S}\bigl(q^0(\mathbf{w}))$.
@@ -402,10 +405,10 @@ $
 
 В~\cite{early} предлагается алгоритм приближенного вычисления для выражения, находящегося под знаком суммы в~\eqref{eq:ev_grad_full}:
 \[
-	-\beta \textnormal{Tr}[\mathbf{H}(\mathbf{w}^l)] - \beta^2 \textnormal{Tr}[\mathbf{H}(\mathbf{w}^l)\mathbf{H}(\mathbf{w}^l)]  \approx \mathbf{r}_0^\mathsf{T}\bigl(-2\mathbf{r}_0 + 3\mathbf{r}_1 -\mathbf{r}_2\bigr),
+	-\beta_{\text{lr}} \textnormal{Tr}[\mathbf{H}(\mathbf{w}^l)] - \beta_{\text{lr}}^2 \textnormal{Tr}[\mathbf{H}(\mathbf{w}^l)\mathbf{H}(\mathbf{w}^l)]  \approx \mathbf{r}_0^\mathsf{T}\bigl(-2\mathbf{r}_0 + 3\mathbf{r}_1 -\mathbf{r}_2\bigr),
 \]
 где вектор $\mathbf{r}_0$  порождается из нормального распределения:
-$$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \mathbf{r}_0 - \beta \mathbf{r}_0^\mathsf{T} \nabla \nabla L, \quad \mathbf{r}_2 = \mathbf{r}_1 - \beta \mathbf{r}_1^\mathsf{T} \nabla \nabla L.$$
+$$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \mathbf{r}_0 - \beta_{\text{lr}} \mathbf{r}_0^\mathsf{T} \nabla \nabla L, \quad \mathbf{r}_2 = \mathbf{r}_1 - \beta_{\text{lr}} \mathbf{r}_1^\mathsf{T} \nabla \nabla L.$$
 
 
 Заметим, что при приближении параметров модели к точке экстремума оценка правдоподобия устремляется в минус бесконечность в силу постоянно убывающей энтропии. Таким образом, чем ближе градиентный метод приближает параметры модели к точке экстремума, тем менее точной становится оценка правдоподобия модели. Один из методов борьбы с данной проблемой представлен в следующих параграфах.
@@ -424,8 +427,8 @@ $$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \m
 \STATE $\boldsymbol{\theta} = T(\boldsymbol{\theta});$
 \FOR{$l=1,\dots,r$}
 \STATE $\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$;
-\STATE $\mathbf{r}_1 = \mathbf{r}_0 - \beta \mathbf{r}^{\mathsf{T}}_0 \nabla \nabla L(\mathbf{w}^l, \mathbf{y}, \mathbf{X})$;
-\STATE $\mathbf{r}_2 = \mathbf{r}_1 - \beta \mathbf{r}^{\mathsf{T}}_1 \nabla \nabla L(\mathbf{w}^l, \mathbf{y}, \mathbf{X})$;
+\STATE $\mathbf{r}_1 = \mathbf{r}_0 - \beta_{\text{lr}} \mathbf{r}^{\mathsf{T}}_0 \nabla \nabla L(\mathbf{w}^l, \mathbf{y}, \mathbf{X})$;
+\STATE $\mathbf{r}_2 = \mathbf{r}_1 - \beta_{\text{lr}} \mathbf{r}^{\mathsf{T}}_1 \nabla \nabla L(\mathbf{w}^l, \mathbf{y}, \mathbf{X})$;
 \STATE $\mathsf{S}^l = \mathbf{r}_0^\mathsf{T}\bigl(-2\mathbf{r}_0 + 3\mathbf{r}_1 -\mathbf{r}_2\bigr)$;
 \ENDFOR
 \STATE $\mathsf{S} = \frac{1}{r}\sum_{l=1}^r \mathsf{S}^l$;
@@ -442,9 +445,9 @@ $$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \m
 \textbf{Модификация алгоритма оптимизации модели.} \\
 В качестве оператора $T$ предлагается использовать псевдослучайный стохастический градиентный спуск, т.е. градиентный спуск~\eqref{eq:sgd_operator}, оптимизирующий параметры $\mathbf{w}^1,\dots,\mathbf{w}^r$ по некоторой случайной подвыборке $\hat{\mathbf{X}}, \hat{\mathbf{y}}$, одинаковой для каждой точки старта $\mathbf{w}^1,\dots,\mathbf{w}^r$:
 \[
-    T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta} - \beta\nabla L(\boldsymbol{\theta},   \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}),
+    T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, \boldsymbol{\beta_{\text{lr}}}) = \boldsymbol{\theta} - \beta_{\text{lr}}\nabla L(\boldsymbol{\theta},   \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}),
 \]
-где $\beta_{\text{lr}}$ --- шаг градиентного спуска, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$.
+где $\beta{\text{lr}}$ --- шаг градиентного спуска, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$.
 
 где $\hat{\mathbf{X}}$ --- случайная подвыборка выборки ${\mathbf{X}}$, одинаковая для всех точек мультистарта, $\hat{\mathbf{y}}$ --- соответствующие метки классов, $$|\hat{\mathbf{X}}| = \hat{m}.$$
 
@@ -464,18 +467,18 @@ $$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \m
 Для достижения нижней оценки интеграла~\eqref{eq:var_elbo2}, более близкой к реальному значению логарифма интеграла~\eqref{eq:evidence}, чем оценка с использованием градиентного спуска, предлагается использовать стохастическую динамику Ланжевена~\cite{langevin}. Стохастическая динамика Ланжевена представляет собой вариант стохастического градиентного спуска с добавлением гауссового шума:
 \begin{equation}
 \label{eq:langevin}
-	T(\mathbf{w}) = \mathbf{w} -  \beta \nabla L -\frac{m}{\hat{m}}\textnormal{log}p(\hat{\mathbf{y}}|\hat{\mathbf{X}}, \mathbf{w},\mathbf{h}) + \boldsymbol{\varepsilon}, \quad  \boldsymbol{\varepsilon} \sim \mathcal{N}(\mathbf{0}, {\frac{\beta}{2}}\mathbf{I}),
+	T(\mathbf{w}) = \mathbf{w} -  \beta_{\text{lr}} \nabla L -\frac{m}{\hat{m}}\textnormal{log}p(\hat{\mathbf{y}}|\hat{\mathbf{X}}, \mathbf{w},\mathbf{h}) + \boldsymbol{\varepsilon}, \quad  \boldsymbol{\varepsilon} \sim \mathcal{N}(\mathbf{0}, {\frac{\beta_{\text{lr}}}{2}}\mathbf{I}),
 \end{equation}
-где $\hat{\mathbf{X}}$ --- псевдослучайная подвыборка, $\hat{\mathbf{y}}$ --- соответствующие метки, $\hat{m}$ --- размер подвыборки. Длина шага оптимизации $\beta$ удовлетворяет  {условиям, гарантирующим сходимость алгоритма в стандартных ситуациях~\cite{langevin}}:
+где $\hat{\mathbf{X}}$ --- псевдослучайная подвыборка, $\hat{\mathbf{y}}$ --- соответствующие метки, $\hat{m}$ --- размер подвыборки. Длина шага оптимизации $\beta_{\text{lr}}$ удовлетворяет  {условиям, гарантирующим сходимость алгоритма в стандартных ситуациях~\cite{langevin}}:
 \[
-	\sum_{\tau=1}^\infty \beta_\tau = \infty, \quad \sum_{\tau=1}^\infty \beta_\tau^2 < \infty.
+	\sum_{\tau=1}^\infty \beta_{\text{lr}}^\tau = \infty, \quad \sum_{\tau=1}^\infty (\beta_{\text{lr}}^\tau)^2 < \infty.
 \]
 
 Для оценки энтропии с учетом шума $\boldsymbol{\varepsilon}$ предлагается использовать следующее неравенство~\cite{entropy,var_grad}:
 \[
 \hat{\mathsf{S}}\bigl(q^\tau(\mathbf{w})\bigr)   \geq \frac{1}{2}u\textnormal{log}\left(\textnormal{exp}\left(\frac{2\mathsf{S}\bigl(q^\tau(\mathbf{w})\bigr)}{u}\right) + \textnormal{exp}\left(\frac{2\mathsf{S}\bigl( \boldsymbol{\varepsilon})}{u}\right)\right),
 \]
-{где  $\tau$ --- текущий шаг оптимизации,} $\mathsf{S}\bigl( \mathcal{N}({0}, {\frac{\beta}{2}})\bigr)$ --- энтропия нормального распределения, $\hat{\mathsf{S}}(q^\tau(\mathbf{w}))$ --- энтропия распределения $q^\tau$ с учетом добавленного шума~$\boldsymbol{\varepsilon}$.
+{где  $\tau$ --- текущий шаг оптимизации,} $\mathsf{S}\bigl( \mathcal{N}({0}, {\frac{\beta_{\text{lr}}}{2}})\bigr)$ --- энтропия нормального распределения, $\hat{\mathsf{S}}(q^\tau(\mathbf{w}))$ --- энтропия распределения $q^\tau$ с учетом добавленного шума~$\boldsymbol{\varepsilon}$.
 
 
 В отличие от стохастического градиентного спуска стохастическая динамика Ланжевена сходится к апостериорному распределению параметров $p(\mathbf{w}|\mathfrak{D},\mathbf{h})$~\cite{langevin, langevin_sato}.  График аппроксимации апостериорного распределения с использованием динамики Ланжевена представлен на рис.~\ref{fig:var},\textit{в}. При одинаковом количестве итераций динамика Ланжевена продолжает аппроксимировать апостериорное распределение, в то время как градиентный спуск сходится к моде распределения. {Как видно из графика, алгоритм, основанный на стохастической динамике Ланжевена, способен давать более точную вариационную оценку правдоподобия~\eqref{eq:var_elbo2}. В то же время алгоритм более требователен к настройке параметров оптимизации~\cite{sgld}: \textit{``быстро изменяющаяся кривизна [траекторий параметров модели] делает методы стохастической градиентной динамики Ланжевена по умолчанию неэффективными''.}}
@@ -546,7 +549,7 @@ $
 \item вариационная нижняя оценка правдоподобия~\eqref{eq:var_elbo} на обучающей выборке $\mathfrak{D}_\textnormal{train}$ для алгоритмов $4,5,6$.
 \end{enumerate}
 
-Для каждой модели назначались различные значения параметра $\alpha (\alpha \in \{10, \dots, 10^9\})$ и длины шага оптимизации $\beta$, отбирались наилучшие модели. 
+Для каждой модели назначались различные значения параметра $\alpha (\alpha \in \{10, \dots, 10^9\})$ и длины шага оптимизации $\beta_{\text{lr}}$, отбирались наилучшие модели. 
 
 
 
