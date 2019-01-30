@@ -17,14 +17,14 @@
 
 \section{Постановка задачи оптимизации правдоподобия моделей}
 Определим понятие статистической сложности модели. Сложностью модели будем называть \textit{правдоподобие модели}~\eqref{eq:evidence}.
-Пусть задано множество моделей $M$, для которых, возможно, не определена общая параметризация.
+Пусть задано множество моделей $M$, для которых, возможно, не задан граф параметрического семейства моделей.
 Для каждой модели $\mathbf{f} \in {M}$ заданы различные значения гиперпараметров $\mathbf{h}$. 
 Рассмотрим два подхода к сравнению сложностей моделей:
 \begin{enumerate}
-\item Модели $\mathbf{f}$ принадлежат одному семейству $\mathfrak{F}$. При таком подходе сравнение сложности различных моделей является  адекватным, т.к. они определены на общем пространстве структур $\amsmathbb{\Gamma}$ и параметров $\mathbb{W}$. Недостатком такого подхода является сложность вычисления правдоподобия модели в случае, когда структура $\boldsymbol{\Gamma}$ определена однозначно, что может противоречить введенным вероятностным предположениям о структуре модели.
-\item Модели $\mathbf{f}$  рассматриваются независимо от общей параметризации. Недостатком такого подхода является возможная некорректность сравнения моделей с заведомо различными структурами моделей, сильно отличающимися по количеству параметров. Возможным решение данного недостатка является введение дополнительного штрафа за большое количество параметров в модели~\cite{MacKay}.
+\item Модели $\mathbf{f}$ принадлежат одному параметрическому семейству моделей глубокого обучения $\mathfrak{F}$. При таком подходе сравнение сложности различных моделей является  адекватным, т.к. они определены на общем пространстве структур $\amsmathbb{\Gamma}$ и параметров $\mathbb{W}$. Возможно сравнение как статистической сложности модели, так и структурной.
+\item Модели $\mathbf{f}$  не имеют общего графа. В данном случае однозначно определить структурную сложность модели нельзя (TODO: теорема?), предлагается полагать, что структуры модели определены однозначно.
 \end{enumerate}
-В данном разделе рассматривается второй вариант. Будем полгать, что структура модели $\boldsymbol{\Gamma}$ для вероятностной модели глубокого обучения $\mathbf{f}$ определена однозначно. Тем не менее, основная часть данной главы также применима и ко первому варианту.
+В данном разделе рассматривается второй вариант. Будем полгать, что структура модели $\boldsymbol{\Gamma}$ для вероятностной модели глубокого обучения $\mathbf{f}$ определена однозначно. Тем не менее, основная часть данной главы также применима и к первому варианту.
 
 \begin{defin} Сложностью модели $\mathbf{f}$ назовем правдоподобие модели:
 \begin{equation}
@@ -87,7 +87,7 @@ $\mathbf{H}$ --- гессиан функции потерь $L$ модели:
 \[
 \mathbf{f} = \mathbf{f}_\textnormal{|V|}(\mathbf{f}_{|V|-1}(\dots \mathbf{f}_1(\mathbf{x}))),
 \]
-$\mathbf{f}_1, \dots, \mathbf{f}_|V|$ --- дифференцируемые функции, $\mathbf{f}_\textnormal{|V|}$ --- многомерная логистическая функция:
+$\mathbf{f}_1, \dots, \mathbf{f}_{|V|}$ --- дифференцируемые функции, $\mathbf{f}_\textnormal{|V|}$ --- многомерная логистическая функция:
 \[
 	\mathbf{f}_\textnormal{|V|} = \frac{\mathbf{f}_{|V|-1}(\dots \mathbf{f}_1(\mathbf{x}))}{\sum_{r=1}^Z \textnormal{exp}\bigl( {f}^{r}_{|V|-1}(\dots \mathbf{f}_1(\mathbf{x})) \bigr)},
 \]
@@ -308,7 +308,7 @@ $\mathsf{E}_{q(\mathbf{w)}}\bigl(\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mat
 Оператором градиентного спуска назовем оператор оптимизации вида
 \begin{equation}
 \label{eq:sgd}
-	T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, \boldsymbol{\beta_{\text{lr}}}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L( \boldsymbol{\theta}, \mathbf{h}, \mathbf{X}, \mathbf{y}), 
+	T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, {\beta_{\text{lr}}}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L( \boldsymbol{\theta}, \mathbf{h}, \mathbf{X}, \mathbf{y}), 
 \end{equation}
 где  $\beta_{\text{lr}}$ --- длина шага градиентного спуска.
 \end{defin}
@@ -320,7 +320,7 @@ $\mathsf{E}_{q(\mathbf{w)}}\bigl(\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mat
  $L$ --- функция потерь, градиент $\nabla L$ которой имеет константу Липшица $C_L$.  Пусть $\mathbf{w}^1,\dots,\mathbf{w}^r$ ---  начальные приближения оптимизации модели, где $r$ --- число начальных приближений. Пусть $\beta_{\text{lr}}$ --- длина шага градиентного спуска, такая что
 \begin{equation}
 \label{eq:ineq}
-\beta_{\text{lr}}<\frac{1}{C_L}, \quad \beta_{\text{lr}} < \bigl(\max_{g \in \{1,\dots,r\}}\lambda_\textnormal{max} (\mathbf{H}(\mathbf{w}^l))\bigr)^{-1}, 
+\beta_{\text{lr}}<\frac{1}{C_L}, \quad \beta_{\text{lr}} < \bigl(\max_{l \in \{1,\dots,r\}}\lambda_\textnormal{max} (\mathbf{H}(\mathbf{w}^l))\bigr)^{-1}, 
 \end{equation}
 где $\lambda_\textnormal{max}$ --- наибольшее по модулю собственное значение гессиана  $\mathbf{H}$ функции потерь $L$.
 
@@ -332,9 +332,6 @@ $\mathsf{E}_{q(\mathbf{w)}}\bigl(\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mat
 где $\mathbf{H}$ --- гессиан функции потерь $L$.
 \end{theorem}
 
-
-
-\begin{proof}
 Предварительно приведем две леммы, требуемые для доказательства теоремы.
 \begin{lemma}[~\cite{sgd_conv}] Пусть $T$ --- оператор градиентного спуска, $L$ --- дважды дифференцируемая функция потерь, градиент $\nabla L$ которой имеет константу Липшица $C_L$.  Пусть для длины шага $\beta_{\text{lr}}$ выполнено неравенство 
 $
@@ -351,22 +348,27 @@ $
 \end{lemma}
 
 
+\begin{proof}
+
+
+
 
 Рассмотрим очередной шаг оптимизации. При $\beta_{\text{lr}}<\frac{1}{C}$ оператор градиентного спуска $T$ является диффеоморфизмом, а значит, и биекцией, справедлива формула~\eqref{eq:entropy_biject}.
 По усиленному закону больших чисел 
 \[
-	\mathsf{S}\bigl(q'(\mathbf{w})\bigr) -  \mathsf{S}\bigl(q(\mathbf{w})\bigr)  \approx  \frac{1}{r}\sum_{l=1}^r \textnormal{log}~\left|\frac{\partial{T(\mathbf{w}'^l)}}{\partial{\mathbf{w}}}\right|.
+	\mathsf{S}\bigl(q'(\mathbf{w})\bigr) -  \mathsf{S}\bigl(q(\mathbf{w})\bigr)  \approx  \frac{1}{r}\sum_{l=1}^r \textnormal{log}~\left|\frac{\partial{T(\mathbf{w}'^l)}}{\partial{\mathbf{w}}}\right|,
 \]
+где знак $\approx$ означает сходимость почти наверное.
 Логарифм якобиана  $\textnormal{log}~\left|\frac{\partial{T(\mathbf{w}'^l)}}{\partial{\mathbf{w}}}\right|$ оператора $T$ запишем как%~\cite{early}:
 \begin{equation}
 \label{eq:to_taylor}
-	\textnormal{log}~\left|\frac{\partial{T(\mathbf{w}'^l)}}{\partial{\mathbf{w}}}\right| = \textnormal{log}~|\mathbf{I} - \beta_{\text{lr}}\mathbf{H}| = \sum_{i=1}^{u} \textnormal{log}~(1-\beta_{\text{lr}}\lambda_i),
+	\textnormal{log}~\left|\frac{\partial{T(\mathbf{w}'^l)}}{\partial{\mathbf{w}}}\right| = \textnormal{log}~|\mathbf{I} - \beta_{\text{lr}}\mathbf{H}| = \sum_{i=1}^{|\mathbb{W}|} \textnormal{log}~(1-\beta_{\text{lr}}\lambda_i),
 \end{equation}
 где $\lambda_i$ --- $i$-е собственное значение гессиана $\mathbf{H}$.
 
 При $(\beta_{\text{lr}}\lambda_i) ^ 2 \leq (\beta_{\text{lr}}\lambda_\textnormal{max})^2 < 1$ выражение~\eqref{eq:to_taylor} раскладывается в ряд Тейлора:
 \[
-	 \sum_{t=1}^{u} \textnormal{log}~(1-\beta_{\text{lr}}\lambda_i) =  -\beta_{\text{lr}} \textnormal{Tr}[\mathbf{H}(\mathbf{w}'^l)] - \beta_{\text{lr}}^2 \textnormal{Tr}[\mathbf{H}(\mathbf{w}'^l)\mathbf{H}(\mathbf{w}'^l)] + o_{\beta_{\text{lr}}^2 \to 0}(1).
+	 \sum_{t=1}^{|\mathbb{W}|} \textnormal{log}~(1-\beta_{\text{lr}}\lambda_i) =  -\beta_{\text{lr}} \textnormal{Tr}[\mathbf{H}(\mathbf{w}'^l)] - \beta_{\text{lr}}^2 \textnormal{Tr}[\mathbf{H}(\mathbf{w}'^l)\mathbf{H}(\mathbf{w}'^l)] + o_{\beta_{\text{lr}}^2 \to 0}(1).
 \]
 Просуммировав полученные выражения для каждой точки мультистарта и вынеся $o_{\beta_{\text{lr}}^2 \to 0}(1)$ за скобки, получим выражение~\eqref{eq:entropy}, что и требовалось доказать.
 
@@ -413,8 +415,6 @@ $$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \m
 
 Заметим, что при приближении параметров модели к точке экстремума оценка правдоподобия устремляется в минус бесконечность в силу постоянно убывающей энтропии. Таким образом, чем ближе градиентный метод приближает параметры модели к точке экстремума, тем менее точной становится оценка правдоподобия модели. Один из методов борьбы с данной проблемой представлен в следующих параграфах.
 \begin{figure}
-\caption{Псевдокод алгоритма получения вариационной нижней оценки правдоподобия модели с использованием градиентного спуска}
-\label{fig:algo}
 \begin{algorithmic}[1]
 \REQUIRE $\mathbf{X}, \mathbf{y}, p(\mathbf{w}|\mathbf{h})$;
 \REQUIRE критерий останова $\text{Stop}$, начальное распределение параметров $q^0$, количество точек мультистарта $r$, функция потерь $L$, ее первая и вторая производные;
@@ -424,7 +424,7 @@ $$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \m
 \ENDFOR
 \STATE $\mathsf{S} = \mathsf{S}\bigl(q^0)$;
 \WHILE{не достигнут критерий останова $\text{Stop}$}
-\STATE $\boldsymbol{\theta} = T(\boldsymbol{\theta});$
+\STATE $\boldsymbol{\theta} = T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, {\beta_{\text{lr}}});$
 \FOR{$l=1,\dots,r$}
 \STATE $\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$;
 \STATE $\mathbf{r}_1 = \mathbf{r}_0 - \beta_{\text{lr}} \mathbf{r}^{\mathsf{T}}_0 \nabla \nabla L(\mathbf{w}^l, \mathbf{y}, \mathbf{X})$;
@@ -438,6 +438,9 @@ $$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \m
 \STATE $\textnormal{log}~\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}) = \textnormal{log}~\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{w}, \mathbf{h}) +\textnormal{log}~\hat{p}(\mathbf{w} | \mathbf{h})$;
 	
 \end{algorithmic}
+\caption{Псевдокод алгоритма получения вариационной нижней оценки правдоподобия модели с использованием градиентного спуска}
+\label{fig:algo}
+
 \end{figure}
 
 
@@ -445,10 +448,9 @@ $$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \m
 \textbf{Модификация алгоритма оптимизации модели.} \\
 В качестве оператора $T$ предлагается использовать псевдослучайный стохастический градиентный спуск, т.е. градиентный спуск~\eqref{eq:sgd_operator}, оптимизирующий параметры $\mathbf{w}^1,\dots,\mathbf{w}^r$ по некоторой случайной подвыборке $\hat{\mathbf{X}}, \hat{\mathbf{y}}$, одинаковой для каждой точки старта $\mathbf{w}^1,\dots,\mathbf{w}^r$:
 \[
-    T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, \boldsymbol{\beta_{\text{lr}}}) = \boldsymbol{\theta} - \beta_{\text{lr}}\nabla L(\boldsymbol{\theta},   \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}),
+    T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, {\beta_{\text{lr}}}) = \boldsymbol{\theta} - \beta_{\text{lr}}\nabla L(\boldsymbol{\theta},   \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}),
 \]
 где $\beta{\text{lr}}$ --- шаг градиентного спуска, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$.
-
 где $\hat{\mathbf{X}}$ --- случайная подвыборка выборки ${\mathbf{X}}$, одинаковая для всех точек мультистарта, $\hat{\mathbf{y}}$ --- соответствующие метки классов, $$|\hat{\mathbf{X}}| = \hat{m}.$$
 
 Как и версия алгоритма с использованием градиентного спуска~\eqref{eq:sgd}, основной проблемой модифицированного алгоритма оценки интеграла~\eqref{eq:var_elbo2} является грубость аппроксимации исходного распределения $p(\mathbf{w}|\mathbf{f},\mathfrak{D})$.
@@ -467,7 +469,7 @@ $$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \m
 Для достижения нижней оценки интеграла~\eqref{eq:var_elbo2}, более близкой к реальному значению логарифма интеграла~\eqref{eq:evidence}, чем оценка с использованием градиентного спуска, предлагается использовать стохастическую динамику Ланжевена~\cite{langevin}. Стохастическая динамика Ланжевена представляет собой вариант стохастического градиентного спуска с добавлением гауссового шума:
 \begin{equation}
 \label{eq:langevin}
-	T(\mathbf{w}) = \mathbf{w} -  \beta_{\text{lr}} \nabla L -\frac{m}{\hat{m}}\textnormal{log}p(\hat{\mathbf{y}}|\hat{\mathbf{X}}, \mathbf{w},\mathbf{h}) + \boldsymbol{\varepsilon}, \quad  \boldsymbol{\varepsilon} \sim \mathcal{N}(\mathbf{0}, {\frac{\beta_{\text{lr}}}{2}}\mathbf{I}),
+	T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, {\beta_{\text{lr}}}) = \boldsymbol{\theta} -\frac{m}{\hat{m}}  \beta_{\text{lr}} \nabla L(\boldsymbol{\theta}, \mathbf{h}, \hat{\mathbf{X}}, \hat{\mathbf{y}})  + \boldsymbol{\varepsilon}, \quad  \boldsymbol{\varepsilon} \sim \mathcal{N}(\mathbf{0}, {\frac{\beta_{\text{lr}}}{2}}\mathbf{I}),
 \end{equation}
 где $\hat{\mathbf{X}}$ --- псевдослучайная подвыборка, $\hat{\mathbf{y}}$ --- соответствующие метки, $\hat{m}$ --- размер подвыборки. Длина шага оптимизации $\beta_{\text{lr}}$ удовлетворяет  {условиям, гарантирующим сходимость алгоритма в стандартных ситуациях~\cite{langevin}}:
 \[
@@ -476,7 +478,7 @@ $$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \m
 
 Для оценки энтропии с учетом шума $\boldsymbol{\varepsilon}$ предлагается использовать следующее неравенство~\cite{entropy,var_grad}:
 \[
-\hat{\mathsf{S}}\bigl(q^\tau(\mathbf{w})\bigr)   \geq \frac{1}{2}u\textnormal{log}\left(\textnormal{exp}\left(\frac{2\mathsf{S}\bigl(q^\tau(\mathbf{w})\bigr)}{u}\right) + \textnormal{exp}\left(\frac{2\mathsf{S}\bigl( \boldsymbol{\varepsilon})}{u}\right)\right),
+\hat{\mathsf{S}}\bigl(q^\tau(\mathbf{w})\bigr)   \geq \frac{1}{2}|\mathbb{W}|\textnormal{log}\left(\textnormal{exp}\left(\frac{2\mathsf{S}\bigl(q^\tau(\mathbf{w})\bigr)}{|\mathbb{W}|}\right) + \textnormal{exp}\left(\frac{2\mathsf{S}\bigl( \boldsymbol{\varepsilon})}{|\mathbb{W}|}\right)\right),
 \]
 {где  $\tau$ --- текущий шаг оптимизации,} $\mathsf{S}\bigl( \mathcal{N}({0}, {\frac{\beta_{\text{lr}}}{2}})\bigr)$ --- энтропия нормального распределения, $\hat{\mathsf{S}}(q^\tau(\mathbf{w}))$ --- энтропия распределения $q^\tau$ с учетом добавленного шума~$\boldsymbol{\varepsilon}$.
 
@@ -498,17 +500,17 @@ $$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \m
 В качестве множества моделей $M$ были рассмотрены  нейросети с одним скрытым слоем и softplus-функцией активации:
 \begin{equation}
 \label{eq:model}
-	\mathbf{f}(\mathbf{w}, \mathbf{X}) =   \textbf{softplus}\bigl(\mathbf{X} \mathbf{W}_1 \bigr)  \mathbf{W}_2,
+	\mathbf{f}(\mathbf{w}, \mathbf{X}) =   \textbf{softplus}\bigl(\mathbf{X} \mathbf{w}_0^{0,1} \bigr)  \mathbf{w}_0^{1,2},
 \end{equation}
-где $\mathbf{W}_1 \in \mathbb{R}^{n\times n_1}$ --- матрица параметров скрытого слоя нейросети, $\mathbf{W}_2 \in \mathbb{R}^{n_1\times 1}$ --- матрица параметров выходного слоя нейросети, {$\textbf{softplus}(\mathbf{X}) = \textbf{log}\bigl(1+\textbf{exp}(\mathbf{X})\bigr)$}.
+где $\mathbf{w}_0^{0,1}  \in \mathbb{R}^{n\times n_1}$ --- матрица параметров скрытого слоя нейросети, $\mathbf{w}_0^{1,2} \in \mathbb{R}^{n_1\times 1}$ --- матрица параметров выходного слоя нейросети, {$\textbf{softplus}(\mathbf{X}) = \textbf{log}\bigl(1+\textbf{exp}(\mathbf{X})\bigr)$}.
 
 {Для выборки Boston также было рассмотрено множество моделей с тремя скрытыми слоями, построенных аналогично однослойной модели~\eqref{eq:model}. Размер каждого слоя равнялся 50.}
 
 {Для выборки MNIST была рассмотрена задача бинарной классификации: из выборки были взяты только объекты, соответствующие цифрам 7 и 9. Размерность выборки была понижена с 784 до 50 методом главных компонент аналогично~\cite{firefly}. Для анализа моделей, полученных в случае высокой вероятности переобучения, из обучающей выборки были взяты первые 500 объектов. В качестве модели рассматривалась нейросеть с тремя скрытыми слоями}
 \[
-    \mathbf{f}(\mathbf{w}, \mathbf{X}) =   \boldsymbol{\sigma}(\textbf{softplus}\bigl(  \textbf{softplus} \bigl(\textbf{softplus}\bigl(\mathbf{X} \mathbf{W}_1 \bigr)  \mathbf{W}_2 \bigr) \mathbf{W}_3 \bigr) \mathbf{W}_4),
+    \mathbf{f}(\mathbf{w}, \mathbf{X}) =   \boldsymbol{\sigma}(\textbf{softplus}\bigl(  \textbf{softplus} \bigl(\textbf{softplus}\bigl(\mathbf{X} \mathbf{w}_0^{0,1} \bigr)  \mathbf{w}_0^{1,2} \bigr) \mathbf{w}_0^{2,3} \bigr) \mathbf{w}_0^{3,4}),
 \]
-{где $\boldsymbol{\sigma}(\mathbf{X}) = \bigl(1+\textbf{exp}(\mathbf{-X})\bigr)^{-1}$  --- сигмоида, $\mathbf{W}_1, \dots, \mathbf{W}_4$ --- параметры нейросети.}
+{где $\boldsymbol{\sigma}(\mathbf{X}) = \bigl(1+\textbf{exp}(\mathbf{-X})\bigr)^{-1}$  --- сигмоида, $\mathbf{W}_0^{0,1}, \dots, \mathbf{w}_0^{3,4}$ --- параметры нейросети.}
 
 
 
@@ -544,8 +546,8 @@ $
 
 Параметры модели выбирались из точек мультистарта (алгоритмы 1---5) или порождались из распределения $\hat{q}$ (алгоритм 6). Количество точек мультистарта: $r=10$ {для задач регрессии и $r=25$ для задачи классификации}.
 Для алгоритмов 2---6 применялась ранняя остановка: каждые $\tau_\textnormal{val}$ итераций производилась оценка внутреннего критерия качества модели. В качестве критерия остановки применялось следующее условие: значение внутреннего критерия качества не улучшалось $3\tau_\textnormal{val}$ итераций. Для разных алгоритмов внутренним критерием качества выступали различные величины:
-\begin{enumerate}
-\item функция потерь $L$~\eqref{eq:loss_func} на валидационной выборке $\mathfrak{D}_\textnormal{valid}$ для алгоритмов $2,3$,
+\begin{enumerate}[1)]
+\item функция потерь $L$~\eqref{eq:loss_func} на валидационной выборке $\mathfrak{D}_\textnormal{valid}$ для алгоритмов $2,3$;
 \item вариационная нижняя оценка правдоподобия~\eqref{eq:var_elbo} на обучающей выборке $\mathfrak{D}_\textnormal{train}$ для алгоритмов $4,5,6$.
 \end{enumerate}
 
