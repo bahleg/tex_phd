@@ -369,23 +369,27 @@ TODO: доказать корректность?
 
 \item Внешний критерий качества моделей $E$:
 \[
-    E = \text{RMSE} = \left (\frac{1}{m}\sum_{1}^m (f(\mathbf{x}_i, \mathbf{w})-y_i)\right)^{\frac{1}{2}}
+    E = \text{RMSE} = \left (\frac{1}{m}\sum_{i=1}^m (f(\mathbf{x}_i, \mathbf{w})-y_i)\right)^{\frac{1}{2}}
 \]
-в случае задачи регрессии,
+в случае задачи регрессии TODO: опять вопрос насчет меток,
 \[
-    E = \text{Accuracy} = 1 - \frac{1}{m}\sum_1^m [f(\mathbf{x}_i, \mathbf{w}) \neq y_i]
+    E = \text{Accuracy} = 1 - \frac{1}{m}\sum_{i=1}^m [\argmax_{r \in \{1, \dots, Z\}}f^r(\mathbf{x}_i, \mathbf{w}) \neq y_i]
 \]
 в случае задачи классификации.
 
 \item Внешний критерий качества моделей $E_\sigma$ при возмущении параметров модели:
 \[
-    E_\sigma = \text{RMSE}_\sigma = \left (\frac{1}{m}\sum_{1}^m (f(\mathbf{x}_i, \mathbf{w} + \boldsymbol{\varepsilon}-y_i)\right)^{\frac{1}{2}}, \quad \boldsymbol{\varepsilon} \sim \mathcal{N}\bigl(\mathbf{0}, \sigma\mathbf{I}\bigr).
+    E_\sigma = \text{RMSE}_\sigma = \left (\frac{1}{m}\sum_{i=1}^m (f(\mathbf{x}_i, \mathbf{w} + \boldsymbol{\varepsilon})-y_i)\right)^{\frac{1}{2}}, \quad \boldsymbol{\varepsilon} \sim \mathcal{N}\bigl(\mathbf{0}, \sigma\mathbf{I}\bigr),
 \]
+\[
+    E_\sigma  = \text{Accuracy}_\sigma  = 1 - \frac{1}{m}\sum_{i=1}^m [\argmax_{r \in \{1, \dots, Z\}}f^r(\mathbf{x}_i, \mathbf{w }  + \boldsymbol{\varepsilon})) \neq y_i],  \quad \boldsymbol{\varepsilon} \sim \mathcal{N}\bigl(\mathbf{0}, \sigma\mathbf{I}\bigr).
+\]
+
 \end{enumerate}
 
 %Для каждого алгоритма для синтетической выборки было проведено 50 повторений, результаты были усреднены. 
 %Для остальных выборок было проведено 5 повторений. 
-В качестве улучшаемого алгоритма рассматривался случайный поиск параметров с количеством итераций поиска, совпадающих с количеством итераций оптимизации гиперпараметров $l$: $l=50$ для синтетической выборки и выборки WISDM, $l=25$ для выборки MNIST. Рассмаитрваемые алгоритмы представлены в Табл.~\ref{table:algo_descr}. Пример поведения траекторий параметров под действием алгоритмов приведен на Рис.~\ref{fig:traj}. В качестве функций $Q$ и $L$ рассматривались функции кросс-валидации~\eqref{eq:cv} с $k=4$ и вариацонной оценки правдоподобия~\eqref{eq:elbo}. 
+В качестве улучшаемого алгоритма рассматривался случайный поиск параметров с количеством итераций поиска, совпадающих с количеством итераций оптимизации гиперпараметров $l$: $l=50$ для синтетической выборки и выборки WISDM, $l=25$ для выборки MNIST. Рассмаитрваемые алгоритмы представлены в Табл.~\ref{table:algo_descr}. Пример поведения траекторий параметров под действием алгоритмов приведен на Рис.~\ref{fig:traj}. В качестве функций $Q$ и $L$ рассматривались функции кросс-валидации~\eqref{eq:cv} с $k=4$ и вариацонная оценка правдоподобия~\eqref{eq:elbo}. 
 
 \begin{table}
 \small
@@ -410,7 +414,7 @@ DrMAD~\cite{hyper_mad} & градиентный &$O(\eta s |\hat{\mathfrak{D}}|)
 
 На всех выборках гиперпараметры инициализировались случайно из равномерного распределения:
 \[
-    \mathbf{h} \sim \mathcal{U}(a,b)^h,
+    \mathbf{h} \sim \mathcal{U}(a,b)^{|\mathbb{H}|},
 \]
 где $a = -2, b = 10$ для синтетической выборки и $a = -4, b = 10$ для выборок WISDM и MNIST.
 
@@ -424,7 +428,7 @@ $l = 50$ для синтетической выборки,  $l=10$ для выб
 
 
 
-\textbf{Синтетическая выборка}
+\textbf{Синтетическая выборка. }
 Синтетические данные были порождены по следующему правилу:
 \[
 	\mathbf{y} = \mathbf{X} + \boldsymbol{\varepsilon},\quad \mathbf{X}  \sim \mathcal{N}(\mathbf{0}, \mathbf{I}) \quad \boldsymbol{\varepsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I}),
@@ -436,17 +440,17 @@ $l = 50$ для синтетической выборки,  $l=10$ для выб
 Графики итоговых полиномов представлены на Рис.~\ref{fig:poly}. Как видно из графиков, с использованием вариационной оценки удалось получить полиномы, близкие к линейным моделям. Подобные модели показывают наилучшее правдоподобие в силу слабого переобучения и хорошего качества на тестовой выборке. 
 
 
-\textbf{WISDM}
+\textbf{WISDM. }
 Выборка WISDM состоит из набора записей акселерометра. Каждой записи соответствуют три координаты по осям акселерометра. В качестве набора объектов рассматривалось наборы из 199 последовательных записей акселерометра. В качестве набора меток рассматривалась евклидовая норма соответствующих 200-х записей акселерометра.
 
 Рассматривалась нейросеть с 10 нейронами на скрытом слое:
 \[
-    \mathbf{f} = \mathbf{W}_2 \cdot \textbf{RELU}(\mathbf{W}_1\mathbf{X} + \mathbf{b}_1) +\mathbf{b}_2,
+    \mathbf{f} = \mathbf{w}_2 \cdot \textbf{relu}(\mathbf{w}_1\mathbf{X} + \mathbf{b}_1) +\mathbf{b}_2,
 \]
-где $\mathbf{W}_1, \mathbf{b}_1$ --- параметры первого слоя нейросети,
-$\mathbf{W}_2, \mathbf{b}_2$ --- параметры второго слоя нейросети,
+где $\mathbf{w}_1, \mathbf{b}_1$ --- параметры первого слоя нейросети,
+$\mathbf{w}_2, \mathbf{b}_2$ --- параметры второго слоя нейросети,
 \[
-    \textbf{RELU}(\mathbf{x}) = \max(\mathbf{0}, \mathbf{x}).
+    \textbf{relu}(\mathbf{x}) = \textbf{max}(\mathbf{0}, \mathbf{x}).
 \]
 
 Графики сходимости алгоритмов, а также качества полученных моделей представлены на Рис.~\ref{fig:wisdm}.
@@ -544,14 +548,17 @@ HOAG & ~\eqref{eq:elbo} &  -280061.6 & 24.0 $\pm$ 0.0  & 0.981 & 0.943 & 0.819\\
 
 
     \begin{figure}
-
+     \begin{minipage}[t]{.5\textwidth}
     
-    \includegraphics[width=0.5\linewidth]{plots/hyperparams/poly_cv.png}
-
-    \includegraphics[width=0.5\linewidth]{plots/hyperparams/poly_var.png}
-
+    \includegraphics[width=\linewidth]{plots/hyperparams/poly_cv.png}
+    \subcaption{}
+    \end{minipage}
+     \begin{minipage}[t]{.5\textwidth}
+    \includegraphics[width=\linewidth]{plots/hyperparams/poly_var.png}
+    \subcaption{}   
+\end{minipage}
     
- \caption{Resulting models for the synthetic dataset: а --- cross-validation, b --- evidence lower bound}
+ \caption{Итоговые модели для синтетической выборки: а) с использованием кросс-валидации, б) с использованием вариационной оценки правдоподобия модели.}
   \label{fig:poly}
    
     \end{figure}
@@ -561,8 +568,8 @@ HOAG & ~\eqref{eq:elbo} &  -280061.6 & 24.0 $\pm$ 0.0  & 0.981 & 0.943 & 0.819\\
 
     \begin{figure}
 
-    \includegraphics[width=0.5\linewidth]{plots/hyperparams/wisdm.png}
-\caption{WISDM,  best validation value $\hat{Q}$ and RMSE  for cross-validation (left) and evidence lower bound (right)}    
+    \includegraphics[width=\linewidth]{plots/hyperparams/wisdm.png}
+\caption{WISDM,  наилучшее значение функции $Q$ и RMSE   для кросс-валидации (слева) и вариационной оценки правдоподобия модели (справа).}    
 \label{fig:wisdm}
     
     \end{figure}
@@ -570,17 +577,17 @@ HOAG & ~\eqref{eq:elbo} &  -280061.6 & 24.0 $\pm$ 0.0  & 0.981 & 0.943 & 0.819\\
 
     \begin{figure}
 
-    \includegraphics[width=0.5\linewidth]{plots/hyperparams/Fig_mnist.eps}
+    \includegraphics[width=\linewidth]{plots/hyperparams/Fig_mnist.eps}
 
-    \caption{MNIST, best validation value  $\hat{Q}$ and Accuracy  for cross-validation (left) and evidence lower bound (right)}
+    \caption{MNIST, наилучшее значение функции $Q$ и RMSE   для кросс-валидации (слева) и вариационной оценки правдоподобия модели (справа).}
     \label{fig:mnist}
     \end{figure}
 
     \begin{figure}
 
-    \includegraphics[width=0.5\linewidth]{plots/hyperparams/Fig_noise.pdf}
+    \includegraphics[width=\linewidth]{plots/hyperparams/Fig_noise.pdf}
 
-    \caption{MNIST, Model accuracy with noise in the Test dataset. The hyperparameters were optimized with evidence lower bound criterion.}
+    \caption{MNIST, точность классификации на тестовой выборке при добавлении шума в обучающую выборку. Гиперпараметры был оптимизированы с использованием вариационной оценки правдоподобия модели.}
     \label{fig:noise}
     \end{figure}
 
