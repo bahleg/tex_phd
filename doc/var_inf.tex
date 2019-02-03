@@ -19,12 +19,12 @@
 Определим понятие статистической сложности модели. Сложностью модели будем называть \textit{правдоподобие модели}~\eqref{eq:evidence}.
 Пусть задано множество моделей $M$, для которых, возможно, не задан граф параметрического семейства моделей.
 Для каждой модели $\mathbf{f} \in {M}$ заданы различные значения гиперпараметров $\mathbf{h}$. 
-Рассмотрим два подхода к сравнению сложностей моделей:
+Рассмотрим два подхода к сравнению сложностей~\eqref{eq:evidence} моделей:
 \begin{enumerate}
-\item Модели $\mathbf{f}$ принадлежат одному параметрическому семейству моделей глубокого обучения $\mathfrak{F}$. При таком подходе сравнение сложности различных моделей является  адекватным, т.к. они определены на общем пространстве структур $\amsmathbb{\Gamma}$ и параметров $\mathbb{W}$. Возможно сравнение как статистической сложности модели, так и структурной.
-\item Модели $\mathbf{f}$  не имеют общего графа. В данном случае однозначно определить структурную сложность модели нельзя (TODO: теорема?), предлагается полагать, что структуры модели определены однозначно.
+\item Модели $\mathbf{f}$ описываются общим параметрическим семействов моделей глубокого обучения $\mathfrak{F}$, т.е. имеют общий граф описания моделей $<V,E>$, общее пространство параметров $\mathbb{W}$ и пространство структур $\mathbb{\Gamma}$. При таком подходе сравнение сложности различных моделей является  адекватным, т.к. они определены на общем пространстве структур $\amsmathbb{\Gamma}$ и параметров $\mathbb{W}$. Возможно сравнение как статистической сложности модели, так и структурной.
+\item Модели $\mathbf{f}$  не описываются общим параметрическим семействома. В данном случае однозначно определить структурную сложность модели нельзя (TODO: теорема?), поэтому будем полагать, что структуры модели определены однозначно, а априорнные распределения $p(\boldsymbol{\Gamma})$ структур моделей не учитываются при сравнении статистической сложности моделей.
 \end{enumerate}
-В данном разделе рассматривается второй вариант. Будем полгать, что структура модели $\boldsymbol{\Gamma}$ для вероятностной модели глубокого обучения $\mathbf{f}$ определена однозначно. Тем не менее, основная часть данной главы также применима и к первому варианту.
+В данном разделе рассматривается второй вариант. Будем полгать, что структура модели $\boldsymbol{\Gamma}$ для вероятностной модели глубокого обучения $\mathbf{f}$ определена однозначно. 
 
 \begin{defin} Сложностью модели $\mathbf{f}$ назовем правдоподобие модели:
 \begin{equation}
@@ -32,6 +32,8 @@
 	p(\mathbf{y}|\mathbf{X},\mathbf{h}) = \int_{\mathbf{w} \in \mathbb{W}} p(\mathbf{y}|\mathbf{X},\mathbf{w}, \mathbf{h})p(\mathbf{w}|\mathbf{h})d\mathbf{w}.
 \end{equation}
 \end{defin}
+
+Заметим, что основная часть данной главы также применим и в случае, когда модели описываются общим параметрическим семействов моделей глубокого обучения. В данном случае вместо интеграла~\eqref{eq:model_evidence} предлагается использовать интеграл~\eqref{eq:evidence}, учитывающий вероятностные предположения о структуре модели.
 
 
 \begin{defin}Модель классификации $\mathbf{f}$ назовем оптимальной среди моделей $M$, если достигается максимум интеграла~\eqref{eq:model_evidence}.
@@ -207,7 +209,7 @@ $$
 	\mathbf{f} = \argmax_{\mathbf{A}_q, \boldsymbol{\mu}_q} \sum_{i=1}^m \textnormal{log}~p({y}_i|\mathbf{x}_i, \mathbf{w}_i) - D_\textnormal{KL}\bigl(q (\mathbf{w} )|| p (\mathbf{w}|\mathbf{h})\bigr) =
 \end{equation}
 \[
-   = \argmin_{\boldsymbol{\theta}} L( \boldsymbol{\theta}, \mathbf{h}, \mathbf{X}, \mathbf{y}).
+   = \argmin_{\boldsymbol{\theta}} L( \boldsymbol{\theta}| \mathbf{h}, \mathbf{X}, \mathbf{y}).
 \]
 
 %\begin{example_empty} 
@@ -286,7 +288,7 @@ $\mathsf{E}_{q(\mathbf{w)}}\bigl(\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mat
 
 Запустим $r$ процедур оптимизаций модели $\mathbf{f}$ из разных начальных приближений:
 \[
-	L( \boldsymbol{\theta}, \mathbf{h}, \mathbf{X}, \mathbf{y}) = -\sum_{l=1}^r \text{log}p(\mathbf{y}, \mathbf{w}^l|\mathbf{X}, \mathbf{h})  \to \min, \quad \boldsymbol{\theta} = [\mathbf{w}^1, \dots, \mathbf{w}^r],
+	L( \boldsymbol{\theta}| \mathbf{h}, \mathbf{X}, \mathbf{y}) = -\sum_{l=1}^r \text{log}p(\mathbf{y}, \mathbf{w}^l|\mathbf{X}, \mathbf{h})  \to \min, \quad \boldsymbol{\theta} = [\mathbf{w}^1, \dots, \mathbf{w}^r],
 \] 
 где $r$ --- число оптимизаций,
 \begin{equation}
@@ -308,7 +310,7 @@ $\mathsf{E}_{q(\mathbf{w)}}\bigl(\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mat
 Оператором градиентного спуска назовем оператор оптимизации вида
 \begin{equation}
 \label{eq:sgd}
-	T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, {\beta_{\text{lr}}}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L( \boldsymbol{\theta}, \mathbf{h}, \mathbf{X}, \mathbf{y}), 
+	T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, {\beta_{\text{lr}}}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L( \boldsymbol{\theta}| \mathbf{h}, \mathbf{X}, \mathbf{y}), 
 \end{equation}
 где  $\beta_{\text{lr}}$ --- длина шага градиентного спуска.
 \end{defin}
@@ -380,7 +382,7 @@ $
 Оценка~\eqref{eq:var_elbo_entropy} на шаге оптимизации $\tau$ представима в виде
 \begin{equation}
 \label{eq:ev_grad_full}
-\textnormal{log}~\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}) \approx \frac{1}{r} \sum_{g = 1}^r L(\mathbf{w}^l_\tau, \mathbf{X}, \mathbf{y})  + 
+\textnormal{log}~\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}) \approx \frac{1}{r} \sum_{g = 1}^r L(\mathbf{w}^l_\tau| \mathbf{X}, \mathbf{y})  + 
 \end{equation}
 \[
 +\mathsf{S}\big(q^0(\mathbf{w})\bigr) + \frac{1}{r}\sum_{b=1}^\tau\sum_{l=1}^r \bigl(-\beta_{\text{lr}} \textnormal{Tr}[\mathbf{H}(\mathbf{w}_b^l)] - \beta_{\text{lr}}^2 \textnormal{Tr}[\mathbf{H}(\mathbf{w}_b^l)\mathbf{H}(\mathbf{w}_b^l)]  \bigr) 
@@ -427,8 +429,8 @@ $$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \m
 \STATE $\boldsymbol{\theta} = T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, {\beta_{\text{lr}}});$
 \FOR{$l=1,\dots,r$}
 \STATE $\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$;
-\STATE $\mathbf{r}_1 = \mathbf{r}_0 - \beta_{\text{lr}} \mathbf{r}^{\mathsf{T}}_0 \nabla \nabla L(\mathbf{w}^l, \mathbf{y}, \mathbf{X})$;
-\STATE $\mathbf{r}_2 = \mathbf{r}_1 - \beta_{\text{lr}} \mathbf{r}^{\mathsf{T}}_1 \nabla \nabla L(\mathbf{w}^l, \mathbf{y}, \mathbf{X})$;
+\STATE $\mathbf{r}_1 = \mathbf{r}_0 - \beta_{\text{lr}} \mathbf{r}^{\mathsf{T}}_0 \nabla \nabla L(\mathbf{w}^l| \mathbf{y}, \mathbf{X})$;
+\STATE $\mathbf{r}_2 = \mathbf{r}_1 - \beta_{\text{lr}} \mathbf{r}^{\mathsf{T}}_1 \nabla \nabla L(\mathbf{w}^l| \mathbf{y}, \mathbf{X})$;
 \STATE $\mathsf{S}^l = \mathbf{r}_0^\mathsf{T}\bigl(-2\mathbf{r}_0 + 3\mathbf{r}_1 -\mathbf{r}_2\bigr)$;
 \ENDFOR
 \STATE $\mathsf{S} = \frac{1}{r}\sum_{l=1}^r \mathsf{S}^l$;
@@ -448,7 +450,7 @@ $$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \m
 \textbf{Модификация алгоритма оптимизации модели.} \\
 В качестве оператора $T$ предлагается использовать псевдослучайный стохастический градиентный спуск, т.е. градиентный спуск~\eqref{eq:sgd_operator}, оптимизирующий параметры $\mathbf{w}^1,\dots,\mathbf{w}^r$ по некоторой случайной подвыборке $\hat{\mathbf{X}}, \hat{\mathbf{y}}$, одинаковой для каждой точки старта $\mathbf{w}^1,\dots,\mathbf{w}^r$:
 \[
-    T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, {\beta_{\text{lr}}}) = \boldsymbol{\theta} - \beta_{\text{lr}}\nabla L(\boldsymbol{\theta},   \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}),
+    T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, {\beta_{\text{lr}}}) = \boldsymbol{\theta} - \beta_{\text{lr}}\nabla L(\boldsymbol{\theta}|   \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}),
 \]
 где $\beta{\text{lr}}$ --- шаг градиентного спуска, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$.
 где $\hat{\mathbf{X}}$ --- случайная подвыборка выборки ${\mathbf{X}}$, одинаковая для всех точек мультистарта, $\hat{\mathbf{y}}$ --- соответствующие метки классов, $$|\hat{\mathbf{X}}| = \hat{m}.$$
@@ -469,7 +471,7 @@ $$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \m
 Для достижения нижней оценки интеграла~\eqref{eq:var_elbo2}, более близкой к реальному значению логарифма интеграла~\eqref{eq:evidence}, чем оценка с использованием градиентного спуска, предлагается использовать стохастическую динамику Ланжевена~\cite{langevin}. Стохастическая динамика Ланжевена представляет собой вариант стохастического градиентного спуска с добавлением гауссового шума:
 \begin{equation}
 \label{eq:langevin}
-	T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, {\beta_{\text{lr}}}) = \boldsymbol{\theta} -\frac{m}{\hat{m}}  \beta_{\text{lr}} \nabla L(\boldsymbol{\theta}, \mathbf{h}, \hat{\mathbf{X}}, \hat{\mathbf{y}})  + \boldsymbol{\varepsilon}, \quad  \boldsymbol{\varepsilon} \sim \mathcal{N}(\mathbf{0}, {\frac{\beta_{\text{lr}}}{2}}\mathbf{I}),
+	T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, {\beta_{\text{lr}}}) = \boldsymbol{\theta} -\frac{m}{\hat{m}}  \beta_{\text{lr}} \nabla L(\boldsymbol{\theta}| \mathbf{h}, \hat{\mathbf{X}}, \hat{\mathbf{y}})  + \boldsymbol{\varepsilon}, \quad  \boldsymbol{\varepsilon} \sim \mathcal{N}(\mathbf{0}, {\frac{\beta_{\text{lr}}}{2}}\mathbf{I}),
 \end{equation}
 где $\hat{\mathbf{X}}$ --- псевдослучайная подвыборка, $\hat{\mathbf{y}}$ --- соответствующие метки, $\hat{m}$ --- размер подвыборки. Длина шага оптимизации $\beta_{\text{lr}}$ удовлетворяет  {условиям, гарантирующим сходимость алгоритма в стандартных ситуациях~\cite{langevin}}:
 \[

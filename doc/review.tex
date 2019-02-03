@@ -376,27 +376,30 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\mathbf{y
 \end{defin} 
 
 \begin{defin}
+\label{def:l}
 Пусть задано вариационное распределения $q$.
-\textit{Функцией потерь} $L( \boldsymbol{\theta}, \mathbf{h}, \mathbf{X}, \mathbf{y})$ для модели $\mathbf{f}$ назовем дифференцируемую функцию, принимаемую за качество модели на обучающей выборки при параметрах модели, получаемых из  распределения $q$.
+\textit{Функцией потерь} $L( \boldsymbol{\theta}| \mathbf{h}, \mathbf{X}, \mathbf{y})$ для модели $\mathbf{f}$ назовем дифференцируемую функцию, принимаемую за качество модели на обучающей выборки при параметрах модели, получаемых из  распределения $q$.
 \end{defin}
 
 В качестве функции $L$ может выступать минус логарифм правдоподобия выборки $\text{log}~p(y|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})$  и логарифм апостериорной вероятности \text{log}~$p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}) $ параметров и структуры модели на обучающей выборке.
 
 \begin{defin}
+\label{def:q}
 Пусть задано вариационное распределения $q$ и функция потерь $L$. 
-\textit{Функцией валидации} $Q(\mathbf{h}, \boldsymbol{\theta}, \mathbf{X}, \mathbf{y} )$ для модели $\mathbf{f}$ назовем дифференцируемую функцию, принимаемую за качество модели при векторе $\boldsymbol{\theta}$, заданном неявно.
+\textit{Функцией валидации} $Q(\mathbf{h}| \boldsymbol{\theta}, \mathbf{X}, \mathbf{y} )$ для модели $\mathbf{f}$ назовем дифференцируемую функцию, принимаемую за качество модели при векторе $\boldsymbol{\theta}$, заданном неявно.
 \end{defin}
+
  
 
 В данной работе задача выбора структуры модели и параметров модели ставится как двухуровневая задача оптимизации:
 \begin{equation}
 \label{eq:optim_problem}
-	\mathbf{h}^{*} = \argmin_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{h},  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y} ),
+	\mathbf{h}^{*} = \argmin_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{h}|  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y} ),
 \end{equation}
 где $\boldsymbol{\theta}^{*}$ --- решение задачи оптимизации
 \begin{equation}
 \label{eq:optim_problem_in}
-   \boldsymbol{\theta}^{*} = \argmin_{\boldsymbol{\theta} \in \mathbb{R}^u} L(\boldsymbol{\theta},  \mathbf{h},  \mathbf{X}, \mathbf{y}).
+   \boldsymbol{\theta}^{*} = \argmin_{\boldsymbol{\theta} \in \mathbb{R}^u} L(\boldsymbol{\theta}|  \mathbf{h},  \mathbf{X}, \mathbf{y}).
 \end{equation}
 
 \begin{defin}
@@ -530,7 +533,7 @@ p(y|\mathbf{X}, \mathbf{h}) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\mathbf{y
 Частным случаем оператора оптимизации является оператор стохастического спуска:
 \begin{equation}
 \label{eq:sgd_operator}
-    T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L(\boldsymbol{\theta},   \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}),
+    T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L(\boldsymbol{\theta}|   \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}),
 \end{equation}
 где $\beta_{\text{lr}}$ --- шаг градиентного спуска, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$.
 
@@ -775,14 +778,14 @@ TODO: в статье нет сотфмакса
 
 В работе~\cite{meta_sgd} рассматривается оптимизация метапараметров (шага градиентного спуска $\beta_{\text{lr}}$ и начального распределения параметров $\boldsymbol{\theta}^0$). Рассматривается задача оптимизации параметров модели в случае, когда количество примеров невелико. Для этого проводится оптимизация оператора оптимизации, который выглядит следующим образом:
 \[
-    T(\boldsymbol{\theta}| L, \mathbf{y}, \mathbf{X},  \mathbf{h}, \boldsymbol{\beta})  = \boldsymbol{\theta}^0 - \boldsymbol{\beta}\nabla L(\boldsymbol{\theta}^0, \mathbf{h}, \mathbf{X}, \mathbf{y},),
+    T(\boldsymbol{\theta}| L, \mathbf{y}, \mathbf{X},  \mathbf{h}, \boldsymbol{\beta})  = \boldsymbol{\theta}^0 - \boldsymbol{\beta}\nabla L(\boldsymbol{\theta}^0| \mathbf{h}, \mathbf{X}, \mathbf{y},),
 \]
 где векторы $\boldsymbol{\theta}^0$ и $\boldsymbol{\beta}$ являются параметрами оператора $T$. Задача оптимизации параметров оператора $T$ рассматривается как задача многзадачного обучения (англ. multitask learning), когда оператор оптимизируется с учетом нескольких различных выборок и различных функций $L$, определенных отдельно для каждой выборки.
 
 
 В работе~\cite{l2l} рассматирвается задача восстановления параметров модели по параметрам  другой модели, чьи параметры были получены оптимизацией функции потерь на выборке меньшей мощности. Задачу можно рассматривать как задачу нахождения параметров некоторого оператора оптимизации $T:\boldsymbol{\theta}^0 \to \boldsymbol{\theta},$ где $\boldsymbol{\theta}^0$ --- параметры модели, оптимизированной на небольшой выборке.  Предлагается функция оптимизации:
 \[
-    T = \argmin ||\hat{\boldsymbol{\theta}} -  \boldsymbol{\theta}^0||_2^2 + \beta_{\lambda} L(\boldsymbol{\theta},  \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}),
+    T = \argmin ||\hat{\boldsymbol{\theta}} -  \boldsymbol{\theta}^0||_2^2 + \beta_{\lambda} L(\boldsymbol{\theta}|  \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}),
 \]
 где $\boldsymbol{\theta}$ --- параметры модели, обученной по полной выборке $\mathfrak{D}$, $\hat{\mathfrak{D}}$ --- выборка меньшей мощности, $\beta_{\lambda}$ --- настраиваемый метапараметр.
 

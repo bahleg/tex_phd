@@ -1,8 +1,8 @@
-Решается задача оптимизации гиперпараметров модели глубокого обучения. Для оптимизации гиперпараметров модели предлагаются алгоритмы, основанные на градиентном спуске. Так как сложность рассматриваемых алгоритмах сопоставима со сложностью оптимизации параметров модели, предлагается проводить оптимизацию параметров и гиперпараметров в единой процедуре. Для выбора адекватных значений гиперпараметров вводятся вероятностные предположения о распределении параметров. В качестве оптимизируемой функции выступает байесовское правдоподобие модели и кросс-валидация. Для получения оценки правдоподобия используются вариационные методы. Проводится вычислительный эксперимент на нескольких выборках.
+Решается задача оптимизации гиперпараметров модели глубокого обучения. Для оптимизации гиперпараметров модели предлагаются алгоритмы, основанные на градиентном спуске. Так как сложность рассматриваемых алгоритмах сопоставима со сложностью оптимизации параметров модели, предлагается оптимизировать параметры и гиперпараметры в единой процедуре. Для выбора адекватных значений гиперпараметров вводятся вероятностные предположения о распределении параметров. В качестве оптимизируемой функции выступает байесовское правдоподобие модели и кросс-валидация. Для получения оценки правдоподобия используются вариационные методы. Проводится вычислительный эксперимент на нескольких выборках.
 
 Одна из проблем построения моделей глубокого обучения --- большое число параметров модели~\cite{hinton_rbm}, которое достигает нескольких миллионов, а оптимизация модели достигает десятков дней~\cite{suts}. Задача выбора модели глубокого обучения включает в себя выбор стратегии построения модели, эффективной по вычислительным ресурсам. Проблема оптимизации параметров модели глубокого обучения является вычислительно сложной в силу невыпуклости оптимизируемой функции потерь. Поэтому задача поиска параметров оптимизации является важной, и нахождение оптимальныых гиперпараметров сильно влияет на итоговое качество модели. 
 
-В данной работе сравниваются градиентные методы оптимизации гиперпараметров. Основным достоинством подобных алгоритмов является их возможность одновременной оптимизации щначительного количества гиперпараметров. В качестве базового алгоритма выступает выбор гиперпараметров модели с использованием случайного поиска.  В работах\cite{hyper_mad,hyper_hoag,greed_hyper} в качестве целевой функции потерь рассматривается потеря на валидационной подвыборке с $L2$ регуляризацией. В данной работе рассматривается общая задачи оптимизации гиперпараметров. Рассматриваеые алгоритмы и целевые функции потерь реализованы и представлены в качестве библиотеки для оптимизации гиперпараметров моделей~\cite{pyfos}. Основным теоретическим вкладом данной главы является анализ рассматриваемых алгоритмов оптимизации гиперпараметров при использовании функции потерь общего вида, а также исследование качества и устойчивости итоговых моделей в случае использования кросс-валидации и вариационной оценки правдоподобия.  В экспериментальной части в качестве критерия выбора модели выступают вариационная нижняя оценка правдоподобия модели и ошибка на валидационной части выборки. В отличие от~\cite{hyper_hoag}, где также производится сравнение алгоритмов оптимизации гиперпараметров, в данной работе исследуется поведение алгоритмов на выборках большой мощности, таких как WISDM~\cite{wisdm} и MNIST~\cite{mnist}.
+В данной работе сравниваются градиентные методы оптимизации гиперпараметров. Основным достоинством подобных алгоритмов является их возможность одновременной оптимизации значительного числа гиперпараметров. В качестве базового алгоритма выступает алгоритм выбора гиперпараметров модели с использованием случайного поиска.  В работах\cite{hyper_mad,hyper_hoag,greed_hyper} в качестве целевой функции потерь рассматривается потеря на валидационной подвыборке с $L_2$ регуляризацией. В данной работе рассматривается общая задачи оптимизации гиперпараметров. Рассматриваеые алгоритмы и целевые функции потерь реализованы и представлены в качестве библиотеки для оптимизации гиперпараметров моделей~\cite{pyfos}. Основным теоретическим вкладом данной главы является анализ рассматриваемых алгоритмов оптимизации гиперпараметров при использовании функции потерь общего вида, а также исследование качества и устойчивости итоговых моделей в случае использования кросс-валидации и вариационной оценки правдоподобия.  В экспериментальной части в качестве критерия выбора модели выступают вариационная нижняя оценка правдоподобия модели и ошибка на валидационной части выборки. В отличие от~\cite{hyper_hoag}, где также производится сравнение алгоритмов оптимизации гиперпараметров, в данной работе исследуется поведение алгоритмов на выборках большой мощности, таких как WISDM~\cite{wisdm} и MNIST~\cite{mnist}.
 Численные эксперименты показывают, что при значительном количестве гиперпараметров, сопоставимым с количеством параметров модели, рассматриваемые алгоритмы предпочтительнее стохастических. 
 
 
@@ -13,9 +13,9 @@
 \[
 	\mathbf{f}(\mathbf{w}, \mathbf{x}):\mathbb{W} \times \mathbb{X} \to \mathbb{Y}, \quad \mathbf{w} \in \mathbb{W}.
 \]
-Как и в главе 3 будем полагать, что структура модели $\boldsymbol{\Gamma}$ задана однозначно.
+Как и в главе 2 будем полагать, что структура модели $\boldsymbol{\Gamma}$ задана однозначно.
 
-Пусть априорное распределение параметров имеет вид:
+Пусть априорное распределение параметров имеет вид
 \begin{equation}
 \label{eq:prior}
 	\mathbf{w} \sim \mathcal{N}(\mathbf{0}, \mathbf{A}^{-1}),
@@ -27,7 +27,7 @@
 Проиллюстрируем задачу оптимизации гиперпараметров \textit{двусвзяным байесовским выводом}.
 
 \begin{example}
-Для дальнейшей формализации задачи в общем виде введем переобозначение:
+Для дальнейшей формализации задачи в общем виде переобозначим
 \begin{equation}
 \label{eq:bayes0}
 	\boldsymbol{\theta} = \mathbf{w}, \quad \mathbf{h} = [\alpha_1, \dots, \alpha_u],	
@@ -37,7 +37,7 @@
 На \textit{первом уровне} байесовского вывода производится оптимизация параметров~\eqref{eq:posterior} модели $\mathbf{f}$ по заданной выборке $\mathfrak{D}$:
 \begin{equation}
 \label{eq:bayes1}
-\hat{\boldsymbol{\theta}} = \argmax \bigl(-L\bigr) = p(\mathbf{w}|\mathbf{X}, \mathbf{y}, \mathbf{h}) = \frac{p(\mathbf{y}|\mathbf{X},\mathbf{w})p(\mathbf{w}|\mathbf{h})}{p(\mathbf{y}|\mathbf{X},\mathbf{h})}.
+{\boldsymbol{\theta}}^{*} = \argmax \bigl(-L\bigr) = p(\mathbf{w}|\mathbf{X}, \mathbf{y}, \mathbf{h}) = \frac{p(\mathbf{y}|\mathbf{X},\mathbf{w})p(\mathbf{w}|\mathbf{h})}{p(\mathbf{y}|\mathbf{X},\mathbf{h})}.
 \end{equation}
 
 На \textit{втором уровне} производится оптимизация апостериорного распределения гиперпараметров $\mathbf{h}$:
@@ -54,21 +54,22 @@ p(\mathbf{h}|\mathbf{X}, \mathbf{y}) \propto p(\mathbf{y}|\mathbf{X},\mathbf{h})
 \end{example}
 
 Как и в общей задаче~\eqref{eq:optim_problem},\eqref{eq:hyper_optim}, 
-требуется найти параметры $\hat{\boldsymbol{\theta}}$ и гиперпараметры $\mathbf{h}^{*}$ модели, доставляющие минимум следующему функционалу:
+требуется найти параметры ${\boldsymbol{\theta}}^{*}$ и гиперпараметры $\mathbf{h}^{*}$ модели, доставляющие минимум следующей функции:
 \begin{equation}
 \label{eq:main}
-    \mathbf{h}^{*} = \argmin_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{h},  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y} ),
+    \mathbf{h}^{*} = \argmin_{\mathbf{h} \in \mathbb{H}} Q(\mathbf{h}|  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y} ),
 \end{equation}
 \begin{equation}
 \label{eq:main2}
-	\boldsymbol{\theta}^{*}(\mathbf{h}) =  \argmin_{\boldsymbol{\theta} \in \mathbb{R}^u} L(\boldsymbol{\theta},  \mathbf{h},  \mathbf{X}, \mathbf{y}).
+	\boldsymbol{\theta}^{*}(\mathbf{h}) =  \argmin_{\boldsymbol{\theta} \in \mathbb{R}^u} L(\boldsymbol{\theta}|  \mathbf{h},  \mathbf{X}, \mathbf{y}),
 \end{equation}
+где $L,Q$ --- функции потерь и валидации (см. Опр.~\ref{def:l},\ref{def:q}).
 
 Рассмотрим вид переменной $\boldsymbol{\theta}$ и функций $L, Q$ для различных методов выбора модели и оптимизации ее параметров.
 
 \textbf{Базовый метод. }
-Пусть оптимизация параметров и гиперпараметров производится по всей выборке $\mathfrak{D}$ по одной и той же функции:
-$$L(\boldsymbol{\theta},  \mathbf{h},  \mathbf{X}, \mathbf{y}) = Q(\mathbf{h},  \boldsymbol{\theta}^{*}, \mathbf{X}, \mathbf{y} ) = -\text{log}p(\mathbf{y}, \mathbf{w} | \mathbf{X}, \mathbf{h}) = \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w})+\text{log}p(\mathbf{w}|\mathbf{h})$$.
+Пусть оптимизация параметров и гиперпараметров производится по всей выборке $\mathfrak{D}$ по одной и той же функции $L=Q$:
+$$L(\boldsymbol{\theta}|  \mathbf{h},  \mathbf{X}, \mathbf{y}) = Q(\mathbf{h}|  \boldsymbol{\theta}, \mathbf{X}, \mathbf{y} ) = -\text{log}p(\mathbf{y}, \mathbf{w} | \mathbf{X}, \mathbf{h}) = \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w})+\text{log}p(\mathbf{w}|\mathbf{h})$$.
 
 Вариационным параметрам $\boldsymbol{\theta}$ модели $\mathbf{f}$  соответствует вектор параметров модели: 
 \[
@@ -76,48 +77,48 @@ $$L(\boldsymbol{\theta},  \mathbf{h},  \mathbf{X}, \mathbf{y}) = Q(\mathbf{h},  
 \]
 
 \textbf{Кросс-валидация. }
-Разобьем выборку $\mathfrak{D}$ на $k$ равных частей:
+Разобьем выборку $\mathfrak{D}$ случайно на $K$ равных частей:
 \[
-\mathfrak{D} = \mathfrak{D}_1 \sqcup \dots \sqcup \mathfrak{D}_k.
+\mathfrak{D} = \mathfrak{D}_1 \sqcup \dots \sqcup \mathfrak{D}_k, \mathfrak{D}_k = \{\mathbf{X}_k, \mathbf{y}_k\}, \quad k=1,\dots,K.
 \]
 
 
-Запустим $k$ оптимизаций модели, каждую на своей части выборки. Положим $\boldsymbol{\theta} = [\mathbf{w}_1, \dots, \mathbf{w}_k]$, где $\mathbf{w}_1, \dots, \mathbf{w}_k$ --- параметры модели при оптимизации $k$.
+Запустим $K$ оптимизаций модели, каждую на своей части выборки. Положим $\boldsymbol{\theta} = [\mathbf{w}_1, \dots, \mathbf{w}_K]$, где $\mathbf{w}_1, \dots, \mathbf{w}_K$ --- параметры модели при оптимизациях $1, \dots, K$.
  
 Положим функцию $L$ равной  среднему значению минус логарифма апостериорной вероятности по всем $k-1$ разбиениям $\mathfrak{D}$:
 \begin{equation}
+L = -\frac{1}{K}\sum_{k=1}^K \bigl(\frac{K}{K-1}\text{log}p(\mathbf{y}_k|\mathbf{X}_k, \mathbf{w}_k) + \text{log}p(\mathbf{w}_k|\mathbf{h})\bigr).
 \label{eq:cv}
-L = -\frac{1}{k}\sum_{q=1}^k \bigl(\frac{k}{k-1}\text{log}p(\mathbf{y} \setminus \mathbf{y}_q|\mathbf{X}\setminus \mathbf{X}_q, \mathbf{w}_q) + \text{log}p(\mathbf{w}_q|\mathbf{h})\bigr),
 \end{equation}
-где операция <<$\mathbf{X} \setminus \mathbf{X}_q$>> определяется как взятие описаний всех объектов $\mathbf{X}$ за исключением описаний объектов из $\mathbf{X}_q$.
 
-Положим функцию $Q$ равной минус среднему значению правдоподобия выборки по частям выборки $\mathfrak{D}_q$, на которых не проходила оптимизация параметров:
+Положим функцию $Q$ равной минус среднему значению правдоподобия выборки по частям выборки $\mathfrak{D}_k$, на которых не проходила оптимизация параметров:
 \[
-Q = -\frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathbf{y}_q|\mathbf{X}_q, \mathbf{w}_q).
+Q = -\frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathbf{y} \setminus \mathbf{y}_k|\mathbf{X}_k \setminus \mathbf{X}, \mathbf{w}_q).
 \]
+где операция <<$\mathbf{X} \setminus \mathbf{X}_k$>> определяется как взятие описаний всех объектов $\mathbf{X}$ за исключением описаний объектов из $\mathbf{X}_k$.
+
 
 \textbf{Вариационная оценка правдоподобия. }
 Положим $L=Q$, равной вариационной оценке правдоподобия модели:
 \begin{equation} 
-\label{eq:hyper_elbo}
 \text{log}~p(\mathbf{y}|\mathbf{X},\mathbf{h})  
 \geq 
 -\text{D}_\text{KL} \bigl(q(\mathbf{w})||p(\mathbf{w}|\mathbf{h})\bigr) + \int_{\mathbf{w}} q(\mathbf{w})\text{log}~{p(\mathbf{y}|\mathbf{X},\mathbf{w},\mathbf{h})} d \mathbf{w}  \approx
+\label{eq:hyper_elbo}
 \end{equation}
 \[
 \approx \sum_{i=1}^m \text{log}~p({y}_i|\mathbf{x}_i, \mathbf{w}_i) - D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{h})\bigr) = -L = -Q,
 \]
 где $q$ --- нормальное распределение с диагональной матрицей ковариаций:
 \begin{equation}
-\label{eq:diag}
 	q \sim \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q),
+\label{eq:diag}
 \end{equation}
 где $\mathbf{A}_q = \text{diag}[\alpha^q_1, \dots, \alpha^q_u]^{-1}$ --- диагональная матрица ковариаций, $\boldsymbol{\mu}_q$ --- вектор средних компонент.
 Расстояние $D_\text{KL}$ между двумя гауссовыми величинами задается как 
 \[
 	D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{h})\bigr) = \frac{1}{2} \bigl( \text{Tr} [\mathbf{A}\mathbf{A}^{-1}_q] + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^\mathsf{T}\mathbf{A}(\boldsymbol{\mu} - \boldsymbol{\mu}_q) - u +\text{ln}~|\mathbf{A}^{-1}| - \text{ln}~|\mathbf{A}_q^{-1}| \bigr).
 \]
-
 В качестве вариационных параметров $\boldsymbol{\theta}$ выступают параметры распределения $q$:
 \[
 \boldsymbol{\theta} = [\alpha_1, \dots, \alpha_u, {\mu}_1,\dots,{\mu}_u].
@@ -139,7 +140,7 @@ Q = -\frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathbf{y}_q|\mathbf{X}_q, \mathbf{w}_
 \begin{tabularx}{\textwidth}{|X|X|X|X|}
 \hline
 \bf Алгоритм & \bf Тип алгоритма & \bf Преимущества алгоритма & \bf Недостатки алгоритма  \\ 
-Случайный поиск & стохастический & простота реализации& алгоритм неэффективен при большом количестве гиперпараметров (проклятие размерности)  \\ \hline
+Случайный поиск & стохастический & простота реализации& Алгоритм неэффективен при большом количестве гиперпараметров (проклятие размерности)  \\ \hline
 Жадный алгоритм~\cite{greed_hyper} & градиентный & Возможность одновременной оптимизации параметров и гиперпараметров & Жадность алгоритма \\ \hline
 HOAG~\cite{hyper_hoag} & градиентный & Быстрая сходимость & Алгоритм требователен к настройкам параметров \\ \hline 
 DrMAD~\cite{hyper_mad} & градиентный & Алгоритм учитывает алгоритм оптимизации параметров модели и его параметры & Алгоритм страдает от проблем неустойчиовтси градиентного спуска (градиентный взрыв и затухание); Алгоритм работает в очень жетских предположениях. \\ \hline
@@ -179,11 +180,11 @@ DrMAD~\cite{hyper_mad} & градиентный &$O(\eta s |\hat{\mathfrak{D}}|)
 Пусть оператор $T$ производит $\eta$ шагов оптимизации:
 \begin{equation}
 \label{eq:gd}
-	 \boldsymbol{\theta}^{*} = T \circ T \circ \dots \circ T(\boldsymbol{\theta}^{0} | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta}) = T^\eta(\boldsymbol{\theta} | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta}),
+	 \boldsymbol{\theta}^{*} = T \circ T \circ \dots \circ T(\boldsymbol{\theta}^{0} | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta}) = T^\eta(\boldsymbol{\theta}^{0} | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta}),
 \end{equation}
 где 
 $$
-	T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L(\boldsymbol{\theta},   \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}), 
+	T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L(\boldsymbol{\theta}|   \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}), 
 $$
 $ \beta_{\text{lr}}$ --- длина шага градиентного спуска, $\boldsymbol{\theta}^0$ --- начальное значение параметров $\boldsymbol{\theta}$, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$. В данной работе в качестве опреатора оптимизации параметров модели выступает стохастический градиентный спуск~\eqref{eq:sgd_operator}.
 
@@ -193,9 +194,9 @@ $ \beta_{\text{lr}}$ --- длина шага градиентного спуск
     \mathbf{h}^{*} = \argmax_{\mathbf{h} \in \mathbb{R}^h} Q(T^\eta(\boldsymbol{\theta} | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta})),
 \end{equation}
 где $\boldsymbol{\theta}^0$ --- начальное значение параметров $\boldsymbol{\theta}$.
-В дальнейшем для удобства будем применять сокращенные формы $Q(\mathbf{h}, \boldsymbol{\theta}), L(\boldsymbol{\theta}, \mathbf{h}), T(\boldsymbol{\theta}, \mathbf{h}).$
+В дальнейшем для удобства будем применять сокращенные формы $Q(\mathbf{h}| \boldsymbol{\theta}), L(\boldsymbol{\theta}| \mathbf{h}), T(\boldsymbol{\theta}, \mathbf{h}).$
 
-Оптимизационную задачу~\eqref{eq:hyper_optim} предлагается решать с использованием градиентного спуска. Вычисление градиента от функции $Q( T^\eta(\boldsymbol{\theta}_0, \mathbf{h}))$ по гиперпараметрам $\mathbf{h}$ является вычислительно сложным в силу внутренней процедуры оптимизации $\boldsymbol{\theta}^{*} = T(\boldsymbol{\theta}_0, \mathbf{h})$. 
+Оптимизационную задачу~\eqref{eq:hyper_optim} предлагается решать с использованием градиентного спуска. Вычисление градиента от функции $Q( T^\eta(\boldsymbol{\theta}_0| \mathbf{h}))$ по гиперпараметрам $\mathbf{h}$ является вычислительно сложным в силу внутренней процедуры оптимизации $\boldsymbol{\theta}^{*} = T(\boldsymbol{\theta}_0, \mathbf{h})$. 
 Общая схема  оптимизации гиперпараметров представлена следующим образом:
 \begin{enumerate}
 \item От 1 до  $l$:
@@ -203,30 +204,31 @@ $ \beta_{\text{lr}}$ --- длина шага градиентного спуск
 \item Приближенно решить задачу оптимизации~\eqref{eq:hyper_optim} и получить новый вектор параметров $\mathbf{h}'$
 \item $\mathbf{h} = \mathbf{h}'$.
 \end{enumerate}
-где $l$ --- количество итераций оптимизации гиперпараметров. Рассмотрим методы приближенного решения данной задачи оптимизации.
-
+Здесь $l$ --- число итераций оптимизации гиперпараметров. Рассмотрим методы приближенного решения данной задачи оптимизации.
+Псевдокод общего алгоритма оптимизации гиперпараметров приведен на Рис.~\ref{alg:hyperparam_optim}.
 
 
 \textbf{Жадный алгоритм. }
 В качестве  правила обновления вектора гиперпараметров $\mathbf{h}$ на каждом шаге оптимизации~\eqref{eq:gd} выступает градиентный спуск с учетом обновления параметров $\boldsymbol{\theta}$ на данном шаге:
 \begin{equation}
 \label{eq:greed}
-\mathbf{h}' =	 \mathbf{h} -  \beta_{\text{lr}}^{\mathbf{h}} \nabla_{\mathbf{h}}  Q \bigl(\mathbf{h}, T(\boldsymbol{\theta}^{0}, \mathbf{h})\bigr) = \mathbf{h} -  \beta_{\text{lr}}^{\mathbf{h}} \nabla_{\mathbf{h}}  Q\bigl(\mathbf{h}, \boldsymbol{\theta} -  \beta_{\text{lr}} \nabla L(\boldsymbol{\theta}, \mathbf{h})\bigr),
+\mathbf{h}' =	 \mathbf{h} -  \beta_{\text{lr}}^{\mathbf{h}} \nabla_{\mathbf{h}}  Q \bigl(\mathbf{h}, T(\boldsymbol{\theta}^{0}, \mathbf{h})\bigr) = \mathbf{h} -  \beta_{\text{lr}}^{\mathbf{h}} \nabla_{\mathbf{h}}  Q\bigl(\mathbf{h}, \boldsymbol{\theta} -  \beta_{\text{lr}} \nabla L(\boldsymbol{\theta}| \mathbf{h})\bigr),
 \end{equation}
 где $ \beta_{\text{lr}}^{\mathbf{h}}$ --- длина шага оптимизации гиперпараметров.
+Псевдокод жадного алгоритма оптимизации гиперпараметров приведен на Рис.~\ref{alg:greedy}.
 
 \textbf{Алгоритм HOAG. }
 Предлагается получить приближенное значения градиента гиперпараметров $\nabla_{\mathbf{h}} Q \bigl(\mathbf{h}, T^\eta(\boldsymbol{\theta}^0)\bigr)$ на основе следующей формулы:
 \[
-\nabla_{\mathbf{h}} Q \bigl(T^\eta(\boldsymbol{\theta}^0, \mathbf{h})\bigr) = \nabla_{\mathbf{h}} Q(, \mathbf{h}, \boldsymbol{\theta}) - (\nabla^2_{\boldsymbol{\theta}, \mathbf{h}} L(\boldsymbol{\theta}, \mathbf{h}))^\text{T}\mathbf{H}(\boldsymbol{\theta})^{-1}\nabla_{\boldsymbol{\theta}} Q( \mathbf{h}, \boldsymbol{\theta}),
+\nabla_{\mathbf{h}} Q \bigl(T^\eta(\boldsymbol{\theta}^0, \mathbf{h})\bigr) = \nabla_{\mathbf{h}} Q( \mathbf{h}| \boldsymbol{\theta}) - (\nabla^2_{\boldsymbol{\theta}, \mathbf{h}} L(\boldsymbol{\theta}| \mathbf{h}))^\text{T}\mathbf{H}(\boldsymbol{\theta})^{-1}\nabla_{\boldsymbol{\theta}} Q( \mathbf{h}| \boldsymbol{\theta}),
 \]
 где $\mathbf{H}$ --- гессиан функции $L$ по вариационным параметрам $\boldsymbol{\theta}$.
 
-Процедура получения приближенного значения градиента гиперпараметров $\nabla_{\mathbf{h}} Q$  производится итеративно:
+Процедура получения приближенного значения градиента гиперпараметров $\nabla_{\mathbf{h}} Q$  производится итеративно.
 \begin{enumerate}
 \item Провести $\eta$ шагов оптимизации: $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0, \mathbf{h})$.
-\item Решить линейную систему для вектора $\boldsymbol{\lambda}$: $\mathbf{H}(\boldsymbol{\theta})\boldsymbol{\lambda} =  \nabla_{\boldsymbol{\theta}} Q(\boldsymbol{\theta}, \mathbf{h})$.
-\item Приближенное значение градиентов гиперпараметра вычисляется как: $\hat{\nabla}_{\mathbf{h}}Q = \nabla_{\mathbf{h}}Q(\boldsymbol{\theta}, \mathbf{h}) -\nabla_{\boldsymbol{\theta}, \mathbf{h}} L(\boldsymbol{\theta}, \mathbf{h})^T\boldsymbol{\lambda}$.
+\item Решить линейную систему для вектора $\boldsymbol{\lambda}$: $\mathbf{H}(\boldsymbol{\theta})\boldsymbol{\lambda} =  \nabla_{\boldsymbol{\theta}} Q(\boldsymbol{\theta}| \mathbf{h})$.
+\item Приближенное значение градиентов гиперпараметра вычисляется как $\hat{\nabla}_{\mathbf{h}}Q = \nabla_{\mathbf{h}}Q(\boldsymbol{\theta}| \mathbf{h}) -\nabla_{\boldsymbol{\theta}, \mathbf{h}} L(\boldsymbol{\theta}| \mathbf{h})^T\boldsymbol{\lambda}$.
 \end{enumerate}
 
 Итоговое правило обновления:
@@ -236,7 +238,7 @@ $ \beta_{\text{lr}}$ --- длина шага градиентного спуск
 \end{equation}
 
 В данной работе для приближенного решения  шага 2 алгоритма HOAG используется стохастический градиентный спуск в силу сложности вычисления гессиана $\mathbf{H}(\boldsymbol{\theta})$.
-
+Псевдокод алгоритма HOAG приведен на Рис.~\ref{alg:hoag}.
 
 \textbf{Алгоритм DrMad. }
 TODO: доказать корректность?
@@ -259,6 +261,8 @@ TODO: доказать корректность?
 \end{enumerate}
 
 Итоговое правило обновления гиперпараметров аналогично~\eqref{eq:update_hyper}.
+Псевдокод общего алгоритма оптимизации гиперпараметров приведен на Рис.~\ref{alg:drmad}.
+
 В работе~\cite{hyper_mad} отмечается неустойчивость алгоритма при высоких значениях длины шага градиентного спуска $ \beta_{\text{lr}}$. Поэтому вместо исходного правила~\eqref{eq:mad_lin} в данной работе первые 5\% значений параметров не рассматриваются, а также учитывается только каждый $\tau_k$ шаг оптимизации:
 \begin{equation}
 \label{eq:mad_lin2}
@@ -266,31 +270,34 @@ TODO: доказать корректность?
 \end{equation}
 где $\tau_0 = [0.05 \cdot \eta]$.
 
-Иллюстративный пример поведения представленных методов представлен на рис.~\ref{fig:traj}. Жадный алгоритм, соответствющий красной линии на графике, оптимизирует гиперпараметры во время процедуры оптимизация вариационных параметров $\boldsymbol{\theta}$. Алгоритм HOAG оптимизирует гиперпараметры после каждой процедуры оптимизации вариационных параметров. Алгоритм DrMAD использует линеаризованную аппроксимацию траектории оптимизации вариационных параметров $\boldsymbol{\theta}$. 
+Иллюстративный пример поведения представленных методов представлен на Рис.~\ref{fig:traj}. Жадный алгоритм, соответствющий красной линии на графике, оптимизирует гиперпараметры во время процедуры оптимизация вариационных параметров $\boldsymbol{\theta}$. Алгоритм HOAG оптимизирует гиперпараметры после каждой процедуры оптимизации вариационных параметров. Алгоритм DrMAD использует линеаризованную аппроксимацию траектории оптимизации вариационных параметров $\boldsymbol{\theta}$. 
 
 \begin{figure}
 %GENERAL
- \begin{minipage}[t]{.5\textwidth}
-        \centering
     \begin{algorithmic}[1]
 \REQUIRE $\mathbf{X}, \mathbf{y}, p(\mathbf{w}|\mathbf{h}), \boldsymbol{\theta}^0$;
 \REQUIRE количество итераций $l$ градиентной оптимизации гиперпараметров; 
 \REQUIRE количество итераций $\eta$ оптимизации вариационных параметров;
+\ENSURE оптимальные значения параметров $\mathbf{h}$;
 \FOR{$r=1,\dots,l$}
 \STATE провести оптимизацию вариационных параметров;
 \STATE Приближенно решить задачу оптимизации~\eqref{eq:hyper_optim} и получить новый вектор параметров $\mathbf{h}'$ 
-\STATE $\mathbf{h} = \mathbf{h}'$.
+\STATE $\mathbf{h} = \mathbf{h}'$;
 \ENDFOR
+\RETURN $\mathbf{h}$.
 \end{algorithmic}
+\caption{Псевдокод общего алгоритма оптимизации гиперпараметров.}
+\label{alg:hyperparam_optim}
 
-    \end{minipage}
-\hfill
+\end{figure}
+
+\begin{figure}
 %GREED
- \begin{minipage}[t]{.5\textwidth}
          \begin{algorithmic}[1]
 \REQUIRE $\mathbf{X}, \mathbf{y}, p(\mathbf{w}|\mathbf{h}), \boldsymbol{\theta}^0$;
 \REQUIRE количество итераций $l$ градиентной оптимизации гиперпараметров; 
 \REQUIRE количество итераций $\eta$ оптимизации вариационных параметров;
+\ENSURE оптимальные значения параметров $\mathbf{h}$;
 \FOR{$r=1,\dots,l$}
 \FOR{$\tau=1,\dots,\eta$}
 \STATE провести шаг оптимизации вариационных параметров;
@@ -298,37 +305,44 @@ TODO: доказать корректность?
 \STATE $\mathbf{h} = \mathbf{h}'$.
 \ENDFOR
 \ENDFOR
+\RETURN $\mathbf{h}$.
 \end{algorithmic}
+\caption{Псевдокод жадного алгоритма оптимизации гиперпараметров.}
+\label{alg:greedy}
+
+\end{figure}
 
 
-    \end{minipage}
-\hfill
-%HOAG
- \begin{minipage}[t]{.5\textwidth}
+\begin{figure}
  \begin{algorithmic}[1]
 \REQUIRE $\mathbf{X}, \mathbf{y}, p(\mathbf{w}|\mathbf{h}), \boldsymbol{\theta}^0$;
 \REQUIRE количество итераций $l$ градиентной оптимизации гиперпараметров; 
 \REQUIRE количество итераций $\eta$ оптимизации вариационных параметров;
+\ENSURE оптимальные значения параметров $\mathbf{h}$;
 \FOR{$r=1,\dots,l$}
 \STATE провести оптимизацию вариационных параметров;
-\STATE Решить линейную систему для вектора $\boldsymbol{\lambda}$: $\mathbf{H}(\boldsymbol{\theta})\boldsymbol{\lambda} =  \nabla_{\boldsymbol{\theta}} Q(\boldsymbol{\theta}, \mathbf{h})$.
-\STATE $\hat{\nabla}_{\mathbf{h}}Q = \nabla_{\mathbf{h}}Q(\boldsymbol{\theta}, \mathbf{h}) -\nabla_{\boldsymbol{\theta}, \mathbf{h}} L(\boldsymbol{\theta}, \mathbf{h})^T\boldsymbol{\lambda}$;
+\STATE Решить линейную систему для вектора $\boldsymbol{\lambda}$: $\mathbf{H}(\boldsymbol{\theta})\boldsymbol{\lambda} =  \nabla_{\boldsymbol{\theta}} Q( \mathbf{h},\boldsymbol{\theta})$.
+\STATE $\hat{\nabla}_{\mathbf{h}}Q = \nabla_{\mathbf{h}}Q(\mathbf{h}|\boldsymbol{\theta}) -\nabla_{\boldsymbol{\theta}, \mathbf{h}} L(\boldsymbol{\theta}| \mathbf{h})^T\boldsymbol{\lambda}$;
 \STATE $\mathbf{h} = \mathbf{h} - \beta_{\text{lr}}\hat{\nabla}_{\mathbf{h}}Q$.
 \ENDFOR
+\RETURN $\mathbf{h}$.
 \end{algorithmic}
-    \end{minipage}
-\hfill
+\caption{Псевдокод алгоритма HOAG.}
+\label{alg:hoag}
+
+\end{figure}
 %DRMAD
 
- \begin{minipage}[b]{.5\textwidth}
 
+\begin{figure}
  \begin{algorithmic}[1]
 \REQUIRE $\mathbf{X}, \mathbf{y}, p(\mathbf{w}|\mathbf{h}), \boldsymbol{\theta}^0$;
 \REQUIRE количество итераций $l$ градиентной оптимизации гиперпараметров; 
 \REQUIRE количество итераций $\eta$ оптимизации вариационных параметров;
+\ENSURE оптимальные значения параметров $\mathbf{h}$;
 \FOR{$r=1,\dots,l$}
 \STATE $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0, \mathbf{h})$.
-\STATE $\hat{\nabla} \mathbf{h} = \nabla_\mathbf{h} Q( \mathbf{h}, \boldsymbol{\theta}).$ 
+\STATE $\hat{\nabla} \mathbf{h} = \nabla_\mathbf{h} Q( \mathbf{h}| \boldsymbol{\theta}).$ 
 \STATE $d\mathbf{v} = \mathbf{0}.$
 \FOR{$\tau=\eta,\dots,1$}
 \STATE Вычислить значения параметров $\boldsymbol{\theta}^\tau$\eqref{eq:mad_lin}.
@@ -338,11 +352,14 @@ TODO: доказать корректность?
 \ENDFOR
 \STATE $\mathbf{h} = \mathbf{h} - \hat{\nabla} \mathbf{h}.$
 \ENDFOR
+\RETURN $\mathbf{h}$.
 \end{algorithmic}
+\caption{Псевдокод алгоритма DrMAD.}
+\label{alg:drmad}
 
-    \end{minipage}
+\end{figure}
 
-\end{figure}     
+     
 \begin{figure}[h!]
 \centering
   \includegraphics[width=0.6\linewidth]{plots/hyperparams/Fig_traj.eps}
@@ -356,7 +373,10 @@ TODO: доказать корректность?
 
 
 \section{Анализ алгоритмов оптимизации гиперпараметров}
-Для анализа рассматриваемых алгоритомв оптимизации гиперпараметров был проведен ряд вычислительных экспериментов на выборках MNIST~\cite{mnist}, WISDM~\cite{wisdm}, а также на синтетических данных.
+Для анализа рассматриваемых алгоритмов оптимизации гиперпараметров был проведен ряд вычислительных экспериментов на выборках MNIST~\cite{mnist}, WISDM~\cite{wisdm}, а также на синтетических данных. Рассматривались задачи классификации и регрессии. В случае задач регрессии рассматриваемые модели $\mathbf{f}$ возвращали скалярные значения:
+\[
+    \mathbb{Y} \subset R, \quad \mathbf{f}(\mathbf{w}, \mathbf{x}) = f(\mathbf{w}, \mathbf{x}).
+\]
 
 Рассматривались следующие критерии качества:
 \begin{enumerate}
@@ -389,25 +409,7 @@ TODO: доказать корректность?
 
 %Для каждого алгоритма для синтетической выборки было проведено 50 повторений, результаты были усреднены. 
 %Для остальных выборок было проведено 5 повторений. 
-В качестве улучшаемого алгоритма рассматривался случайный поиск параметров с количеством итераций поиска, совпадающих с количеством итераций оптимизации гиперпараметров $l$: $l=50$ для синтетической выборки и выборки WISDM, $l=25$ для выборки MNIST. Рассмаитрваемые алгоритмы представлены в Табл.~\ref{table:algo_descr}. Пример поведения траекторий параметров под действием алгоритмов приведен на Рис.~\ref{fig:traj}. В качестве функций $Q$ и $L$ рассматривались функции кросс-валидации~\eqref{eq:cv} с $k=4$ и вариацонная оценка правдоподобия~\eqref{eq:elbo}. 
-
-\begin{table}
-\small
-% Алгоритм & Тип алгоритм & Время & Плюсы & Минусы 
-
-\begin{tabularx}{\textwidth}{|X|X|X|X|}
-\hline
-\bf Алгоритм & \bf Тип алгоритма & \bf Сложность работы одной итерации & \bf Предположения для корректности  \\ 
-Случайный поиск & стохастический & $O(\eta s |\hat{\mathfrak{D}}|)$& -  \\ \hline
-Жадный алгоритм~\cite{greed_hyper} & градиентный & $O(\eta (s+h) |\hat{\mathfrak{D}}|)$ & $\mathbf{H}(\boldsymbol{\theta}) = \mathbf{I}$  \\ \hline
-HOAG~\cite{hyper_hoag} & градиентный & $O(\eta s |\hat{\mathfrak{D}}| + h^2 |\hat{\mathfrak{D}}| + \text{o}),$ где $o$ --- время решения уравнения пункте 3&  первые производные $Q$ и вторые производные $L$ --- липшецевы;  $\text{det}\mathbf{H} \neq \mathbf{0}$;  \\ \hline
-DrMAD~\cite{hyper_mad} & градиентный &$O(\eta s |\hat{\mathfrak{D}}|)$ & Траектория оптимизации параметров $\boldsymbol{\theta}$ = $\boldsymbol{\theta}_0, \dots \boldsymbol{\theta}_\eta$ --- линейная \\ \hline
-\end{tabularx}
-
-\caption{Основные свойства рассматриваемых алгоритмов}
-\label{table:algo_descr}
-
-\end{table}
+В качестве улучшаемого алгоритма рассматривался случайный поиск параметров с количеством итераций поиска, совпадающих с количеством итераций оптимизации гиперпараметров $l$: количество итераций $l=50$ для синтетической выборки и выборки WISDM, $l=25$ для выборки MNIST. В качестве функций $Q$ и $L$ рассматривались функции кросс-валидации~\eqref{eq:cv} с $k=4$ и вариацонная оценка правдоподобия~\eqref{eq:hyper_elbo}. 
 
 
 
@@ -429,11 +431,12 @@ $l = 50$ для синтетической выборки,  $l=10$ для выб
 
 
 \textbf{Синтетическая выборка. }
-Синтетические данные были порождены по следующему правилу:
+Синтетические данные были порождены из выборки с одним признаком, $\mathbf{X} \in \mathbb{R}^{m \times 1}$.
+Порождения выборки происходило по следующему правилу:
 \[
 	\mathbf{y} = \mathbf{X} + \boldsymbol{\varepsilon},\quad \mathbf{X}  \sim \mathcal{N}(\mathbf{0}, \mathbf{I}) \quad \boldsymbol{\varepsilon} \sim \mathcal{N}(\mathbf{0}, \mathbf{I}),
 \]
-где $\quad m = 40, \quad n = 1.$
+где $\quad m = 40.$
 В качестве модели $\mathbf{f}$ выступает регрессия с признаками $\{\mathbf{X}^0, \dots, \mathbf{X}^9, \textbf{sin}(\mathbf{X}), \textbf{cos}(\mathbf{X})\}$.
 
 Было проведено 5 запусков для каждого алгоритма.
@@ -454,20 +457,20 @@ $\mathbf{w}_2, \mathbf{b}_2$ --- параметры второго слоя не
 \]
 
 Графики сходимости алгоритмов, а также качества полученных моделей представлены на Рис.~\ref{fig:wisdm}.
-Как видно из графиков, градиентные алгоритмы DrMad и HOAG показывают значительно худший результат по сравнению с жадным алгоритмом оптимизации. Случайный поиск показыват достаточно хорошие результаты в случае небольшого числа оптимизируемых гиперпараметров $\mathbf{h}$. В случае, когда в качестве функции $Q$ используется вариационная нижняя оценка правдоподобия~\eqref{eq:elbo} и количество гиперпараметров велико, эффективно работающими алгоритмами оказалась жадная оптимизация и HOAG. HOAG имеет большее время сходимости и требует более сложных вычислений в процессе оптимизации.
+Как видно из графиков, градиентные алгоритмы DrMad и HOAG показывают значительно худший результат по сравнению с жадным алгоритмом оптимизации. Случайный поиск показыват достаточно хорошие результаты в случае небольшого числа оптимизируемых гиперпараметров $\mathbf{h}$. В случае, когда в качестве функции $Q$ используется вариационная нижняя оценка правдоподобия~\eqref{eq:hyper_elbo} и количество гиперпараметров велико, эффективно работающими алгоритмами оказалась жадная оптимизация и HOAG. HOAG имеет большее время сходимости и требует более сложных вычислений в процессе оптимизации.
 
 
-\textbf{MNIST}
+\textbf{MNIST. }
 Выборка MNIST состоит из множества изображений рукописных цифр.
 Рассматривалась нейросеть с 300 нейронами на скрытом слое.
 
 Графики сходимости алгоритмов, а также качества полученных моделей представлены на Рис.~\ref{fig:mnist}.
-Как видно из графиков, модели, достигающиие наилучшей оценки правдоподобия, имеют наихудшее итоговое качество, но более устойчивы к возмущению параметров модели. Для дополнительного анализа данной проблемы были проведены эксперименты по оптимизации моделей на выборке с добавленным шумом с использованием значений гиперпараметров $\mathbf{h}$, полученных ранее:
+Как видно из графиков, модели, достигающиие наилучшей оценки правдоподобия, имеют наихудшее итоговое качество, но более устойчивы к возмущению параметров модели. Для дополнительного анализа данной проблемы были проведены эксперименты по оптимизации моделей на выборке с добавленным шумом и использованием значений гиперпараметров $\mathbf{h}$, полученных ранее:
 \[
     \hat{\mathfrak{D}} = \mathfrak{D} + \boldsymbol{\varepsilon}, \quad   \boldsymbol{\varepsilon} \sim \mathcal{N}(\mathbf{0}, \hat{\sigma}\mathbf{I}),
 \]
 где $\hat{\sigma}$ варьировалась в отрезке от 0 до 0.5.
-График зависимости качества моделей от значения $\hat{\sigma}$ приведен на Рис.~\ref{fig:noise}.  Гиперпараметры, достигающие наибольших значений вариационной оценки~\eqref{eq:elbo} менее подвережены шуму в обучающей выборке, что можно интерпретировать как меньшую подверженность к переобучению.
+График зависимости качества моделей от значения $\hat{\sigma}$ приведен на Рис.~\ref{fig:noise}.  Гиперпараметры, достигающие наибольших значений вариационной оценки~\eqref{eq:hyper_elbo} менее подвережены шуму в обучающей выборке, что можно интерпретировать как меньшую подверженность к переобучению.
 
 Как можно видеть по результатам экспериментов, градиентные методы показывают лучший результат, чем случай поиск в случае большого количество гиперпараметров. Наилучшие результаты были получены жадным поиском. Алгоритм DrMad, показавший результаты хуже, чем жадный алгоритм и HOAG, является упрощенной версией алгоритма, представленного в~\cite{hyper_mad}. Данный алгоритм позволяет проводить оптимизацию не только гиперпараметров, но параметров алгоритма оптимизации $T$. Поэтому возможным развитием  метода DrMad является получение оптимальных значений параметров оптимизации.
 
@@ -477,7 +480,7 @@ $\mathbf{w}_2, \mathbf{b}_2$ --- параметры второго слоя не
 \begin{tabularx}{\textwidth}{ |X|X|X|X|X|X|X|X|X|}
 
 \hline
-\textbf{Algorithm} & $L, Q$  & $Q(\boldsymbol{\theta}, \mathbf{A})$ & Convergence & E & $E_{0.25}$ & $E_{0.5}$\\ 
+\textbf{Algorithm} & $L, Q$  & $Q(\mathbf{h}| \boldsymbol{\theta} )$ & Convergence & E & $E_{0.25}$ & $E_{0.5}$\\ 
 \hline
 \multicolumn{7}{|c|}{\textit{Synthetic}}  \\
 \hline
@@ -489,13 +492,13 @@ DrMAD & ~\eqref{eq:cv} & -174.1 & 40.2 $\pm$ 16.1 &  1.403 & 1.424 & \bf 1.512 \
 \hline
 HOAG & ~\eqref{eq:cv} &-174.7 & 29.4 $\pm$ 24.0 &   \bf 1.432  & 1.463 & 1.553\\
 \hline
-Random Search & ~\eqref{eq:elbo} & -63.5  & 32.4 $\pm$ 18.7  & 1.368 & 1.426 & 1.546  \\
+Random Search & ~\eqref{eq:hyper_elbo} & -63.5  & 32.4 $\pm$ 18.7  & 1.368 & 1.426 & 1.546  \\
 \hline
-Greedy & ~\eqref{eq:elbo} & -25.5 & \bf 1.2 $\pm$ 0.4 & 1.161 & 1.174 & 1.193\\
+Greedy & ~\eqref{eq:hyper_elbo} & -25.5 & \bf 1.2 $\pm$ 0.4 & 1.161 & 1.174 & 1.193\\
 \hline
-DrMAD & ~\eqref{eq:elbo} & \bf -25.1 &  10.6 $\pm$ 0.8 &  1.157 & 1.163 &  1.184\\
+DrMAD & ~\eqref{eq:hyper_elbo} & \bf -25.1 &  10.6 $\pm$ 0.8 &  1.157 & 1.163 &  1.184\\
 \hline
-HOAG & ~\eqref{eq:elbo} &-25.8 & 10.8 $\pm$ 1.5&   \bf 1.141  & \bf 1.149 & \bf 1.177\\
+HOAG & ~\eqref{eq:hyper_elbo} &-25.8 & 10.8 $\pm$ 1.5&   \bf 1.141  & \bf 1.149 & \bf 1.177\\
 \hline
 
 
@@ -509,13 +512,13 @@ DrMAD & ~\eqref{eq:cv} & -1086708.2 & 29.2 $\pm$ 8.0 &  0.694 &  0.708 & 0.742 \
 \hline
 HOAG & ~\eqref{eq:cv} & -1086733.5 & 28.2 $\pm$ 7.13&   0.701 & 0.724 & 0.753 \\
 \hline
-Random search & ~\eqref{eq:elbo} & -35420.4 &   14.4 $\pm$ 7.8  &   0.732 &   0.755 & 0.785 \\
+Random search & ~\eqref{eq:hyper_elbo} & -35420.4 &   14.4 $\pm$ 7.8  &   0.732 &   0.755 & 0.785 \\
 \hline
-Greedy & ~\eqref{eq:elbo} & \bf -3552.9 &\bf 1.0 $\pm$ 0.0  &   \bf 0.702 & \bf 0.730  &  \bf 0.767\\
+Greedy & ~\eqref{eq:hyper_elbo} & \bf -3552.9 &\bf 1.0 $\pm$ 0.0  &   \bf 0.702 & \bf 0.730  &  \bf 0.767\\
 \hline
-DrMAD & ~\eqref{eq:elbo} & -26091.4 &   50.0 $\pm$ 0.0  & 0.729 &  0.753 & 0.816 \\
+DrMAD & ~\eqref{eq:hyper_elbo} & -26091.4 &   50.0 $\pm$ 0.0  & 0.729 &  0.753 & 0.816 \\
 \hline
-HOAG & ~\eqref{eq:elbo} &  -16566.6 & 49.0 $\pm$ 0.0  &  0.733 &  0.755 &  0.801 \\
+HOAG & ~\eqref{eq:hyper_elbo} &  -16566.6 & 49.0 $\pm$ 0.0  &  0.733 &  0.755 &  0.801 \\
 \hline
 
 
@@ -530,13 +533,13 @@ DrMAD & ~\eqref{eq:cv} & -3469.0 & 17.0 $\pm$ 5.6 & \bf  0.982 & 0.962 & 0.831\\
 \hline
 HOAG & ~\eqref{eq:cv} & -3748.6 & \bf 8.6 $\pm$ 7.3&   0.980 &  0.961  & 0.853 \\
 \hline
-Random search & ~\eqref{eq:elbo} & -1304556.4 &  14.2 $\pm$ 5.7 &  \bf 0.982 & 0.943 & 0.814 \\
+Random search & ~\eqref{eq:hyper_elbo} & -1304556.4 &  14.2 $\pm$ 5.7 &  \bf 0.982 & 0.943 & 0.814 \\
 \hline
-Greedy & ~\eqref{eq:elbo} & \bf -11136.2 & \bf 1.0 $\pm$ 0.0  &  0.977 & \bf 0.952 & \bf 0.884\\
+Greedy & ~\eqref{eq:hyper_elbo} & \bf -11136.2 & \bf 1.0 $\pm$ 0.0  &  0.977 & \bf 0.952 & \bf 0.884\\
 \hline
-DrMAD & ~\eqref{eq:elbo} & -1305432.9 & 24.6 $\pm$ 0.5  & \bf 0.982 & 0.941 & 0.813 \\
+DrMAD & ~\eqref{eq:hyper_elbo} & -1305432.9 & 24.6 $\pm$ 0.5  & \bf 0.982 & 0.941 & 0.813 \\
 \hline
-HOAG & ~\eqref{eq:elbo} &  -280061.6 & 24.0 $\pm$ 0.0  & 0.981 & 0.943 & 0.819\\
+HOAG & ~\eqref{eq:hyper_elbo} &  -280061.6 & 24.0 $\pm$ 0.0  & 0.981 & 0.943 & 0.819\\
 \hline
 
 
