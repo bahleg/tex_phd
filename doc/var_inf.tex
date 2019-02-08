@@ -36,7 +36,7 @@
 Заметим, что основная часть данной главы также применим и в случае, когда модели описываются общим параметрическим семействов моделей глубокого обучения. В данном случае вместо интеграла~\eqref{eq:model_evidence} предлагается использовать интеграл~\eqref{eq:evidence}, учитывающий вероятностные предположения о структуре модели.
 
 
-\begin{defin}Модель классификации $\mathbf{f}$ назовем оптимальной среди моделей $M$, если достигается максимум интеграла~\eqref{eq:model_evidence}.
+\begin{defin}Модель  $\mathbf{f}$ назовем оптимальной среди моделей $M$, если достигается максимум интеграла~\eqref{eq:model_evidence}.
 \end{defin}
 
 
@@ -86,13 +86,15 @@ $\mathbf{H}$ --- гессиан функции потерь $L$ модели:
 
 \begin{example}
 Рассмотрим задачу классификации, в которой модель --- нейросеть с softmax-слоем на выходе:
-\[
+\begin{equation}
+\label{eq:softmax_example}
 \mathbf{f} = \mathbf{f}_\textnormal{|V|}(\mathbf{f}_{|V|-1}(\dots \mathbf{f}_1(\mathbf{x}))),
-\]
+\end{equation}
 $\mathbf{f}_1, \dots, \mathbf{f}_{|V|}$ --- дифференцируемые функции, $\mathbf{f}_\textnormal{|V|}$ --- многомерная логистическая функция:
-\[
+\begin{equation}
+\label{eq:proba_softmax}
 	\mathbf{f}_\textnormal{|V|} = \frac{\mathbf{f}_{|V|-1}(\dots \mathbf{f}_1(\mathbf{x}))}{\sum_{r=1}^Z \textnormal{exp}\bigl( {f}^{r}_{|V|-1}(\dots \mathbf{f}_1(\mathbf{x})) \bigr)},
-\]
+\end{equation}
 где ${f}_{|V|-1}^{r}$ --- $r$-я компонента функции $\mathbf{f}_{|V|-1}$. Компонента $r$ вектора $\mathbf{f}_{|V|}$ определяет вероятность принадлежности объекта $\mathbf{x}$ к классу $r$. Логарифм правдоподобия зависимой переменной аналогично~\eqref{eq:example1} имеет вид
 \[
 	\textnormal{log} p({y}|\mathbf{x}, \mathbf{w}, \mathbf{h}) =  \textnormal{log}~{f}^{y}_{|V|} (\mathbf{f}_{|V-1|}(\dots \mathbf{f}_1(\mathbf{x}))).
