@@ -393,7 +393,7 @@ TODO: доказать корректность?
 \]
 в случае задачи регрессии TODO: опять вопрос насчет меток,
 \[
-    E = \text{Accuracy} = 1 - \frac{1}{m}\sum_{i=1}^m [\argmax_{r \in \{1, \dots, Z\}}f^r(\mathbf{x}_i, \mathbf{w}) \neq y_i]
+    E = \text{Accuracy} = 1 - \frac{1}{m}\sum_{i=1}^m [\argmax_{r \in \{1, \dots, R\}}f^r(\mathbf{x}_i, \mathbf{w}) \neq y_i]
 \]
 в случае задачи классификации.
 
@@ -402,7 +402,7 @@ TODO: доказать корректность?
     E_\sigma = \text{RMSE}_\sigma = \left (\frac{1}{m}\sum_{i=1}^m (f(\mathbf{x}_i, \mathbf{w} + \boldsymbol{\varepsilon})-y_i)\right)^{\frac{1}{2}}, \quad \boldsymbol{\varepsilon} \sim \mathcal{N}\bigl(\mathbf{0}, \sigma\mathbf{I}\bigr),
 \]
 \[
-    E_\sigma  = \text{Accuracy}_\sigma  = 1 - \frac{1}{m}\sum_{i=1}^m [\argmax_{r \in \{1, \dots, Z\}}f^r(\mathbf{x}_i, \mathbf{w }  + \boldsymbol{\varepsilon})) \neq y_i],  \quad \boldsymbol{\varepsilon} \sim \mathcal{N}\bigl(\mathbf{0}, \sigma\mathbf{I}\bigr).
+    E_\sigma  = \text{Accuracy}_\sigma  = 1 - \frac{1}{m}\sum_{i=1}^m [\argmax_{r \in \{1, \dots, R\}}f^r(\mathbf{x}_i, \mathbf{w }  + \boldsymbol{\varepsilon})) \neq y_i],  \quad \boldsymbol{\varepsilon} \sim \mathcal{N}\bigl(\mathbf{0}, \sigma\mathbf{I}\bigr).
 \]
 
 \end{enumerate}
