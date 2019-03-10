@@ -443,71 +443,62 @@ $$\PP(\bw|\mathbf{h}) \sim \NNN(\boldsymbol{\mu}, \mathbf{A}^{-1}),$$
 \textbf{Постановка задачи}
 
 Задана выборка
-$$\mathfrak{D} = \{\textbf{x}_i,y_i\},~ i =1,...,m$$
-где~$\textbf{x}_i \in \mathbb{R}^{m}$,~$y_i \in \{1, \dots, R\}$,~$R$ --- число классов.
-Рассмотрим модель~$$\mathbf{f}(\mathbf{x}, \mathbf{w}): \mathbb{R}^m \times \mathbb{W} \to [0,1]^R$$, где
-$$\mathbf{f}((\mathbf{x}, \mathbf{w}) = \textbf{softmax}\bigl( f_1(f_2(...(f_{|V|}(\mathbf{x}, \mathbf{w})\bigr)$$.
+$$\mathfrak{D} = \{\textbf{x}_i,y_i\},~ i =1,...,m,$$
+где~$\textbf{x}_i \in \mathbb{R}^{n}$,~$y_i \in \{1, \dots, R\}$,~$R$ --- число классов.
+Рассмотрим модель~$$\mathbf{f}(\mathbf{x}, \mathbf{w}): \mathbb{R}^n \times \mathbb{W} \to [0,1]^R, где$$
+$$\mathbf{f}(\mathbf{w}, \mathbf{x}) = \textbf{softmax}\bigl( f_1(f_2(...(f_{|V|}(\mathbf{x}, \mathbf{w})\bigr).$$
 
-Параметр~$w_j$ модели~$\mathbf{f}$  называется активным, если~$w_j \not = 0$. Множество индексов активных параметров обозначим~$\mathcal{A}$.
-Задано пространство параметров модели:
-$$\mathbb{W_\mathcal{A}} = \{ \textbf{w} \in \mathbb{W}|~w_j\not=0,~j \in \mathcal{A}  \}.$$
+Параметр~$w_j$ модели~$\mathbf{f}$  называется активным, если~$w[j] \not = 0$. Множество индексов активных параметров обозначим~$\mathcal{A}$.
+Задано пространство активных параметров модели:
+$$\mathbb{W_\mathcal{A}} = \{ \textbf{w} \in \mathbb{W}|~w[j]\not=0,~j \in \mathcal{A}  \}.$$
 
 
-Для модели~$\mathbf{f}$ с множеством индексов активных параметров~$\mathcal{A}$ и соответствующего ей вектора параметров~$\textbf{w} \in \mathbb{W_\mathcal{A}}$  определим логарифмическую функцию правдоподобия выборки:
-$$L = \log p(\mathbf{Y}|\mathbf{X}, \mathbf{w}, \mathcal{A}),$$
-где~$p(\mathfrak{D}|\mathcal{A},\textbf{w})$ --- апостериорная вероятность выборки~$\mathfrak{D}$ при заданных~$\textbf{w}, \mathcal{A}$.
+Для модели~$\mathbf{f}$ с множеством индексов активных параметров~$\mathcal{A}$ и соответствующего ей вектора параметров~$\textbf{w} \in \mathbb{W_\mathcal{A}}$  определим логарифмическую функцию правдоподобия выборки~\eqref{eq:var_elbo}:
+\begin{equation}
+\label{eq:applied_elbo}
+    L = -\sum_{i=1}^m \text{log}~p({y}_i|\mathbf{x}_i, \hat{\mathbf{w}}) + D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{h})\bigr),\quad \hat{\mathbf{w}} \sim q,
+\end{equation}
+где $q$ --- вариацинное распределение, аппроксимирующее неизвестное апостериорное распределение параметров.
 
 Аналогично~\eqref{eq:applied_elbo} будем проводить оптимизацию вариационной оценки правдоподобия модели, где в качестве вариационного распределения $q$ и априорного распределения параметров $p(\mathbf{w}|\mathbf{h})$ выступает нормальное.
 
-TODO: не понял, спросить у Андрея.
 \textbf{Случайное удаление. }
-Метод случайного удаления заключается в том, что случайным образом удаляется некоторый параметр $w_\xi$ из множества активных параметров сети.  Индекс параметра $\xi$ из равномерного распределения  случайная величина, предположительно доставляющая оптимум в (2.11).
+Метод случайного удаления заключается в том, что случайным образом удаляется некоторый параметр $w[\xi]$ из множества активных параметров сети.  Индекс параметра $\xi$ порождается из равномерного распределения:
 $$\xi \sim \mathcal{U}(\mathcal{A}). \eqno(3.1.1)$$
 
 \textbf{Оптимальное прореживание. }
-Метод оптимального прореживания \cite{cun1990} использует вторую производную целевой функции (2.4) по параметрам для определения нерелевантных параметров. Рассмотрим функцию потерь~$\mathcal{L}$ (2.4) разложенную в ряд Тейлора в некоторой окрестности вектора параметров~$\textbf{w}$:
-$$\delta \mathcal{L} = \sum_{j\in \mathcal{A}} g_j\delta w_j + \frac{1}{2}\sum_{i,j\in \mathcal{A}} h_{ij}\delta w_i\delta w_j + O(||\delta\textbf{w}||^3), \eqno(3.2.1)$$
-где~$\delta w_j~$ --- компоненты вектора~$\delta\textbf{w}$,~$g_j$ --- компоненты вектора градиента~$\nabla \mathcal{L}$, а~$h_{ij}$ --- компоненты гесcиана~$\textbf{H}$:
-$$g_j = \frac{\partial \mathcal{L}}{\partial w_j}, \qquad h_{ij} = \frac{\partial^2\mathcal{L}}{\partial w_i \partial w_j}. \eqno(3.2.2)$$
-
-Задача является вычислительно сложной в силу высокой размерности матрицы \textbf{H}. Введем предположение \cite{cun1990}, о том что удаление нескольких параметров приводит к такому же изменению функции потерь~$\mathcal{L}$, как и суммарное изменение при индивидуальном удалении:
-$$\delta \mathcal{L} = \sum_{j\in \mathcal{A}} \delta \mathcal{L}_j, \eqno(3.2.3)$$
-где~$\mathcal{A}$ --- множество активных параметров,~$\delta\mathcal{L}_j$ --- изменение функции потерь при удалении одного параметра~$\textbf{w}_j$.
-
-В силу данного предположения будем рассматривать только диагональные элементы матрицы \textbf{H}. После введенного предположения, выражение (3.2.1) принимает вид
-$$\delta \mathcal{L} = \frac{1}{2} \sum_{j\in \mathcal{A}} h_{jj}\delta w_j^2, \eqno(3.2.4)$$
-
-Получаем следующую задачу оптимизации:
-
-$$\xi = \argmin_{j\in \mathcal{A}} h_{jj}\frac{w_j^2}{2}, \eqno(3.2.5)$$
-где~$\xi$ --- индекс наименее релевантного, удаляемого параметра, предположительно доставляющая оптимум в (2.11).
+Метод оптимального прореживания~\cite{obd}~\eqref{eq:obd} использует вторую производную целевой функции.
+Нахождение очередного индекса элемента для удаления сводится к задаче оптимизации:
+\[
+    \xi = \argmin \frac{w[xi]^2}{2\mathbf{H}[i,j]},
+\]
+где~$\xi$ --- индекс наименее релевантного, удаляемого параметра.
 
 \textbf{Удаление неинформативных параметров с помощью вариационного вывода. }
-Для удаления параметров в работе \cite{graves2011} предлагается удалить параметры, которые имеют максимальное отношение плотности~$p(\textbf{w}|\mathcal{A})$ априорной вероятности в нуле к плотности вероятности априорной вероятности в математическом ожидании $\mu_j$ параметра $w_j$.\\
+Для удаления параметров в работе \cite{graves2011} предлагается удалить параметры, которые имеют максимальное отношение плотности~$p(\textbf{w}|\mathcal{A})$ априорной вероятности в нуле к плотности вероятности априорной вероятности в математическом ожидании $\mu[j]$ параметра $w[j]$.\\
 Для гауссовского распределения с диагональной матрицей ковариации получаем:
-$$p_j(\textbf{w}|\mathcal{A})(w) = \frac{1}{\sqrt[]{2\sigma_j^2}}\exp({-\frac{(w-\mu_j)^2}{2\sigma_j^2}}), \eqno(3.3.1)$$
-где $w$ --- значение носителя распределенного параметра.
+$$p(\w[j]|\mathbf{h}) = \frac{1}{\sqrt[]{2\alpha_q[j]^2}}\exp({-\frac{(w[j]-\mu[j])^2}{2\alpha_q[j]^2}}).$$
 Разделим плотность вероятности в нуле к плотности в математическом ожидании
-$$ \frac{p_j(\textbf{w}|\mathcal{A})(0)}{p_j(\textbf{w}|\mathcal{A})(\mu_j)}= \exp({-\frac{\mu_j^2}{2\sigma_j^2}}), \eqno(3.3.2)$$
+$$ \frac{p(w[j]=0|\mathbf{h})}{p(w[j]=\mu[j]|\mathbf{h}}= \exp({-\frac{\mu[j]^2}{2\alpha[j]^2}}),$$
 и поставим следующую задачу оптимизации:
-$$\xi = \argmin_{j\in \mathcal{A}} \left|\frac{\mu_j}{\sigma_j}\right|, \eqno(3.3.3)$$
+$$\xi = \argmin_{j\in \mathcal{A}} \left|\frac{\mu[j]}{\alpha[j]}\right|,$$
 где~$\xi$ --- индекс наименее релевантного, удаляемого параметра.
 
 \textbf{Предлагаемый метод определения релевантности параметров нейросети. }
-Предлагается метод основанный, на модификации метода Белсли. Пусть $\textbf{w}$ --- вектор параметров, доставляющий минимум функционалу потерь $\mathcal{L}_\mathcal{A}$ из (2.8) на  множестве $\mathbb{W_\mathcal{A}}$, а $\textbf{A}_\text{ps}$ соответствующая ему ковариационная матрица.
+Предлагается метод основанный, на модификации метода Белсли. Пусть $\mathbf{w}$ --- вектор параметров, доставляющий минимум функционалу потерь $L$ на  множестве $\mathbb{W_\mathcal{A}}$, а $\mathbf{A}_q$ соответствующая ему ковариационная матрица.
 
 Выполним сингулярное разложение матрицы
-$$\textbf{A}_\text{ps} = \textbf{U}{\bf\Lambda}\textbf{V}^\mathsf{T}. \eqno(4.1)$$
-Индекс обусловленности $\eta_{j}$ определим как отношение максимального элемента к $j$-му элементу матрицы ${\bf\Lambda}$. Для нахождения мультикоррелирующих признаков требуется найти индекс~$\xi$ вида:
-$$\xi = \argmax_{j\in \mathcal{A}}{\eta_j}. \eqno(4.2)$$
+$$\textbf{A}_q = \textbf{U}{\bf\Lambda}\textbf{V}^\mathsf{T}.$$
+Индекс обусловленности $\eta[j]$ определим как отношение максимального элемента к $j$-му элементу матрицы ${\bf\Lambda}$. Для нахождения мультикоррелирующих признаков требуется найти индекс~$\xi$ вида:
+$$\xi = \argmax_{j\in \mathcal{A}}{\eta[j]}. $$
 
 \begin{figure}[h!t]\center
-\begin{minipage}[t]{.5\textwidth}
-{\includegraphics[width=0.5\textwidth]{plots/grabovoy/Cov.pdf}}
+\begin{minipage}[t]{.45\textwidth}
+{\includegraphics[width=\textwidth]{plots/grabovoy/Cov.pdf}}
 \subcaption{Матрица ковариации}
 \end{minipage}
-\begin{minipage}[t]{.5\textwidth}
-{\includegraphics[width=0.5\textwidth]{plots/grabovoy/BelslyImage.pdf}}
+\begin{minipage}[t]{.45\textwidth}
+{\includegraphics[width=\textwidth]{plots/grabovoy/BelslyImage.pdf}}
 \subcaption{Дисперсионные доли}
 \end{minipage}
 \caption{Илюстрация метода Белсли}
@@ -538,17 +529,16 @@ $1\cdot 10^{16}$ &  $\bf9\cdot 10^{-1}$ &  $1\cdot 10^{-2}$& $ 4\cdot 10^{-2}$& 
 \end{center}
 \end{table}
 
-Дисперсионный долевой коэффициент $q_{ij}$ определим как вклад $j$-го признака в дисперсию $i$-го элемента вектора параметра~$\textbf{w}$:
+Дисперсионный долевой коэффициент $q[ij]$ определим как вклад $j$-го признака в дисперсию $i$-го элемента вектора параметра~$\textbf{w}$:
 
-$$q_{ij} = \frac{u^2_{ij}/\lambda_{jj}}{\sum^n_{j=1}{u^2_{ij}/\lambda_{jj}}}. \eqno(4.3)$$
+$$q[ij] = \frac{u^2[ij]/\lambda[jj]}{\sum^n_{j=1}{u^2[ij]/\lambda[jj]}}. \eqno(4.3)$$
 
-Большие значение дисперсионных долей указывают на наличие зависимости между параметрами. Находим долевые коэффициенты, которые вносят максимальный вклад в дисперсию параметра~$w_\xi$:
+Большие значение дисперсионных долей указывают на наличие зависимости между параметрами. Находим долевые коэффициенты, которые вносят максимальный вклад в дисперсию параметра~$w[\xi]$:
 
-$$\zeta = \argmax_{j\in \mathcal{A}}{q_{\xi j}}. \eqno(4.4)$$
+$$\zeta = \argmax_{j\in \mathcal{A}}{q[\xi j]}. $$
 Параметр с индексом $\zeta$ определим как наименее релевантный параметр нейросети. 
-%Для удаления нескольких зависимых параметров за раз, предлагается удалить параметры с номерами $p \in \mathcal{A}: q_{\xi i} > \lambda  \in  \mathbb{R}_+$.
 
-Проиллюстрируем принцип работы метода Белсли на примере. Рассмотрим данные порожденные следующим образом: 
+Проиллюстрируем принцип работы метода Белсли на примере. Рассмотрим данные, порожденные следующим образом: 
 $$\textbf{w} = \begin{bmatrix}
 \text{sin}(x)\\
 \text{cos}(x)\\
@@ -568,7 +558,7 @@ x
 
 В качестве данных использовались три выборки. Выборки Wine~\cite{Wine} и Boston~Housing~\cite{Boston}  --- это реальные данные. Синтетические данные сгенерированы таким образом, чтобы параметры сети были мультикоррелируемые. Генерация данных состояла из двух этапов. 
 На первом этапе генерировался вектор параметров $\mathbf{w}_{\text{synthetic}}$:
-$$\mathbf{w}_{\text{synthetic}}  \sim \mathcal{N}(\textbf{m}_{\text{synthetic}}, \textbf{A}_{\text{synthetic}}), \eqno(5.1)$$ 
+$$\mathbf{w}_{\text{synthetic}}  \sim \mathcal{N}(\textbf{m}_{\text{synthetic}}, \textbf{A}_{\text{synthetic}}),$$ 
 где 
 $\textbf{m}_{\text{synthetic}} = \begin{bmatrix}
 1.0\\
@@ -584,7 +574,7 @@ $\textbf{A}_{\text{synthetic}} = \begin{bmatrix}
 \end{bmatrix}$.
 
 На втором этапе генерировалась выборка $\mathfrak{D}_{\text{synthetic}}$:
-$$\mathfrak{D}_{\text{synthetic}} = \{(\textbf{x}_i,y_i)| \textbf{x}_i \sim  \mathcal{N}(\textbf{1}, \textbf{I}), y_i = x_{i0}, i = 1 \cdots 10000\}. \eqno(5.2)$$
+$$\mathfrak{D}_{\text{synthetic}} = \{(\textbf{x}_i,y_i)| \textbf{x}_i \sim  \mathcal{N}(\textbf{1}, \textbf{I}), y_i = x_{i0}, i = 1 \dots 10000\}.$$
 В приведенном выше векторе параметров $\mathbf{w}_{\text{synthetic}}$ для выборки $\mathfrak{D}_{\text{synthetic}}$, наиболее релевантным является первый параметр, а все остальные параметры являются нерелевантными. Матрица ковариации была выбрана таким образом, чтобы все нерелевантные параметры были зависимы и метод Белсли был максимально эффективен.
 
 
@@ -624,12 +614,12 @@ $$\mathfrak{D}_{\text{synthetic}} = \{(\textbf{x}_i,y_i)| \textbf{x}_i \sim  \ma
 
 Для алгоритмов тренировочная и тестовая выборки составили~$80\%$ и~$20\%$ соответсвенно. Критерием качества прореживания служит процент параметров нейросети, удаление которого не влечет значимой потери качества прогноза. Также критерием качества служит устойчивость нейросети к зашумленности данных. 
 
-Качеством прогноза $R_{\text{cl}}$ модели для задачи классификации является точность прогноза модели:
-$$R_{\text{cl}} = \frac{\sum_{(\textbf{x},y)\in \mathfrak{D}} [f(\textbf{x}, \textbf{w}) = y]}{\left|\mathfrak{D}\right|}, \eqno(5.3)$$
+Качеством прогноза $\text{Accuracy}$ модели для задачи классификации является точность прогноза модели:
+$$\text{Accuracy} = \frac{\sum_{i=1}^m [f(\textbf{x}_i, \textbf{w}) = y_i]}{m},$$
 
-Качеством прогноза $R_{\text{rg}} $ модели для задачи регрессии является среднеквадратическое отклонение результата модели от точного:
+Качеством прогноза $\text{RMSE}$ модели для задачи регрессии является среднеквадратическое отклонение результата модели от точного:
 
-$$R_{\text{rg}} = \frac{\sum_{(\textbf{x},y)\in \mathfrak{D}} \left(f(\textbf{x}, \textbf{w}) - y\right)^2}{\left|\mathfrak{D}\right|}, \eqno(5.4)$$
+$$\text{RMSE} = \frac{\sum_{i=1}^m \left(f(\textbf{x}_i, \textbf{w}) - y_i\right)^2}{m},$$
 
 \textbf{Wine.} Рассмотрим нейроную сеть с 13 нейронами на входе, 13 нейронами в скрытом слое и 3 нейронами на выходе.
 
@@ -640,18 +630,16 @@ $$R_{\text{rg}} = \frac{\sum_{(\textbf{x},y)\in \mathfrak{D}} \left(f(\textbf{x}
 \end{figure}
 
 \begin{figure}[h!t]\center
-\begin{minipage}[t]{.5\textwidth}
-{\includegraphics[width=0.5\textwidth]{plots/grabovoy/Wine/RandomNoise3D.pdf}}
+\begin{minipage}[t]{0.45\textwidth}
+{\includegraphics[width=\textwidth]{plots/grabovoy/Wine/RandomNoise3D.pdf}}
 \subcaption{Произвольное удаление параметров}
 \end{minipage}
-
-\begin{minipage}[t]{.5\textwidth}
-{\includegraphics[width=0.5\textwidth]{plots/grabovoy/Wine/OBDNoise3D.pdf}}
+\begin{minipage}[t]{0.45\textwidth}
+{\includegraphics[width=\textwidth]{plots/grabovoy/Wine/OBDNoise3D.pdf}}
 \subcaption{Оптимальное прореживание}
 \end{minipage}
-
-\begin{minipage}[t]{.5\textwidth}
-{\includegraphics[width=0.5\textwidth]{plots/grabovoy/Wine/VariationalNoise3D.pdf}}
+\begin{minipage}[t]{0.45\textwidth}
+{\includegraphics[width=\textwidth]{plots/grabovoy/Wine/VariationalNoise3D.pdf}}
 \subcaption{Вариационный метод}
 \end{minipage}
 
@@ -673,17 +661,17 @@ $$R_{\text{rg}} = \frac{\sum_{(\textbf{x},y)\in \mathfrak{D}} \left(f(\textbf{x}
 
 
 \begin{figure}[h!t]\center
-\begin{minipage}[t]{.5\textwidth}
-{\includegraphics[width=0.5\textwidth]{plots/grabovoy/Boston/RandomNoise3D.pdf}}
+\begin{minipage}[t]{.45\textwidth}
+{\includegraphics[width=\textwidth]{plots/grabovoy/Boston/RandomNoise3D.pdf}}
 \subcaption{Произвольное удаление параметров}
 \end{minipage}
-\begin{minipage}[t]{.5\textwidth}
-{\includegraphics[width=0.5\textwidth]{plots/grabovoy/Boston/OBDNoise3D.pdf}}
+\begin{minipage}[t]{.45\textwidth}
+{\includegraphics[width=\textwidth]{plots/grabovoy/Boston/OBDNoise3D.pdf}}
 \subcaption{Оптимальное прореживание}
 \end{minipage}
 
-\begin{minipage}[t]{.5\textwidth}
-{\includegraphics[width=0.5\textwidth]{plots/grabovoy/Boston/VariationalNoise3D.pdf}}
+\begin{minipage}[t]{.45\textwidth}
+{\includegraphics[width=\textwidth]{plots/grabovoy/Boston/VariationalNoise3D.pdf}}
 \subcaption{Вариационный метод}
 \end{minipage}
 
@@ -692,7 +680,7 @@ $$R_{\text{rg}} = \frac{\sum_{(\textbf{x},y)\in \mathfrak{D}} \left(f(\textbf{x}
 \end{figure}
 
 
-На рис.~\ref{BostonAll} показано как меняется среднеквадратическое отклонение прогноза $R_{\text{rg}}$ от точного ответа  при удалении параметров указанными методами. График показывает, что метод Белсли является более эффективным, чем другие методы, так-как позволяет удалить больше параметров нейросети без потери качества.
+На рис.~\ref{BostonAll} показано как меняется среднеквадратическое отклонение прогноза $R_{\text{rg}}$ от точного ответа  при удалении параметров указанными методами. График показывает, что метод Белсли является более эффективным, чем другие методы, т.к. позволяет удалить больше параметров нейросети без потери качества.
 
 На рис.~\ref{BostonNoise} показаны поверхности изменения уровня шума ответов нейросети при изменении процента удаленных параметров и уровня шума входных данных для разных методов прореживания. График показывает, что уровень шума всех методов одинаковый, так как поверхности всех методов находятся на одном уровне.
 
@@ -706,17 +694,17 @@ $$R_{\text{rg}} = \frac{\sum_{(\textbf{x},y)\in \mathfrak{D}} \left(f(\textbf{x}
 \end{figure}
 
 \begin{figure}[h!t]\center
-\begin{minipage}[t]{.5\textwidth}
-{\includegraphics[width=0.5\textwidth]{plots/grabovoy/Data1/RandomNoise3D.pdf}}
+\begin{minipage}[t]{.45\textwidth}
+{\includegraphics[width=\textwidth]{plots/grabovoy/Data1/RandomNoise3D.pdf}}
 \subcaption{Произвольное удаление параметров}
 \end{minipage}
-\begin{minipage}[t]{.5\textwidth}
-{\includegraphics[width=0.5\textwidth]{plots/grabovoy/Data1/OBDNoise3D.pdf}}
+\begin{minipage}[t]{.45\textwidth}
+{\includegraphics[width=\textwidth]{plots/grabovoy/Data1/OBDNoise3D.pdf}}
 \subcaption{Оптимальное прореживание}
 \end{minipage}
 
-\begin{minipage}[t]{.5\textwidth}
-{\includegraphics[width=0.5\textwidth]{plots/grabovoy/Data1/VariationalNoise3D.pdf}}
+\begin{minipage}[t]{.45\textwidth}
+{\includegraphics[width=\textwidth]{plots/grabovoy/Data1/VariationalNoise3D.pdf}}
 \subcaption{Вариационный метод}
 \end{minipage}
 
@@ -725,7 +713,7 @@ $$R_{\text{rg}} = \frac{\sum_{(\textbf{x},y)\in \mathfrak{D}} \left(f(\textbf{x}
 \end{figure}
 
 
-На рис.~\ref{Data1All} показано как меняется среднеквадратическое отклонение прогноза от $R_{\text{rg}}$ точного ответа при удалении параметров указанными методами. График показывает, что удаление параметров методом Белсли являеться более эффективным чем другие методы прореживания, так-как качество прогноза нейросети улучшается при удалении шумовых параметров.
+На рис.~\ref{Data1All} показано как меняется среднеквадратическое отклонение прогноза от $R_{\text{rg}}$ точного ответа при удалении параметров указанными методами. График показывает, что удаление параметров методом Белсли являеться более эффективным чем другие методы прореживания, т.к. качество прогноза нейросети улучшается при удалении шумовых параметров.
 
-На рис.~\ref{Data1Noise} показаны поверхности изменения уровня шума ответов нейросети при изменении процента удаленных параметров и уровня шума входных данных для разных методов прореживания. На графиках показано, что при удалении параметров нейросети методом Белсли шум меньше, чем при удалении параметров другими методами, так-как поверхность которая соответствует методу Белсли ниже других поверхностей.
+На рис.~\ref{Data1Noise} показаны поверхности изменения уровня шума ответов нейросети при изменении процента удаленных параметров и уровня шума входных данных для разных методов прореживания. На графиках показано, что при удалении параметров нейросети методом Белсли шум меньше, чем при удалении параметров другими методами, т.к. поверхность которая соответствует методу Белсли ниже других поверхностей.
 
