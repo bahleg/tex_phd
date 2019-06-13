@@ -391,7 +391,7 @@ language = {english},
   year={2017}
 }
 
-@book{MacKay,
+@book{mackay,
  author = {MacKay, David J. C.},
  title = {Information Theory, Inference \& Learning Algorithms},
  year = {2002},
@@ -432,7 +432,7 @@ language = {english},
 language = {english},
 }
 
-@book{Bishop,
+@book{bishop,
  author = {Bishop, Christopher M.},
  title = {Pattern Recognition and Machine Learning (Information Science and Statistics)},
  year = {2006},
@@ -911,6 +911,13 @@ url="http://dx.doi.org/10.1007/978-3-642-15819-3\_12",
  publisher = {JMLR.org},
 } 
 
+@inproceedings{hinton_mdl,
+  title={Keeping neural networks simple by minimizing the description length of the weights},
+  author={Hinton, Geoffrey and Van Camp, Drew},
+  booktitle={in Proc. of the 6th Ann. ACM Conf. on Computational Learning Theory},
+  year={1993},
+  organization={Citeseer}
+}
 @article{hd,
  author = {Hinton, Geoffrey E. and Osindero, Simon and Teh, Yee-Whye},
  title = {A Fast Learning Algorithm for Deep Belief Nets},
@@ -943,6 +950,20 @@ url="http://dx.doi.org/10.1007/978-3-642-15819-3\_12",
   timestamp = {Mon, 27 Apr 2015 15:45:37 +0200},
   biburl    = {http://dblp.uni-trier.de/rec/bib/journals/jmlr/AlainB14},
   bibsource = {dblp computer science bibliography, http://dblp.org}
+}
+
+@article{reparametrization,
+  title={On some variance reduction properties of the reparameterization trick},
+  author={Xu, Ming and Quiroz, Matias and Kohn, Robert and Sisson, Scott A},
+  journal={arXiv preprint arXiv:1809.10330},
+  year={2018}
+}
+
+@article{gumbel,
+  title={The concrete distribution: A continuous relaxation of discrete random variables},
+  author={Maddison, Chris J and Mnih, Andriy and Teh, Yee Whye},
+  journal={arXiv preprint arXiv:1611.00712},
+  year={2016}
 }
 
 @inproceedings{score, 
@@ -1471,7 +1492,7 @@ url="http://dx.doi.org/10.1186/1758-2946-6-10"
 
 @misc{bias,
            title = {Full versus incomplete cross-validation: measuring the impact of imperfect separation between training and test sets in prediction error estimation},
-        abstract = {In practical applications of supervised statistical learning the separation of the training and test data is often violated through performing one or several analysis steps prior to estimating the prediction error by cross-validation (CV) procedures. We refer to such practices as incomplete CV. For the special case of preliminary variable selection in high-dimensional microarray data the corresponding error estimate is well known to be strongly downwardly biased, resulting in over-optimistic conclusions regarding prediction accuracy of the fitted models. However, while other data preparation steps may also be affected by these types of problems, their impact on error estimation is far less acknowledged in the literature. In this paper we shed light on these issues. We present a new measure quantifying the impact of incomplete CV that is based on the ratio between the errors estimated by incomplete CV and by a formally correct "full CV." The new measure is illustrated through applications to several low- and high-dimensional biomedical data sets  and various data preparation steps including preliminary variable selection, choice of tuning parameters, normalization of gene expression microarray data, and imputation of missing values. It may be used in biometrical applications to determine whether specific data preparation steps can be safely performed as preliminary steps before running the CV procedure, or if they should be repeatedly trained in each CV iteration.},
+        abstract = {In practical applications of supervised statistical learning the separation of the training and test data is often violated through performing one or several analysis steps prior to estimating the prediction error by cross-validation (CV) procedures. We refer to such practices as incomplete CV. For the special case of preliminary variable selection in high-dimensional microarray data the corresponding error estimate is well known to be strongly downwardly biased, resulting in over-optimistic conclusions regarding prediction accuracy of the fitted models. However, while other data preparation steps may also be affected by these types of problems, their impact on error estimation is far less acknowledged in the literature. In this paper we shed light on these issues. We present a new measure quantifying the impact of incomplete CV that is based on the ratio between the errors estimated by incomplete CV and by a formally correct "full CV." The new measure is illustrated through applications to several low- and high-dimensional biomedical data sets  and various data preparation steps including preliminary variable selection, choice of tuning parameters, normalization of gene expression microarray data, and imputation of missing values. It may be used in biometrical applications to determigsne whether specific data preparation steps can be safely performed as preliminary steps before running the CV procedure, or if they should be repeatedly trained in each CV iteration.},
           series = {tech},
           author = {Roman Hornung and Christoph Bernau and Caroline Truntzer and Thomas Stadler and Anne-Laure Boulesteix},
          keyword = {Cross-validation, Over-optimism, Good practice, Error estimation, Practical guidelines, Supervised learning},

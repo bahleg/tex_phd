@@ -180,18 +180,18 @@ DrMAD~\cite{hyper_mad} & градиентный &$O(\eta s |\hat{\mathfrak{D}}|)
 Пусть оператор $T$ производит $\eta$ шагов оптимизации:
 \begin{equation}
 \label{eq:gd}
-	 \boldsymbol{\theta}^{*} = T \circ T \circ \dots \circ T(\boldsymbol{\theta}^{0} | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta}) = T^\eta(\boldsymbol{\theta}^{0} | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta}),
+	 \boldsymbol{\theta}^{*} = T \circ T \circ \dots \circ T(\boldsymbol{\theta}^{0} | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = T^\eta(\boldsymbol{\theta}^{0} | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}),
 \end{equation}
 где 
 $$
-	T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, \boldsymbol{\beta}) = \boldsymbol{\theta} - \beta_{\text{lr}} \nabla L(\boldsymbol{\theta}|   \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}), 
+	T( \boldsymbol{\theta}| L,\mathbf{X},  \mathbf{y},  \mathbf{h}, \boldsymbol{\lambda}) = \boldsymbol{\theta} - \lambda_{\text{lr}} \nabla L(\boldsymbol{\theta}|   \mathbf{h},  \hat{\mathbf{X}}, \hat{\mathbf{y}}), 
 $$
-$ \beta_{\text{lr}}$ --- длина шага градиентного спуска, $\boldsymbol{\theta}^0$ --- начальное значение параметров $\boldsymbol{\theta}$, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$. В данной работе в качестве опреатора оптимизации параметров модели выступает стохастический градиентный спуск~\eqref{eq:sgd_operator}.
+$ \lambda_{\text{lr}}$ --- длина шага градиентного спуска, $\boldsymbol{\theta}^0$ --- начальное значение параметров $\boldsymbol{\theta}$, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$. В данной работе в качестве опреатора оптимизации параметров модели выступает стохастический градиентный спуск~\eqref{eq:sgd_operator}.
 
 Перепишем задачу оптимизации~\eqref{eq:main}, ~\eqref{eq:main2} в следующем виде
 \begin{equation}
 \label{eq:hyper_optim}
-    \mathbf{h}^{*} = \argmax_{\mathbf{h} \in \mathbb{R}^h} Q(T^\eta(\boldsymbol{\theta} | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\beta})),
+    \mathbf{h}^{*} = \argmax_{\mathbf{h} \in \mathbb{R}^h} Q(T^\eta(\boldsymbol{\theta} | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})),
 \end{equation}
 где $\boldsymbol{\theta}^0$ --- начальное значение параметров $\boldsymbol{\theta}$.
 В дальнейшем для удобства будем применять сокращенные формы $Q(\mathbf{h}| \boldsymbol{\theta}), L(\boldsymbol{\theta}| \mathbf{h}), T(\boldsymbol{\theta}, \mathbf{h}).$
@@ -212,9 +212,9 @@ $ \beta_{\text{lr}}$ --- длина шага градиентного спуск
 В качестве  правила обновления вектора гиперпараметров $\mathbf{h}$ на каждом шаге оптимизации~\eqref{eq:gd} выступает градиентный спуск с учетом обновления параметров $\boldsymbol{\theta}$ на данном шаге:
 \begin{equation}
 \label{eq:greed}
-\mathbf{h}' =	 \mathbf{h} -  \beta_{\text{lr}}^{\mathbf{h}} \nabla_{\mathbf{h}}  Q \bigl(\mathbf{h}, T(\boldsymbol{\theta}^{0}, \mathbf{h})\bigr) = \mathbf{h} -  \beta_{\text{lr}}^{\mathbf{h}} \nabla_{\mathbf{h}}  Q\bigl(\mathbf{h}, \boldsymbol{\theta} -  \beta_{\text{lr}} \nabla L(\boldsymbol{\theta}| \mathbf{h})\bigr),
+\mathbf{h}' =	 \mathbf{h} -  \lambda_{\text{lr}}^{\mathbf{h}} \nabla_{\mathbf{h}}  Q \bigl(\mathbf{h}, T(\boldsymbol{\theta}^{0}, \mathbf{h})\bigr) = \mathbf{h} -  \lambda_{\text{lr}}^{\mathbf{h}} \nabla_{\mathbf{h}}  Q\bigl(\mathbf{h}, \boldsymbol{\theta} -  \lambda_{\text{lr}} \nabla L(\boldsymbol{\theta}| \mathbf{h})\bigr),
 \end{equation}
-где $ \beta_{\text{lr}}^{\mathbf{h}}$ --- длина шага оптимизации гиперпараметров.
+где $ \lambda_{\text{lr}}^{\mathbf{h}}$ --- длина шага оптимизации гиперпараметров.
 Псевдокод жадного алгоритма оптимизации гиперпараметров приведен на Рис.~\ref{alg:greedy}.
 
 \textbf{Алгоритм HOAG. }
@@ -234,7 +234,7 @@ $ \beta_{\text{lr}}$ --- длина шага градиентного спуск
 Итоговое правило обновления:
 \begin{equation}
 \label{eq:update_hyper}
-\mathbf{h}' = \mathbf{h} -  \beta_{\text{lr}}^{\mathbf{h}} \hat{\nabla}_{\mathbf{h}}Q.
+\mathbf{h}' = \mathbf{h} -  \lambda_{\text{lr}}^{\mathbf{h}} \hat{\nabla}_{\mathbf{h}}Q.
 \end{equation}
 
 В данной работе для приближенного решения  шага 2 алгоритма HOAG используется стохастический градиентный спуск в силу сложности вычисления гессиана $\mathbf{H}(\boldsymbol{\theta})$.
@@ -255,7 +255,7 @@ TODO: доказать корректность?
 \item Положим $d\mathbf{v} = \mathbf{0}.$
 \item Для $\tau = \eta \dots 1 $ повторить:
 \item Вычислить значения параметров $\boldsymbol{\theta}^\tau$\eqref{eq:mad_lin}.
-\item $d\mathbf{v} =   \beta_{\text{lr}} \hat{\nabla}_{\boldsymbol{\theta}}$.
+\item $d\mathbf{v} =   \lambda_{\text{lr}} \hat{\nabla}_{\boldsymbol{\theta}}$.
 \item $\hat{\nabla} \mathbf{h} =  \hat{\nabla} \mathbf{h} - d\mathbf{v}\nabla_{\mathbf{h}} \nabla_{\boldsymbol{\theta}} Q$.
 \item $\hat{\nabla} \boldsymbol{\theta}  = \hat{\nabla} \boldsymbol{\theta}  - d\mathbf{v}\nabla_{\boldsymbol{\theta}} \nabla_{\boldsymbol{\theta}} Q$.
 \end{enumerate}
@@ -263,7 +263,7 @@ TODO: доказать корректность?
 Итоговое правило обновления гиперпараметров аналогично~\eqref{eq:update_hyper}.
 Псевдокод общего алгоритма оптимизации гиперпараметров приведен на Рис.~\ref{alg:drmad}.
 
-В работе~\cite{hyper_mad} отмечается неустойчивость алгоритма при высоких значениях длины шага градиентного спуска $ \beta_{\text{lr}}$. Поэтому вместо исходного правила~\eqref{eq:mad_lin} в данной работе первые 5\% значений параметров не рассматриваются, а также учитывается только каждый $\tau_k$ шаг оптимизации:
+В работе~\cite{hyper_mad} отмечается неустойчивость алгоритма при высоких значениях длины шага градиентного спуска $ \lambda_{\text{lr}}$. Поэтому вместо исходного правила~\eqref{eq:mad_lin} в данной работе первые 5\% значений параметров не рассматриваются, а также учитывается только каждый $\tau_k$ шаг оптимизации:
 \begin{equation}
 \label{eq:mad_lin2}
 \boldsymbol{\theta}^\tau = \boldsymbol{\theta}^{\tau_0} + \frac{\tau}{\eta} (T(\boldsymbol{\theta})-\boldsymbol{\theta}^{\tau_0}), \quad \tau \in \{\tau_0,\dots,\eta\}, \tau \text{ mod } \tau_k = 0,
@@ -323,7 +323,7 @@ TODO: доказать корректность?
 \STATE провести оптимизацию вариационных параметров;
 \STATE Решить линейную систему для вектора $\boldsymbol{\lambda}$: $\mathbf{H}(\boldsymbol{\theta})\boldsymbol{\lambda} =  \nabla_{\boldsymbol{\theta}} Q( \mathbf{h},\boldsymbol{\theta})$.
 \STATE $\hat{\nabla}_{\mathbf{h}}Q = \nabla_{\mathbf{h}}Q(\mathbf{h}|\boldsymbol{\theta}) -\nabla_{\boldsymbol{\theta}, \mathbf{h}} L(\boldsymbol{\theta}| \mathbf{h})^T\boldsymbol{\lambda}$;
-\STATE $\mathbf{h} = \mathbf{h} - \beta_{\text{lr}}\hat{\nabla}_{\mathbf{h}}Q$.
+\STATE $\mathbf{h} = \mathbf{h} - \lambda_{\text{lr}}\hat{\nabla}_{\mathbf{h}}Q$.
 \ENDFOR
 \RETURN $\mathbf{h}$.
 \end{algorithmic}
@@ -346,7 +346,7 @@ TODO: доказать корректность?
 \STATE $d\mathbf{v} = \mathbf{0}.$
 \FOR{$\tau=\eta,\dots,1$}
 \STATE Вычислить значения параметров $\boldsymbol{\theta}^\tau$\eqref{eq:mad_lin}.
-\STATE $d\mathbf{v} =   \beta_{\text{lr}} \hat{\nabla}_{\boldsymbol{\theta}}$.
+\STATE $d\mathbf{v} =   \lambda_{\text{lr}} \hat{\nabla}_{\boldsymbol{\theta}}$.
 \STATE $\hat{\nabla} \mathbf{h} =  \hat{\nabla} \mathbf{h} - d\mathbf{v}\nabla_{\mathbf{h}} \nabla_{\boldsymbol{\theta}} Q$.
 \STATE $\hat{\nabla} \boldsymbol{\theta}  = \hat{\nabla} \boldsymbol{\theta}  - d\mathbf{v}\nabla_{\boldsymbol{\theta}} \nabla_{\boldsymbol{\theta}} Q$.
 \ENDFOR
@@ -420,13 +420,13 @@ TODO: доказать корректность?
 \]
 где $a = -2, b = 10$ для синтетической выборки и $a = -4, b = 10$ для выборок WISDM и MNIST.
 
-Длина градиентного шага $ \beta_{\text{lr}}^{\mathbf{h}}$ подбиралась для каждого алгоритма из сетки значений вида $\{r \cdot 10^{s}, s \leq 1, r \in \{1,25,50,75\}\}$  таким образом, чтобы итоговое значение гиперпараметров  $\mathbf{h}$  удовлетворяло следующему правилу:
+Длина градиентного шага $ \lambda_{\text{lr}}^{\mathbf{h}}$ подбиралась для каждого алгоритма из сетки значений вида $\{r \cdot 10^{s}, s \leq 1, r \in \{1,25,50,75\}\}$  таким образом, чтобы итоговое значение гиперпараметров  $\mathbf{h}$  удовлетворяло следующему правилу:
 \[
     a_\text{min} \leq  \min(\mathbf{h}), \quad \max(\mathbf{h}) \leq b_\text{max},
 \] 
 где  $a_\text{min} = -2.5, b_\text{max}=10.5$ для синтетической выборки и $a_\text{min} = -5, b_\text{max}=11$ для для выборок WISDM и MNIST.
-Калибровка значения $ \beta_{\text{lr}}$ проводилась на небольшом количестве итераций оптимизаций гиперпараметров $l$:
-$l = 50$ для синтетической выборки,  $l=10$ для выборки WISDM $l=5$ для выборки MNIST. В случае, если алгоритмы показывали неустойчивую работу непосредственно во время запуска эксперимента (взрыв градиента или численное переполнение), то длина шага $ \beta_{\text{lr}}^\mathbf{h}$ понижалась. Для алгоритма DrMad параметр $\tau_k$, отвечающий за количество рассматриваемых шагов оптимизации был установлен как $\tau_k=1$ для синтетической выборки и выборки WISDM, $\tau_k=10$ для выборки MNIST.
+Калибровка значения $ \lambda_{\text{lr}}$ проводилась на небольшом количестве итераций оптимизаций гиперпараметров $l$:
+$l = 50$ для синтетической выборки,  $l=10$ для выборки WISDM $l=5$ для выборки MNIST. В случае, если алгоритмы показывали неустойчивую работу непосредственно во время запуска эксперимента (взрыв градиента или численное переполнение), то длина шага $ \lambda_{\text{lr}}^\mathbf{h}$ понижалась. Для алгоритма DrMad параметр $\tau_k$, отвечающий за количество рассматриваемых шагов оптимизации был установлен как $\tau_k=1$ для синтетической выборки и выборки WISDM, $\tau_k=10$ для выборки MNIST.
 
 
 
