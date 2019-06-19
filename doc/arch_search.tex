@@ -256,17 +256,18 @@ C_p(\boldsymbol{\theta}) = \min_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\l
 
 Одним из критериев удаления неинформативных параметров в вероятностных моделях является вариационная плотность~\cite{nips}: отношение вариационной плотности параметров в моде распределения к вариационной плотности параметра в нуле:
 \[
-    \rho(q_{\mathbf{w}}|\boldsymbol{\Gamma}) = \frac{q(\mu)}{q(0)} = \text{exp}\left(\frac{-2\sigma_q^2}{\mu^2}\right).
+    \frac{q_\mathbf{w}(\mu|\boldsymbol{\theta}_\mathbf{w})}{q(0)} = \text{exp}\left(-\frac{2\alpha_q^2}{\mu^2}\right),
 \]
+где $q_\mathbf{w}(w|\boldsymbol{\theta}_\mathbf{w}) \sim \mathcal{N}(\mu, \alpha_q).$
 
 Обобщим понятие относительной вариационной плотности на случай произвольных распределений.
 \begin{defin}
 Относительной вариационной параметра  плотностью $w \in \mathbf{w}$  при условии структуры $\boldsymbol{\Gamma}$ и гиперпараметров $\mathbf{h}$ назовем отношение моды вариационного распределения параметра к моде априорного распределению параметра:
 \[
-    \rho(w|\boldsymbol{\Gamma}, \mathbf{h}) = \frac{q(\text{mode}~q(w|\boldsymbol{\Gamma})|\boldsymbol{\Gamma})}{q(\text{mode}~p({w}|\boldsymbol{\Gamma}, \mathbf{h}))},
+    \rho(w|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda}) = \frac{q\bigl(\text{mode}~q\left(w|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}\right)|\boldsymbol{\Gamma}\boldsymbol{\theta}_\mathbf{w}\bigr)}{q\bigl(\text{mode}~p\left({w}|\boldsymbol{\Gamma}, \mathbf{h},\boldsymbol{\lambda}\right)|\boldsymbol{\Gamma}\boldsymbol{\theta}_\mathbf{w}\bigr)},
 \]
 \[
-    \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}) = \prod_{w \in \mathbf{w}}\rho(w|\boldsymbol{\Gamma}, \mathbf{h}).
+    \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda}) = \prod_{w \in \mathbf{w}}\rho(w|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda}).
 \]
 
 \end{defin}
