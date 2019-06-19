@@ -170,7 +170,7 @@ y={(0cm,1.7cm)},
 \]
 где $\mathbf{h}^*$ --- решение задачи оптимизации~\eqref{eq:optimal_hyper}.
 
-Для вычисления обоснованности $$p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = \iint_{\boldsymbol{\Gamma},\mathbf{w}}p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma},\boldsymbol{\lambda})p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda})p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})$$ из~\eqref{eq:optimal_hyper} предлагается использовать вариационную оценку обоснованности.
+Для вычисления обоснованности $$p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = \iint_{\boldsymbol{\Gamma},\mathbf{w}}p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma},\boldsymbol{\lambda})p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda})p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})d\boldsymbol{\Gamma}d\mathbf{w}$$ из~\eqref{eq:optimal_hyper} предлагается использовать вариационную оценку обоснованности.
 
 \begin{theorem}
 Пусть $q = q_{\mathbf{w}}q_{\boldsymbol{\Gamma}}$ --- вариационное распределение c параметрами $\boldsymbol{\theta}$, аппроксимирующее апостериорное распределение структуры и параметров:
@@ -209,7 +209,7 @@ D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\bolds
 
 Декомпозируем распределение $q$ по свойству условной дивергенции:
 \[
-D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})) = D_\text{KL}\left(q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right) - D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right).    
+D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})) = D_\text{KL}\left(q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right) + D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right).    
 \]
 \end{proof}
 
@@ -223,7 +223,7 @@ D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},
 
 Вариационными параметрами распределения $q$ являются параметры распределений $q_{\mathbf{w}}, q_{\boldsymbol{\Gamma}}$:
 \[
-    \boldsymbol{\theta} = [\boldsymbol{\mu}, \boldsymbol{\sigma}^2_q, \mathbf{s}_q, \theta_\text{temp}], 
+    \boldsymbol{\theta} = [\boldsymbol{\mu}, \boldsymbol{\alpha}_q, \mathbf{s}_q, \theta_\text{temp}], 
 \]
 где $ \mathbf{s}_q, \theta_\text{temp}$ --- параметры Gumbel-Softmax распределений.
 
@@ -256,13 +256,13 @@ C_p(\boldsymbol{\theta}) = \min_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\l
 
 Одним из критериев удаления неинформативных параметров в вероятностных моделях является вариационная плотность~\cite{nips}: отношение вариационной плотности параметров в моде распределения к вариационной плотности параметра в нуле:
 \[
-    \frac{q_\mathbf{w}(\mu|\boldsymbol{\theta}_\mathbf{w})}{q(0)} = \text{exp}\left(-\frac{2\alpha_q^2}{\mu^2}\right),
+    \frac{q_\mathbf{w}(\mu|\boldsymbol{\theta}_\mathbf{w})}{q(0|\boldsymbol{\theta}_\mathbf{w})} = \text{exp}\left(-\frac{2\alpha_q^2}{\mu^2}\right),
 \]
 где $q_\mathbf{w}(w|\boldsymbol{\theta}_\mathbf{w}) \sim \mathcal{N}(\mu, \alpha_q).$
 
 Обобщим понятие относительной вариационной плотности на случай произвольных распределений.
 \begin{defin}
-Относительной вариационной параметра  плотностью $w \in \mathbf{w}$  при условии структуры $\boldsymbol{\Gamma}$ и гиперпараметров $\mathbf{h}$ назовем отношение моды вариационного распределения параметра к моде априорного распределению параметра:
+Относительной вариационной   плотностью параметра $w \in \mathbf{w}$  при условии структуры $\boldsymbol{\Gamma}$ и гиперпараметров $\mathbf{h}$ назовем отношение моды вариационного распределения параметра к моде априорного распределению параметра:
 \[
     \rho(w|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda}) = \frac{q\bigl(\text{mode}~q\left(w|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}\right)|\boldsymbol{\Gamma}\boldsymbol{\theta}_\mathbf{w}\bigr)}{q\bigl(\text{mode}~p\left({w}|\boldsymbol{\Gamma}, \mathbf{h},\boldsymbol{\lambda}\right)|\boldsymbol{\Gamma}\boldsymbol{\theta}_\mathbf{w}\bigr)},
 \]
@@ -274,27 +274,39 @@ C_p(\boldsymbol{\theta}) = \min_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\l
 
 Сформулируем и докажеми теорему о связи относительной плотности и параметрической сложности модели:
 \begin{theorem}
-Пусть вариационное распределение $q_\mathbf{w}$ и априорное распределение $p({w}|\boldsymbol{\Gamma}, \mathbf{h}))$ являются унимодальными со свойстом:
+Пусть вариационное распределение $q_\mathbf{w}$ и априорное распределение $p({w}|\boldsymbol{\Gamma}, \mathbf{h}))$ являются унимодальными со свойством:
 \[
-    \text{mode}~q_\mathbf{w} = \mathsf{E}_{q_\mathbf{w}}w,\quad \text{mode}~p({w}|\boldsymbol{\Gamma}, \mathbf{h})) = \mathsf{E}_p({w}|\boldsymbol{\Gamma}, \mathbf{h}))~w.
-\]
-Пусть $\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,\dots$ --- бесконечная по1следовательность векторов вариационных параметров, такая что $\lim_{i \to \infty}C_p(\boldsymbol{\theta}_i) = 0$, $\lim \sigma_q  \neq 0, \lim \theta_q \neq 0.$ 
-С вариационной вероятностью $q_{\boldsymbol{\Gamma}}$ вариационная плотность данной последовательности стремится к единице:
+    \text{mode}~q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) = \mathsf{E}_{q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})}\mathbf{w},\quad \text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})) = \mathsf{E}_{p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}))}\mathbf{w}.
+\] 
+Пусть мода априорного распределения $p({w}|\boldsymbol{\Gamma}, \mathbf{h}))$ не зависит от гиперпараметров $\mathbf{h}$.
+Пусть также $\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,\dots$ --- бесконечная последовательность векторов вариационных параметров, такая что $\lim_{i \to \infty}C_p(\boldsymbol{\theta}_i) = 0.$ 
+Тогда вариационная плотность данной последовательности стремится к единице почти наверно по вероятностной мере $q_{\boldsymbol{\Gamma}}$:
 \[
-    \lim_{i \to \infty} \int_{\boldsymbol{\Gamma}} \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}_i)q(\boldsymbol{\Gamma})d\Gamma = 1, 
+    \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}_i)q(\boldsymbol{\Gamma}) \xrightarrow{\text{п.н. по }~q_{\boldsymbol{\Gamma}}} 1.
 \]
-где $\mathbf{h}_i = \argmin_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})\right)$. Пусть мода априорного распределения не зависит от гиперпарамтров.
+где $\mathbf{h}_i = \argmin_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})\right)$. 
 \end{theorem}
 \begin{proof}
 Предел параметрической сложности перепишем как 
 \[
-    D_\text{KL}(q_\mathbf{w}|p|\boldsymbol{\gamma}) + D_\text{KL}(q_{\boldsymbol{\gamma}}|p).
+    \lim_{i \to \infty} \min_{h} D_\text{KL}\left(q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right) + D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right)
 \]
+
 Т.к. параметрическая сложность состоит из двух неотрицательных слагаемых, то в пределе оба слагаемых достигают нуля.
-Рассмотрим первое слагаемое:
+Рассмотрим второе слагаемое:
 \[
-    D_\text{KL}(q_\mathbf{w}|p|\boldsymbol{\gamma}) = \mathsf{E}_q D_\text{KL}(q_\mathbf{w}|p|\boldsymbol{\gamma}).
+    D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right) = \int_{\Gamma}  \mathsf{E}_{q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})}\text{log}\left(\frac{q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})}{p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})}\right)
 \]
+Т.к. предел равен нулю, то для множества событий меры 1 по $q_{\boldsymbol{\Gamma}}$ выполняется:
+\[
+    \hat{D}_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right) = 0,
+\] 
+где $\hat{D}_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right)$ --- дивергенция при фиксированном значении переменной $\boldsymbol{\Gamma}$. По неравенству Пинскера отсюда следует:
+\[
+    ||F_q - F_p|| \to 0,
+\]
+где $F_q, F_p$ --- функции распределения для $q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}), p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})$.
+
 Отсюда и используя свойство теоремы о монотонной сходимости:
 \[
     0 = \lim D_\text{KL}(q_\mathbf{w}|p|\boldsymbol{\gamma}) = \mathsf{E} \lim D_\text{KL}(q_\mathbf{w}|p|\boldsymbol{\gamma}).
