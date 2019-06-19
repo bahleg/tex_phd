@@ -274,7 +274,7 @@ C_p(\boldsymbol{\theta}) = \min_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\l
 
 Сформулируем и докажеми теорему о связи относительной плотности и параметрической сложности модели:
 \begin{theorem}
-Пусть вариационное распределение $q_\mathbf{w}$ и априорное распределение $p({w}|\boldsymbol{\Gamma}, \mathbf{h}))$ являются унимодальными со свойством:
+Пусть вариационное распределение $q_\mathbf{w}$ и априорное распределение $p({w}|\boldsymbol{\Gamma}, \mathbf{h}))$ являются унимодальными с ограниченным вторым моментом и свойством:
 \[
     \text{mode}~q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) = \mathsf{E}_{q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})}\mathbf{w},\quad \text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})) = \mathsf{E}_{p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}))}\mathbf{w}.
 \] 
@@ -301,34 +301,27 @@ C_p(\boldsymbol{\theta}) = \min_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\l
 \[
     \hat{D}_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right) = 0,
 \] 
-где $\hat{D}_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right)$ --- дивергенция при фиксированном значении переменной $\boldsymbol{\Gamma}$. По неравенству Пинскера отсюда следует:
+где $\hat{D}_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right)$ --- дивергенция при фиксированном значении переменной $\boldsymbol{\Gamma}$. Для каждого значения $\boldsymbol{\Gamma}$ за исключением счетного множества значений по неравенству Пинскера следует:
 \[
     ||F_q - F_p|| \to 0,
 \]
 где $F_q, F_p$ --- функции распределения для $q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}), p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})$.
-
-Отсюда и используя свойство теоремы о монотонной сходимости:
+%http://www.math.chalmers.se/~serik/WeakConv/C-space.pdf
+%https://math.stackexchange.com/questions/2923/do-convergence-in-distribution-along-with-uniform-integrability-imply-convergenc
+Из теоремы Шеффе следует, что $q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) - p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})$ сходится слабо к нулю.
+% https://web.ma.utexas.edu/users/gordanz/notes/uniform_integrability.pdf
+%file:///home/legin/%D0%97%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B8/weak_convergence.pdf
+Т.к. второй момент параметров конечен, то последовательность равномерно интегрируема:
 \[
-    0 = \lim D_\text{KL}(q_\mathbf{w}|p|\boldsymbol{\gamma}) = \mathsf{E} \lim D_\text{KL}(q_\mathbf{w}|p|\boldsymbol{\gamma}).
+    \lim_{i \to \infty} (\text{mode} q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) -  \text{mode} p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})) =
 \]
-Поэтому для измеримого множества единичной меры дивергенция между априорным распределение и вариационным будет нулевой.
-Рассмотрим разность предел разности мод двух распределений при $\Gamma$:
-\[
-    \lim (\text{mode} q -  \text{mode} p) = \lim \mathsf{E}_q \mathbf{w} - \mathsf{E}_p \mathbf{w} = \lim \int_\mathbf{w} \mathbf{w} (p-q) d\mathbf{w}.
-\]
-Т.к. $(p-q) \to 0$ почти наверно, то  %слабая сходимости
-\[
-    \lim \int_\mathbf{w} \mathbf{w} (p-q) d\mathbf{w} =  \int_\mathbf{w} \lim \mathbf{w} (p-q) d\mathbf{w} = 0.
-\]
-Отсюда разность мод для данных распределений в пределе равняется нулю.
-
-Рассмотрим относительную плотность:
-\[
-    \frac{q}{q} = \lim = 1.
+\[ = \lim_{i \to \infty} \mathsf{E}_{q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})}\mathbf{w} - \mathsf{E}_{p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}))} \mathbf{w} = 0.
 \]
 
+В пределе мода распределения $q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})$ совпадает с модой априорного распределения, отсюда относительная плотность стремится к единице почти всюду.
 \end{proof}
-Теорема утверждает, что при устремлении параметрической сложности моделей к нулю, параметры модели станоятся неинформативными и подлежащими удалению. Заметим, что последовательность $q$ не обязана иметь предел. Примером такой последовательности может быть последовательность гауссовых распределений, чье среднее стремится к нулю.
+Теорема утверждает, что при устремлении параметрической сложности моделей к нулю, параметры модели станоятся неинформативными и подлежащими удалению. 
+% оба распределения могут не иметь предела
 
 \section{Обобщающая задача}
 Рассмотрим основные критерии выбора вероятностных моделей.
@@ -340,18 +333,12 @@ C_p(\boldsymbol{\theta}) = \min_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\l
 \]
 
 Метод заключается в максимизации правдоподобия обучающей выборки и подвержен переобучению.
-Для использования данного метода в контексте вариационных распределений предлагается следующее обобщение:
+Для использования данного метода в качестве задачи выбора модели предлагается следующее обобщение:
 \[
     L =  \mathsf{E}_q \text{log} \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}).
 \]
-Для данного метода нет оптимизируемых гиперпараметров. Для формального соответствия данной задачи задаче выбора положим $L=Q$.
-Заметим, что частным случаем задачи является метод правдоподобия при выборе в качестве $q$ эмпирического распределения парамтетров и структуры.
-
-\item Перебор структуры:
-\[
-    L =  Q = \mathsf{E}_q\text{log}p(\mathbf{y}, \mathbf{w}|\mathbf{X})[q_{\boldsymbol{\Gamma}} = p']
-\]
-где $p'$ --- некоторое распределение на структуре, выступающее в качестве метапараметра.
+Данное обобщение эквивалентно  методу правдоподобия при выборе в качестве $q$ эмпирического распределения парамтетров и структуры.
+Метод не предполагает оптимизации гиперпараметров. Для формального соответствия данной задачи задаче выбора положим $L=Q$.
 
 
 \item Метод максимальной апостериорной вероятности. 
@@ -362,17 +349,43 @@ C_p(\boldsymbol{\theta}) = \min_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\l
 \[
     L = Q = \mathsf{E}_q \text{log} \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w})+\text{log}p(\mathbf{w}|\boldsymbol{\lambda}) + \text{log}p(\boldsymbol{\gamma}|\mathbf{X}, \mathbf{w}).
 \]
-В рамках данной задачи оптимизации параметры априорных распределений $\mathbf{A}, \mathbf{s}$ выступают в качестве метапараметров, и поэтому не подлежат оптимизации.
+В рамках данной задачи оптимизации параметры априорных распределений $\mathbf{A}, \mathbf{s}$ выступают в качестве метапараметров и не подлежат оптимизации.
 
+
+
+\item Перебор структуры:
+\[
+    L =  Q = \mathsf{E}_q\text{log}p(\mathbf{y}, \mathbf{w}|\mathbf{X})[q_{\boldsymbol{\Gamma}} = p']
+\]
+где $p'$ --- некоторое распределение на структуре, выступающее в качестве метапараметра.
+
+
+
+
+\item Критерий Акаике:
+\[
+   Q =  \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - |\mathbb{W}|.
+\]
+Заметим,что в условия выбора модели на параметрическом множестве моделей данный критерий не имеет смысла, т.к. количество параметров для каждой модели одинаково. Прелагается следуюая переформулировка:
+\[
+    L = Q = \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - |\{w: C_p(w)<\lambda\}|,
+\]
+где $\lambda$ --- метапараметр алгоритма. 
+
+\item Информационный критерий Шварца:
+\[
+    \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - 0.5\text{log}(m)|\mathbb{W}|.
+\]
+Переформулируем данный критерий аналогично критерию AIC:
+\[
+    L = Q = BIC_{\lambda} = \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - \text{log}(m)|\{w: C_p(w)<\lambda\}|.
+\]
 
 
 \item Метод вариационной оценки обоснованности.
 \[
     L = Q = \mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - D_\text{KL}(q|p).
 \]
-
-
-
 
 
 \item Hold-out кросс-валидация.
@@ -383,24 +396,6 @@ C_p(\boldsymbol{\theta}) = \min_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\l
     Q = \mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}).
 \]
 
-
-\item Критерий Акаике:
-\[
-    \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - |\mathbb{W}|.
-\]
-Заметим,что в условия выбора модели на параметрическом множестве моделей данный критерий не имеет смысла, т.к. количество параметров для каждой модели одинаково. Прелагается следуюая переформулировка:
-\[
-    AIC_{\lambda} = \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - |\{w: C_p(w)<\lambda\}|.
-\]
-
-\item Информационный критерий Шварца:
-\[
-    \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - 0.5\text{log}(m)|\mathbb{W}|.
-\]
-Переформулируем данный критерий аналогично критерию AIC:
-\[
-    BIC_{\lambda} = \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - \text{log}(m)|\{w: C_p(w)<\lambda\}|.
-\]
 
 \end{enumerate}
 
