@@ -24,7 +24,7 @@
 \begin{enumerate}
 \item Реализацию $\hat{\gamma}_p,$ т.е. $p$-й компоненты случайной величины $\boldsymbol{\gamma}$  можно породить следующим образом:
 \[
-    \hat{\gamma}_p = \frac{\text{exp}(\text{log}s_p+\hat{g}_p)/\lambda_{\text{temp}}}{\sum_{p'=1}^{K}\text{exp}(\text{log}s_{p'}+\hat{g_{p'}})/\lambda_{\text{temp}}},
+    \hat{\gamma}_p = \frac{\text{exp}(\text{log}s_p+\hat{g}_p)/\lambda_{\text{temp}}}{\sum_{p'=1}^{K}\text{exp}(\text{log}s_{p'}+\hat{g}_{p'})/\lambda_{\text{temp}}},
 \]
 где $\hat{\mathbf{g}} \sim -\text{log}\bigl(-\text{log}~\mathcal{U}(0,1)^K\bigr).$ 
 
@@ -39,9 +39,9 @@
 \item При устремлении температуры к бесконечности плотность распределения концентрируется в центре симплекса:
 \begin{equation}
 \label{eq:theorem_gs}
-    \lim_{\lambda_{\text{temp}} \to \infty}  p(\boldsymbol{\gamma}^{j,k}|\mathbf{h}) = 
+    \lim_{\lambda_{\text{temp}} \to \infty}  p(\boldsymbol{\gamma}|\mathbf{h}) = 
     \begin{cases}
-    \infty, \boldsymbol{\gamma}^{j,k}_p = \frac{1}{K_{j,k}}, p \in \{1,\dots,K_{j,k}\},\\
+    \infty, \boldsymbol{\gamma}_p = \frac{1}{K}, p \in \{1,\dots,K\},\\
     0, \text{ иначе.}
     \end{cases}
 \end{equation}
@@ -50,14 +50,14 @@
 Доказательства первых трех утверждений приведены в~\cite{gumbel}. Докажем утверждение 4.
 
 \begin{proof} 
-Форумлу плотности записывается следующим образом с точностью до множителя:
+Формула плотности записывается следующим образом с точностью до множителя:
 \[
        \frac{\lambda_{\text{temp}}^{K-1}}{\left(\sum_{p=1}^K s_p\gamma_p^{-\frac{-K-1}{K}\lambda_\text{temp}}\sum_{p'=1}^K [p \neq p']s_p\gamma_p^{-\frac{1}{K}\lambda_\text{temp}}\right)^{K}}
 \]
 
 
 Заметим, что числитель $\lambda_{\text{temp}}^{K-1}$ имеет меньшую скорость сходимости, чем знаменатель. 
-Знаменатель состоит из слагаемых вида:
+Знаменатель является суммой слагаемых вида:
 \begin{equation}
 \label{eq:gs}
     \left(\frac{\prod_{p' \neq p} \gamma_{p'}^{\frac{1}{K}}}{\gamma_p^{\frac{K-1}{K}}}\right)^{\lambda_{\text{temp}}}.
