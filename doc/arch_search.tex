@@ -175,13 +175,13 @@ y={(0cm,1.7cm)},
 \begin{theorem}
 Пусть $q = q_{\mathbf{w}}q_{\boldsymbol{\Gamma}}$ --- вариационное распределение c параметрами $\boldsymbol{\theta}$, аппроксимирующее апостериорное распределение структуры и параметров:
 \[
-    q \approx p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}),
+    q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta}) \approx p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}),
 \]
 \[
-    q_{\mathbf{w}} \approx p(\mathbf{w}|\mathbf{y}, \mathbf{X},  \boldsymbol{\Gamma},\mathbf{h}),
+    q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) \approx p(\mathbf{w}|\mathbf{y}, \mathbf{X},  \boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda}),
 \]
 \[
-    q_{\boldsymbol{\Gamma}} \approx p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X},  \mathbf{h}).
+    q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}}) \approx p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X},  \mathbf{h}, \boldsymbol{\lambda}).
 \]
 
 Тогда справедлива следующая оценка:
@@ -190,11 +190,11 @@ y={(0cm,1.7cm)},
 \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) \geq
 \end{equation}
 \[
- \mathsf{E}_{\boldsymbol{\Gamma} \sim q_{\boldsymbol{\Gamma}}}\mathsf{E}_{\mathbf{w} \sim q_{\mathbf{w}}} \text{log}p(\mathbf{y}|\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{X}) - D_\text{KL}\left(q_{\boldsymbol{\Gamma}}|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right) - D_\text{KL}\left(q_{\mathbf{w}}|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right),
+ \mathsf{E}_{\boldsymbol{\Gamma} \sim q_{\boldsymbol{\Gamma}}}\mathsf{E}_{\mathbf{w} \sim q_{\mathbf{w}}} \text{log}p(\mathbf{y}|\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{X}) - D_\text{KL}\left(q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right) - D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right),
 \]
-где $D_\text{KL}\left(q_{\mathbf{w}}|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right)$ вычисляется по формуле условной дивергенции~\cite{TODO}:
+где $D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right)$ вычисляется по формуле условной дивергенции~\cite{TODO}:
 \[
-D_\text{KL}\left(q_{\mathbf{w}}|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right) = \mathsf{E}_{\boldsymbol{\Gamma} \sim q_{\boldsymbol{\Gamma}}} \mathsf{E}_{\mathbf{w} \sim q_{\mathbf{w}}} \frac{\text{log}q(\mathbf{w}|\boldsymbol{\Gamma})}{\text{log}p(\mathbf{w}|\mathbf{h},\boldsymbol{\Gamma})}.
+D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right) = \mathsf{E}_{\boldsymbol{\Gamma} \sim q_{\boldsymbol{\Gamma}}} \mathsf{E}_{\mathbf{w} \sim q_{\mathbf{w}}} \frac{\text{log}q(\mathbf{w}|\boldsymbol{\Gamma})}{\text{log}p(\mathbf{w}|\mathbf{h},\boldsymbol{\Gamma})}.
 \]
 \end{theorem}
 
@@ -204,20 +204,22 @@ D_\text{KL}\left(q_{\mathbf{w}}|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\ri
 \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) \geq
 \]
 \[
-   \mathsf{E}_{q} \text{log}p(\mathbf{y}|\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{X}) - D_\text{KL}(q|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})).
+   \mathsf{E}_{q} \text{log}p(\mathbf{y}|\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{X}) - D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})).
 \]
 
 Декомпозируем распределение $q$ по свойству условной дивергенции:
 \[
-D_\text{KL}(q|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})) = D_\text{KL}\left(q_{\boldsymbol{\Gamma}}|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right) - D_\text{KL}\left(q_{\mathbf{w}}|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right).    
+D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})) = D_\text{KL}\left(q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right) - D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right).    
 \]
 \end{proof}
 
-В качестве вариационного распределения $q_{\mathbf{w}}$ предлагается использовать нормальное распределение:
+В качестве вариационного распределения $q_{\mathbf{w}}$ предлагается использовать нормальное распределение, не зависящее от структуры модели $\boldsymbol{\Gamma}$:
 \[
-    q_{\mathbf{w}} = \mathcal{N}(\boldsymbol{\mu}, \boldsymbol{\sigma}^2_q).
+    q_{\mathbf{w}} = \mathcal{N}(\boldsymbol{\mu}, \mathbf{A}_q), 
 \]
-В качестве вариационного распределения $q_{\boldsymbol{\Gamma}}$ предлагается использовать распределение Gumbel-Softmax.
+где $\mathbf{A}_q$ --- диагональная матрица с диагональю $\boldsymbol{\alpha}_q$.
+
+В качестве вариационного распределения $q_{\boldsymbol{\Gamma}}$ предлагается использовать произведение распределений Gumbel-Softmax. конкатенацию параметров концентрации распределений обозначим как $\mathbf{s}_q$. Температуру вариационного распределения на структуре $\boldsymbol{\Gamma}$ обозначим как $\theta_\text{temp}$.
 
 Вариационными параметрами распределения $q$ являются параметры распределений $q_{\mathbf{w}}, q_{\boldsymbol{\Gamma}}$:
 \[
@@ -236,12 +238,12 @@ D_\text{KL}(q|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})) = D_\text{KL}\left(q
 
 Для вычисления приближенного значения вариационной оценки обоснованности~\eqref{eq:full_elbo} предлагается использовать следующую формулу:
 \[
-    \sum_{r=1}^R \text{log}p(\mathbf{y}|\boldsymbol{\mu}+\boldsymbol{\sigma} \circ \hat{\epsilon}_r, \hat{\boldsymbol{\Gamma}}_r, \mathbf{X}) - \sum_{r=1}^R \left(\text{log}q_{\boldsymbol{\Gamma}}(\hat{\boldsymbol{\Gamma}}_r) - p(\hat{\boldsymbol{\Gamma}}|\mathbf{h},\boldsymbol{\lambda})\right) -
+    \sum_{r=1}^R \text{log}p(\mathbf{y}|\boldsymbol{\mu}+\boldsymbol{\alpha}_q \circ \hat{\epsilon}_r, \hat{\boldsymbol{\Gamma}}_r, \mathbf{X}) - \sum_{r=1}^R \left(\text{log}q_{\boldsymbol{\Gamma}}(\hat{\boldsymbol{\Gamma}}_r|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})) - p(\hat{\boldsymbol{\Gamma}}|\mathbf{h},\boldsymbol{\lambda})\right) -
 \]
-\[ -\sum_{r=1}^R\frac{1}{2}\left( \hat{\boldsymbol{\Gamma}}_r^{-1}\text{tr}(\mathbf{A}_q\mathbf{A}^{-1}) + \boldsymbol{\mu}^{\mathsf{T}}\hat{\boldsymbol{\Gamma}}_r^{-1}\mathbf{A}^{-1}\boldsymbol{\mu} - |\mathbf{W}| + \text{log}\frac{|\boldsymbol{\Gamma}_r\mathbf{A}|}{|\mathbf{A}^q|}\right),
+\[ -\sum_{r=1}^R\frac{1}{2}\left( \hat{\boldsymbol{\Gamma}}_r^{-1}\text{tr}(\mathbf{A}_q\mathbf{A}^{-1}) + \boldsymbol{\mu}^{\mathsf{T}}\hat{\boldsymbol{\Gamma}}_r^{-1}\mathbf{A}^{-1}\boldsymbol{\mu} - |\mathbf{W}| + \text{log}\frac{|\boldsymbol{\Gamma}_r\mathbf{A}|}{|\mathbf{A})_q|}\right),
 \]
 где $r$ --- множество реализаций случайных величин, по котором вычисляется значения вариационной оценки обоснованности, $\hat{\epsilon}_r \sim \mathcal{N}(0,1),$
- $\hat{\boldsymbol{\Gamma}}$ --- реализация случайно величиный из композиций распределений Gumbel-Softmax.
+ $\hat{\boldsymbol{\Gamma}}_r$ --- реализация случайной величины, соответствующей структуре $\boldsymbol{\Gamma}$.
 
 Для анализа сложности полученной модели введем понятие \textit{параметрической сложности}. 
 \begin{defin}
