@@ -254,10 +254,10 @@ D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},
  $\hat{\boldsymbol{\Gamma}}_r = [\boldsymbol{\gamma}^{j,k}_r, (j,k) \in E]$ --- реализация случайной величины, соответствующей структуре $\boldsymbol{\Gamma}$.
 
 Для анализа сложности полученной модели введем понятие \textit{параметрической сложности}. 
-\begin{defin}
-Параметрической сложностью  $C_p(\boldsymbol{\theta})$ модели с вариационными параметрами $\boldsymbol{\theta}$ назовем минимальную дивергенцию между вариационным и априорным распределением:
+\begin{defin} 
+Параметрической сложностью  $C_p(\boldsymbol{\theta})$ модели с вариационными параметрами $\boldsymbol{\theta}$ на множестве $U_\mathbf{h} \subset \mathbb{H}$ назовем минимальную дивергенцию между вариационным и априорным распределением:
 \[
-C_p(\boldsymbol{\theta}) = \min_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})\right).
+C_p(\boldsymbol{\theta}|U_\mathbf{h}) = \inf_{\mathbf{h} \in U_\mathbf{h}} \text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})\right).
 \]
 \end{defin}
 Параметрическая сложность модели соответствует ожидаемой длине описания параметров модели при условии заданного параметрического априорного распределения~\cite{hinton_mdl}.
@@ -282,22 +282,22 @@ C_p(\boldsymbol{\theta}) = \min_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\l
 
 Сформулируем и докажеми теорему о связи относительной плотности и параметрической сложности модели:
 \begin{theorem}
+Пусть мода априорного распределения $p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}))$ не зависит от гиперпараметров $\mathbf{h}$.
 Пусть вариационное распределение $q_\mathbf{w}$ и априорное распределение $p({w}|\boldsymbol{\Gamma}, \mathbf{h}))$ являются унимодальными с ограниченным вторым моментом и свойством:
 \[
-    \text{mode}~q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) = \mathsf{E}_{q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})}\mathbf{w},\quad \text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}) = \mathsf{E}_{p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}))}\mathbf{w}.
+    \text{mode}~q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) = \mathsf{E}_{q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})}\mathbf{w},\quad \text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}) = \mathsf{E}_{p(\mathbf{w}|\boldsymbol{\Gamma}))}\mathbf{w}.
 \] 
-Пусть мода априорного распределения $p({w}|\boldsymbol{\Gamma}, \mathbf{h}))$ не зависит от гиперпараметров $\mathbf{h}$.
-Пусть также $\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,\dots$ --- бесконечная последовательность векторов вариационных параметров, такая что $\lim_{i \to \infty}C_p(\boldsymbol{\theta}_i) = 0.$ 
+Пусть также $\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,\dots$ --- бесконечная последовательность векторов вариационных параметров, такая что $\lim_{i \to \infty}C_p(\boldsymbol{\theta}_i|\mathbb{H}) = 0.$ 
 Тогда вариационная плотность данной последовательности стремится к единице почти наверно по вероятностной мере $q_{\boldsymbol{\Gamma}}$:
 \[
-    \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}_i) \xrightarrow{\text{п.н. по }~q_{\boldsymbol{\Gamma}}} 1.
+    \prod_{w \in \mathbf{w}} \frac{q\bigl(\mathsf{E}_{q_{\mathbf{w}}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}))|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}\bigr)}{q\bigl(\mathsf{E}_{p(\mathbf{w}|\boldsymbol{\Gamma}))}\mathbf{w}|\boldsymbol{\Gamma},\boldsymbol{\theta}_\mathbf{w}\bigr)}  \xrightarrow{\text{п.н. по }~q_{\boldsymbol{\Gamma}}} 1.
 \]
 где $\mathbf{h}_i = \argmin_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})\right)$. 
 \end{theorem}
 \begin{proof}
 Предел параметрической сложности перепишем как 
 \[
-    \lim_{i \to \infty} \min_{h} D_\text{KL}\left(q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right) + D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right)
+    \lim_{i \to \infty} \inf_{h} D_\text{KL}\left(q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right) + D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right)
 \]
 
 Т.к. параметрическая сложность состоит из двух неотрицательных слагаемых, то в пределе оба слагаемых достигают нуля.
@@ -377,16 +377,16 @@ C_p(\boldsymbol{\theta}) = \min_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\l
 \[
    Q =  \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - |\mathbb{W}|.
 \]
-Заметим,что в условия выбора модели на параметрическом множестве моделей данный критерий не имеет смысла, т.к. количество параметров для каждой модели одинаково. Прелагается следуюая переформулировка:
+Заметим,что в условия выбора модели на параметрическом множестве моделей данный критерий не имеет смысла, т.к. количество параметров для каждой модели одинаково. Предлагается следующая переформулировка:
 \begin{equation}
 \label{eq:optim_aic}
-    L = Q = \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - |\{w: C_p(w)<\lambda\}|,
+    L = Q = \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - |\{w: C_p(\theta|U_\mathbf{h})<\lambda\}|,
 \end{equation}
-где $\lambda$ --- метапараметр алгоритма. 
+где $\lambda$ --- метапараметр алгоритма, $U_\mathbf{h}  \subset \mathbb{H}$ --- область определения задачи по гиперпараметрам.
 
 \item Информационный критерий Шварца:
 \[
-    \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - 0.5\text{log}(m)|\mathbb{W}|.
+    \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - 0.5\text{log}(m)|\{w: C_p(\theta|U_\mathbf{h})<\lambda\}|.
 \]
 Переформулируем данный критерий аналогично критерию AIC:
 \begin{equation}
@@ -431,7 +431,7 @@ C_p(\boldsymbol{\theta}) = \min_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\l
 
 \item Свойство максимизации правдоподобия выборки: существует $\boldsymbol{\lambda} \in U_{\lambda}$ и  $K_1 \in \mathbb{R}_{+}$, такие что для любых векторов гиперпараметров, удовлетворяющих неравенству $\mathbf{h}_1, \mathbf{h}_2 \in  U_{h}, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_1$, выполняется неравенство $\mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_1, \lambda_{\text{temp}}, \mathbf{f})>\text{log}\mathsf{E}_q ~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_2, \lambda_{\text{temp}}, \mathbf{f})$.
 
-\item Свойство минимизации параметрической сложности:  существует  $\boldsymbol{\lambda} \in U_{\lambda}$ и $K_2 \in \mathbb{R}_{+}$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2 \in U_h$, удовлетворяющих неравенству $Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_2$ и при этом имеющие равенство ожидаемых правдоподобий выборок  $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}_1, \lambda_{\text{temp}}, \mathbf{f}) = \text{log}\mathsf{E}_q ~p(\mathbf{y}|\boldsymbol{\theta}_2, \lambda_{\text{temp}}, \mathbf{f})$, параметрическая сложность первой модели меньше, чем второй: $C_p(\boldsymbol{\theta}^{*}(\mathbf{h}_1)<C_p(\boldsymbol{\theta}^{*}(\mathbf{h}_2)$.
+\item Свойство минимизации параметрической сложности:  существует  $\boldsymbol{\lambda} \in U_{\lambda}$ и $K_2 \in \mathbb{R}_{+}$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2 \in U_h$, удовлетворяющих неравенству $Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_2$ и при этом имеющие равенство ожидаемых правдоподобий выборок  $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}_1, \lambda_{\text{temp}}, \mathbf{f}) = \text{log}\mathsf{E}_q ~p(\mathbf{y}|\boldsymbol{\theta}_2, \lambda_{\text{temp}}, \mathbf{f})$, параметрическая сложность первой модели меньше, чем второй: $C_p(\boldsymbol{\theta}^{*}(\mathbf{h}_1)|U_\mathbf{h})<C_p(\boldsymbol{\theta}^{*}(\mathbf{h}_2|U_\mathbf{h})$.
 
 \item Свойства приближения оценки обоснованности: существует значение гиперпараметров $\boldsymbol{\lambda}$, такое что оптимизация задачи эквивалента оптимизации вариационной оценки обоснованности модели: $\argmax_{\mathbf{h} \in U_h}Q(\argmax_{\boldsymbol{\theta}} \in U_{\boldsymbol{\theta}} L) \approx \argmax_{\mathbf{h} \in U_h} \mathsf{E}_q p(\mathbf{y}|\mathbf{w}, \mathbf{X}) - {D}_{KL}(q|p).$
 
