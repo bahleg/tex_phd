@@ -72,8 +72,28 @@
 \end{proof}
 
 
-Первое свойство Gumbel-Softmax распределения позволяет использовать репараметризацию при вычислении градиента в вариационном выводе (англ. reparametrization trick). Данный подход позволяет значительно повысить точность вычисления градиента от функций, зависящих от случайных величин~\cite{reparametrization}.
-Пример распределения Gumbel-Softmax при различных параметрах представлен на Рис.~\ref{fig:gs}. В качестве альтернативы для априорного распределения на структуре выступает  распределение Дирихле и равномерное распределение. Выбор в качестве распределения на структуре произведения Gumbel-Softmax распределения обоснован выбором этого же распределения в качестве вариационного. TODO: подробнее.
+Первое свойство Gumbel-Softmax распределения позволяет использовать репараметризацию при вычислении градиента в вариационном выводе (англ. reparametrization trick). 
+Идея подхода заключается в следующем. Рассмотрим для примера математическое ожидание логарифма правдоподобия выборки модели по некоторому непрерывному распределению $q$:
+\[
+    \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})=  \int_{\mathbf{w}} \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})q(\mathbf{w})d\mathbf{w}.
+\]
+Продиффиринцируем данное выражение по параметрам $\boldsymbol{\theta}$ вариационного распределения $q$:
+\[
+    \nabla_{\boldsymbol{\theta}} \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = \int_{\mathbf{w}}  \nabla_{\boldsymbol{\theta}}\text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})q(\mathbf{w})d\mathbf{w} + \int_{\mathbf{w}}  \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})\nabla_{\boldsymbol{\theta}}q(\mathbf{w})d\mathbf{w}.
+\]
+Первое слагаемое в общем видел сложновычислимо. Пусть распределение $q$ можно представить как функцию от непараметрического распределения:
+\[
+    q(\mathbf{w}) = q(g(\varepsilon)).
+\]
+Тогда 
+\[
+ \nabla_{\boldsymbol{\theta}} \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = \nabla_{\boldsymbol{\theta}} \mathsf{E}_{\varepsilon} \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = \int_{\varepsilon}  \nabla_{\boldsymbol{\theta}} \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})  p(\varepsilon) d\varepsilon.
+\]
+Таким образом, распределение, позволяющее произвести репараметризацию, является более удобным для вычисления интегральных оценок.
+Кроме того, данный подход позволяет значительно повысить точность вычисления градиента от функций, зависящих от случайных величин~\cite{reparametrization}.
+% отсюда: http://gregorygundersen.com/blog/2018/04/29/reparameterization/
+
+Пример распределения Gumbel-Softmax при различных параметрах представлен на Рис.~\ref{fig:gs}. В качестве альтернативы для априорного распределения на структуре выступает  распределение Дирихле и равномерное распределение. Выбор в качестве распределения на структуре произведения Gumbel-Softmax распределения обоснован выбором этого же распределения в качестве вариационного. 
 
 \begin{figure}
  \begin{minipage}[t]{.2\textwidth}
@@ -456,7 +476,7 @@ TODO
 
 \begin{theorem}
 Пусть задано непустое множество непрерывных по параметрам распределний на структуре $\mathbf{P}$. 
-Пусть функции потерь и валидации $L,Q$ являются непрерывно-дифференцируемыми на некоторой области $U\subset \amsmathbb{\Theta} \times \mathbb{H} \times \amsmathbb{\Lambda}$, где параметры распределений $\mathbf{P} \in \amsmathbb{\Lambda}.$ 
+Пусть функции потерь и валидации $L,Q$ являются непрерывно-дифференцируемыми на компакте $U\subset \amsmathbb{\Theta} \times \mathbb{H} \times \amsmathbb{\Lambda}$, где параметры распределений $\mathbf{P} \in \amsmathbb{\Lambda}.$ 
 Тогда следующая задача является обобщающей на $U$.
 \begin{equation}
 \tag{$Q^{*}$}
@@ -483,14 +503,25 @@ TODO
 \]
 \end{theorem}
 \begin{proof}
-TODO
+Для доказательста теоремы требуется доказать критерии 1-6 из определения обобщающей задачи.
+Критерий 1 следует из условий задачи.
+
+Докажем критерий 2. Пусть $\lambda^\text{prior}_\text{Q} = 0, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$. Зафиксируем некоторое значение метапараметров $\lambda_1, \lambda_2$. Т.к. $U_\mathbf{h}$ --- компакт, возьмем в качестве константы $K_1$ разницу между максимальным и минимальным значением $p(\mathbf{h}|\mathbf{f})$:
+\[
+    K = \max_{\mathbf{h}} \text{log}~p (\mathbf{h}|\mathbf{f}) - \min_{\mathbf{h}} \text{log}~p(\mathbf{h}|\mathbf{f}).
+\]
+Тогда $Q(\mathbf{h}_1) - Q(\mathbf{h}_2) = \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_1 \lambda_{\text{temp}}, \mathbf{f}) - \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_2, \lambda_{\text{temp}}, \mathbf{f}) + \text{log}~p(\mathbf{h}_2|\mathbf{f}) - \text{log}~p(\mathbf{h}_1|\mathbf{f})>K_1.$ Отсюда следует $\mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_1 \lambda_{\text{temp}}, \mathbf{f}) > \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_2 \lambda_{\text{temp}}, \mathbf{f}).$
 \end{proof}
 
 Метапараметрами данной задачи являются коэффициенты $\lambda^\text{prior}_\text{Q}, \lambda^\text{prior}_\text{L}$, отвечающие за регуляризацию верхней и нижней задачи оптимизации, коэффициент $\lambda_\text{likelihood}^\text{Q}$ за максимизацию правдоподобия, а также параметры распрделений $\mathbf{P}$ и вектор коэффициентов перед ними $\boldsymbol{\lambda}^\text{struct}_\text{Q}$. 
 
-В предельном случае, когда множество температура $\lambda_\text{temp}$ близка к нулю, а множество $\mathbf{P}$ состоит из распределений, близких к дискретным, и соответствующих всем возможным структурам, калибровка $\boldsymbol{\lambda}^\text{struct}_\text{Q}$ порождает последовательность задач оптимизаций, схожую с перебором структур. 
+В предельном случае, когда множество температура $\lambda_\text{temp}$ близка к нулю, а множество $\mathbf{P}$ состоит из распределений, близких к дискретным, и соответствующих всем возможным структурам, калибровка $\boldsymbol{\lambda}^\text{struct}_\text{Q}$ порождает последовательность задач оптимизаций, схожую с перебором структур.  Для примера рассмотрим вырожденный случай поведения функции $Q$, когда $\lambda_\text{likelihood}^\text{Q} = \lambda^\text{prior}_\text{Q} = 0$. Пусть в Пусть модель использует один структурный параметр, в качестве априорного распределения на структуре задано распределение Gumbel-Softmax с $\lambda_\text{temp}=0.1$. Пусть в качестве множества распределений $\mathbf{P}$ используется два распределения Gumbel-Softmax, сконцентрированных близко к вершинам симплекса:
+\[
+    \mathbf{P} = [\text{Gumbel-Softmax}([0.8, 0.1, 0.1]^\text{T}, 0.1) ,\text{Gumbel-Softmax}([0.1, 0.8, 0.1]^\text{T}, 0.1)].
+\]
+Из определения распределения Gumbel-Softmax следует, что достаточно рассмотреть только значения параметра $\mathbf{s}$ находящиеся внутри симплекса.
+На рис.~\ref{fig:gs_comb} изображены значения функции Q в зависимости от мета-параметров и значения гиперпараметра $\mathbf{s}$ распределения на структуре. Видно, что калибруя коэффициенты метапараметров получается последовательность оптимизаций, схожая с полным перебором структуры.
 
-TODO
 
 \textbf{Обобщающая задача: переформулировка через градиент}
 
