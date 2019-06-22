@@ -16,32 +16,32 @@
 \]
 где для каждого структурного параметра $\boldsymbol{\gamma}$ с количеством базовых функций $K$ вероятность $p(\boldsymbol{\gamma}|\mathbf{s}, \lambda_\text{temp})$ определна следующим образом:
 \[
-    p(\boldsymbol{\gamma}|\mathbf{s}, \lambda_\text{temp}) = (K-1)!\lambda_{\text{temp}}^{K-1}\prod_{p=1}^K s_p\gamma_p^{-\lambda_\text{temp} -1} \left(\sum_{p=1}^K s_p\gamma_p^{-\lambda_\text{temp}}\right)^{-K},
+    p(\boldsymbol{\gamma}|\mathbf{s}, \lambda_\text{temp}) = (K-1)!\lambda_{\text{temp}}^{K-1}\prod_{l=1}^K s_l\gamma_l^{-\lambda_\text{temp} -1} \left(\sum_{l=1}^K s_l\gamma_l^{-\lambda_\text{temp}}\right)^{-K},
 \]
 где $\mathbf{s} \in (0,\infty)^K$ --- гиперпараметр, отвечающий за смещенность плотности распределения относительно точек симплекса на $K$ вершинах, $\lambda_{\text{temp}}$ --- метапараметр температуры, отвечающий за концентрацию плотности вблизи вершин симплекса или в центре симплекса.
 
 Перечислим свойства, которыми обладает распределение Gumbel-Softmax:
 \begin{enumerate}
-\item Реализацию $\hat{\gamma}_p,$ т.е. $p$-й компоненты случайной величины $\boldsymbol{\gamma}$  можно породить следующим образом:
+\item Реализацию $\hat{\gamma}_l,$ т.е. $l$-й компоненты случайной величины $\boldsymbol{\gamma}$  можно породить следующим образом:
 \[
-    \hat{\gamma}_p = \frac{\text{exp}(\text{log}s_p+\hat{g}_p)/\lambda_{\text{temp}}}{\sum_{p'=1}^{K}\text{exp}(\text{log}s_{p'}+\hat{g}_{p'})/\lambda_{\text{temp}}},
+    \hat{\gamma}_l = \frac{\text{exp}(\text{log}s_l+\hat{g}_l)/\lambda_{\text{temp}}}{\sum_{l'=1}^{K}\text{exp}(\text{log}s_{l'}+\hat{g}_{l'})/\lambda_{\text{temp}}},
 \]
 где $\hat{\mathbf{g}} \sim -\text{log}\bigl(-\text{log}~\mathcal{U}(0,1)^K\bigr).$ 
 
-\item Свойство округления: $p(\gamma_{p_1} > \gamma_{p_2}, p_1\neq p_2) = \frac{s_p}{\sum_{p'}s_{p'}}.$
+\item Свойство округления: $p(\gamma_{l_1} > \gamma_{l_2}, l_1\neq l_2|\mathbf{s}, {\lambda}_\text{temp}) = \frac{s_l}{\sum_{l'}s_{l'}}.$
 
 \item При устремлении температуры к нулю реализация случайной величины концентрируется на вершинах симплекса:
 \[
-    p(\lim_{\lambda_{\text{temp}} \to 0}  \gamma_{p} = 1)  = \frac{s_p}{\sum_{p'}s_{p'}}.
+    p(\lim_{\lambda_{\text{temp}} \to 0}  \gamma_{l} = 1|\mathbf{s}, {\lambda}_\text{temp})  = \frac{s_l}{\sum_{l'}s_{l'}}.
 \]
 
 
 \item При устремлении температуры к бесконечности плотность распределения концентрируется в центре симплекса:
 \begin{equation}
 \label{eq:theorem_gs}
-    \lim_{\lambda_{\text{temp}} \to \infty}  p(\boldsymbol{\gamma}|\mathbf{h}) = 
+    \lim_{\lambda_{\text{temp}} \to \infty}  p(\boldsymbol{\gamma}|\mathbf{s}, {\lambda}_\text{temp}) = 
     \begin{cases}
-    \infty, \boldsymbol{\gamma}_p = \frac{1}{K}, p \in \{1,\dots,K\},\\
+    \infty, \boldsymbol{\gamma}_l = \frac{1}{K}, l \in \{1,\dots,K\},\\
     0, \text{ иначе.}
     \end{cases}
 \end{equation}
@@ -52,7 +52,7 @@
 \begin{proof} 
 Формула плотности записывается следующим образом с точностью до множителя:
 \[
-       \frac{\lambda_{\text{temp}}^{K-1}}{\left(\sum_{p=1}^K s_p\gamma_p^{-\frac{-K-1}{K}\lambda_\text{temp}}\sum_{p'=1}^K [p \neq p']s_p\gamma_p^{-\frac{1}{K}\lambda_\text{temp}}\right)^{K}}
+       \frac{\lambda_{\text{temp}}^{K-1}}{\left(\sum_{l=1}^K s_l\gamma_l^{-\frac{-K-1}{K}\lambda_\text{temp}}\sum_{l'=1}^K [l \neq l']s_l\gamma_l^{-\frac{1}{K}\lambda_\text{temp}}\right)^{K}}
 \]
 
 
@@ -60,10 +60,10 @@
 Знаменатель является суммой слагаемых вида:
 \begin{equation}
 \label{eq:gs}
-    \left(\frac{\prod_{p' \neq p} \gamma_{p'}^{\frac{1}{K}}}{\gamma_p^{\frac{K-1}{K}}}\right)^{\lambda_{\text{temp}}}.
+    \left(\frac{\prod_{l' \neq l} \gamma_{l'}^{\frac{1}{K}}}{\gamma_l^{\frac{K-1}{K}}}\right)^{\lambda_{\text{temp}}}.
 \end{equation}
-Пусть хотя бы для одного $p$: $\gamma_p \neq \frac{1}{K}$. Пусть $p'$ соответствует индексу максимальной компоненты вектора $\boldsymbol{\gamma}$.
-Для $p=p'$ предел выражения~\eqref{eq:gs} при $\lambda_{\text{temp}}$ стремится к бесконечности. Для $p\neq p'$ предел выражения~\eqref{eq:gs} при $\lambda_{\text{temp}}$ стремится к нулю. Возводя сумму пределов в степень $-K$ получаем предел плотности, равный нулю.
+Пусть хотя бы для одного $l$: $\gamma_l \neq \frac{1}{K}$. Пусть $l'$ соответствует индексу максимальной компоненты вектора $\boldsymbol{\gamma}$.
+Для $l=l'$ предел выражения~\eqref{eq:gs} при $\lambda_{\text{temp}}$ стремится к бесконечности. Для $l\neq l'$ предел выражения~\eqref{eq:gs} при $\lambda_{\text{temp}}$ стремится к нулю. Возводя сумму пределов в степень $-K$ получаем предел плотности, равный нулю.
 
 Пусть $\boldsymbol{\gamma} = \frac{1}{K}$.
 Тогда выражение с точностью до множителя упрощается до $\lambda^{K-1}$. Предел данного выражения стремится к бесконечности.
@@ -173,9 +173,9 @@ y={(0cm,1.7cm)},
 Для вычисления обоснованности $$p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = \iint_{\boldsymbol{\Gamma},\mathbf{w}}p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma},\boldsymbol{\lambda})p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda})p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})d\boldsymbol{\Gamma}d\mathbf{w}$$ из~\eqref{eq:optimal_hyper} предлагается использовать вариационную оценку обоснованности.
 
 \begin{theorem}
-Пусть $q = q_{\mathbf{w}}q_{\boldsymbol{\Gamma}}$ --- вариационное распределение c параметрами $\boldsymbol{\theta}$, аппроксимирующее апостериорное распределение структуры и параметров:
+Пусть $q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})  = q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta}_\mathbf{w})q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})$ --- вариационное распределение c параметрами $\boldsymbol{\theta}= [\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\theta}_{\boldsymbol{\Gamma}} ]$, аппроксимирующее апостериорное распределение структуры и параметров:
 \[
-    q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta}) \approx p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}),
+    q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta}) \approx p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}),
 \]
 \[
     q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) \approx p(\mathbf{w}|\mathbf{y}, \mathbf{X},  \boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda}),
@@ -219,7 +219,7 @@ D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},
 \]
 где $\mathbf{A}_q$ --- диагональная матрица с диагональю $\boldsymbol{\alpha}_q$.
 
-В качестве вариационного распределения $q_{\boldsymbol{\Gamma}}$ предлагается использовать произведение распределений Gumbel-Softmax. Конкатенацию параметров концентрации распределений обозначим как $\mathbf{s}_q$. Температуру вариационного распределения на структуре $\boldsymbol{\Gamma}$ обозначим как $\theta_\text{temp}$.
+В качестве вариационного распределения $q_{\boldsymbol{\Gamma}}$ предлагается использовать произведение распределений Gumbel-Softmax. Конкатенацию параметров концентрации распределений обозначим $\mathbf{s}_q$. Его температуру обозначим $\theta_\text{temp}$.
 
 Вариационными параметрами распределения $q$ являются параметры распределений $q_{\mathbf{w}}, q_{\boldsymbol{\Gamma}}$:
 \[
@@ -235,29 +235,11 @@ D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},
 \label{fig:plate_qprob}
 \end{figure}
 
-
-Для вычисления приближенного значения вариационной оценки обоснованности~\eqref{eq:full_elbo} предлагается использовать приближение методом Монте-Каарло с порождением $R$ реализаций величин $\mathbf{w}, \boldsymbol{\Gamma}$:
-\[
-    \sum_{r=1}^R \text{log}p(\mathbf{y}|\boldsymbol{\mu}+\boldsymbol{\alpha}_q \circ \hat{\epsilon}_r, \hat{\boldsymbol{\Gamma}}_r, \mathbf{X}) - \sum_{r=1}^R \left(\text{log}q_{\boldsymbol{\Gamma}}(\hat{\boldsymbol{\Gamma}}_r|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})) - p(\hat{\boldsymbol{\Gamma}}|\mathbf{h},\boldsymbol{\lambda})\right) -
-\]
-\[
--\sum^{(i,j) \in E}\sum_{k=1}^{K_{i,j}} \hat{D}_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}^{i,j}_k|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}^{i,j}_k|\boldsymbol{\Gamma}, \mathbf{h})\right),
-\]
-где 
-\[
-     \hat{D}_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}^{i,j}_k|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}^{i,j}_k|\boldsymbol{\Gamma}, \mathbf{h})\right) = 
-\]
-\[
-= \sum_{r=1}^R\frac{1}{2}\left( \left(\hat{\gamma}^{i,j}_r[k]\right)^{-1}\text{tr}(\mathbf{A}_q\mathbf{A}^{-1}) + \boldsymbol{\mu}^{\mathsf{T}}\hat{\gamma}^{i,j}_r[k]^{-1}\mathbf{A}^{-1}\boldsymbol{\mu} - |\mathbf{W}| + \text{log}\frac{|\hat{\gamma}^{i,j}[r]_k\mathbf{A}|}{|\mathbf{A}_q|}\right),
-\]
-где $R$ --- количество реализаций случайных величин, по котором вычисляется значения вариационной оценки обоснованности, $\hat{\epsilon}_r \sim \mathcal{N}(0,1),$
- $\hat{\boldsymbol{\Gamma}}_r = [\boldsymbol{\gamma}^{j,k}_r, (j,k) \in E]$ --- реализация случайной величины, соответствующей структуре $\boldsymbol{\Gamma}$.
-
 Для анализа сложности полученной модели введем понятие \textit{параметрической сложности}. 
 \begin{defin} 
-Параметрической сложностью  $C_p(\boldsymbol{\theta})$ модели с вариационными параметрами $\boldsymbol{\theta}$ на множестве $U_\mathbf{h} \subset \mathbb{H}$ назовем минимальную дивергенцию между вариационным и априорным распределением:
+Параметрической сложностью  $C_p(\boldsymbol{\theta})$ модели с вариационными параметрами $\boldsymbol{\theta}$ на компакте $U_\mathbf{h} \subset \mathbb{H}$ назовем минимальную дивергенцию между вариационным и априорным распределением:
 \[
-C_p(\boldsymbol{\theta}|U_\mathbf{h}) = \inf_{\mathbf{h} \in U_\mathbf{h}} \text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})\right).
+C_p(\boldsymbol{\theta}|U_\mathbf{h}) = \min_{\mathbf{h} \in U_\mathbf{h}} \text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})\right).
 \]
 \end{defin}
 Параметрическая сложность модели соответствует ожидаемой длине описания параметров модели при условии заданного параметрического априорного распределения~\cite{hinton_mdl}.
@@ -281,55 +263,76 @@ C_p(\boldsymbol{\theta}|U_\mathbf{h}) = \inf_{\mathbf{h} \in U_\mathbf{h}} \text
 \end{defin}
 
 Сформулируем и докажеми теорему о связи относительной плотности и параметрической сложности модели:
+
 \begin{theorem}
-Пусть мода априорного распределения $p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}))$ не зависит от гиперпараметров $\mathbf{h}$.
-Пусть вариационное распределение $q_\mathbf{w}$ и априорное распределение $p({w}|\boldsymbol{\Gamma}, \mathbf{h}))$ являются унимодальными с ограниченным вторым моментом и свойством:
+Пусть
+\begin{enumerate}
+\item заданы компактные множества $U_\mathbf{h} \subset \mathbb{H}, U_{\boldsymbol{\theta}} \subset \amsmathbb{\Theta}$;
+
+
+\item мода априорного распределения $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}))$ не зависит от гиперпараметров $\mathbf{h}$ на $U_\mathbf{h}$:
 \[
-    \text{mode}~q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) = \mathsf{E}_{q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})}\mathbf{w},\quad \text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}) = \mathsf{E}_{p(\mathbf{w}|\boldsymbol{\Gamma}))}\mathbf{w}.
-\] 
-Пусть также $\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,\dots$ --- бесконечная последовательность векторов вариационных параметров, такая что $\lim_{i \to \infty}C_p(\boldsymbol{\theta}_i|\mathbb{H}) = 0.$ 
-Тогда вариационная плотность данной последовательности стремится к единице почти наверно по вероятностной мере $q_{\boldsymbol{\Gamma}}$:
-\[
-    \prod_{w \in \mathbf{w}} \frac{q\bigl(\mathsf{E}_{q_{\mathbf{w}}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}))|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}\bigr)}{q\bigl(\mathsf{E}_{p(\mathbf{w}|\boldsymbol{\Gamma}))}\mathbf{w}|\boldsymbol{\Gamma},\boldsymbol{\theta}_\mathbf{w}\bigr)}  \xrightarrow{\text{п.н. по }~q_{\boldsymbol{\Gamma}}} 1.
-\]
-где $\mathbf{h}_i = \argmin_{\mathbf{h} \in \mathbb{H}} \text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})\right)$. 
-\end{theorem}
-\begin{proof}
-Предел параметрической сложности перепишем как 
-\[
-    \lim_{i \to \infty} \inf_{h} D_\text{KL}\left(q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right) + D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right)
+    p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}_1) = p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}_2) =  p(\mathbf{w},\boldsymbol{\Gamma}) \forall \mathbf{h}_1,\mathbf{h}_2 \in U_{\mathbf{h}}. 
 \]
 
-Т.к. параметрическая сложность состоит из двух неотрицательных слагаемых, то в пределе оба слагаемых достигают нуля.
-Рассмотрим второе слагаемое:
+\item вариационное распределение $q_\mathbf{w}$ и априорное распределение $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}))$  являются абсолютно непрерывными и унимодальными на  $U_\mathbf{h} \subset \mathbb{H}, U_{\boldsymbol{\theta}}$.
+
+\item мода и матожидание вариационного распределение $q$ и априорного распределение $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}))$  распределения совпадают.
+
+\item задана последовательность $\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,\dots$ --- бесконечная последовательность векторов вариационных параметров, такая что $\lim_{i \to \infty}C_p(\boldsymbol{\theta_i}|U_{\mathbf{h}}) = 0, \boldsymbol{\theta} \in U_{\boldsymbol{\theta}}.$ 
+
+\item $\mathbf{h}_i$. 
+\end{enumerate}
+$\mathbf{h}_i$.
+Тогда матожидание вариационной плотности данной последовательности стремится к единице:
 \[
-    D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right) = \int_{\Gamma}  \mathsf{E}_{q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})}\text{log}\left(\frac{q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})}{p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})}\right)
+   \mathsf{E}_q \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1} \to 1.
 \]
-Т.к. предел равен нулю, то для множества событий меры 1 по $q_{\boldsymbol{\Gamma}}$ выполняется:
+
+
+\end{theorem}
+
+\begin{proof}
+Воспользуемся неравенством Пинскера:
 \[
-    \hat{D}_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right) = 0,
-\] 
-где $\hat{D}_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right)$ --- дивергенция при фиксированном значении переменной $\boldsymbol{\Gamma}$. Для каждого значения $\boldsymbol{\Gamma}$ за исключением счетного множества значений по неравенству Пинскера следует:
-\[
-    ||F_q - F_p|| \to 0,
+    ||F_q(\boldsymbol{\theta}) - F_p(\mathbf{h})||_\text{TV},\leq\sqrt{2\text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})\right)},
 \]
-где $F_q, F_p$ --- функции распределения для $q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}), p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})$.
+где $|\cdot|_\text{TV}$ --- расстояние по вариации, $F_q, F_p$ --- функции распределения   $q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})$ и $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}, \boldsymbol{\lambda})$.
+Отсюда $ \lim_{i \to \infty} ||F_q(\boldsymbol{\theta}) - F_p(\mathbf{h})||_\text{TV} = 0.$
+Из сходимости по вариации следует слабая сходимость распределений.
+
+Рассмотрим разность мод:
+\[
+\mathsf{E}_{q_{\boldsymbol{\Gamma}}}\text{mode}~q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) - \mathsf{E}_{p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})} \text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}) =
+\]
+\[
+= \mathsf{E}_{q}\mathbf{w} - \mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})}\mathbf{w}.
+\]
+
+Т.к. вторые моменты величины $\mathbf{w}$ конечны для вариационного и априорного распределения, то функции $\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})}\mathbf{w}, \mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h})}$ абсолютно интегрируемы, что в сочетании со слабой сходимостью позволяет записать:
+\[
+  \lim_{i \to \infty}\bigl( \mathsf{E}_{q}\mathbf{w} -  \mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})}\mathbf{w} \bigr) = 0.
+\]
+Таким образом в пределе моды вариационного распределения $q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})$ и априорного распределения $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h})$ совпадают.
 %http://www.math.chalmers.se/~serik/WeakConv/C-space.pdf
 %https://math.stackexchange.com/questions/2923/do-convergence-in-distribution-along-with-uniform-integrability-imply-convergenc
-Из теоремы Шеффе следует, что $q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) - p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})$ сходится слабо к нулю.
 % https://web.ma.utexas.edu/users/gordanz/notes/uniform_integrability.pdf   
 %file:///home/legin/%D0%97%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B8/weak_convergence.pdf
-Т.к. второй момент параметров конечен, то последовательность равномерно интегрируема:
+Т.к. наибольшее значение распределения $q$ сосредоточено в моде распределения $q$, то $\boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1}$ ограничена сверху единицей. Рассмотрим матожидание функции, обратной к отношению вариационных плотностей:
 \[
-    \lim_{i \to \infty} (\text{mode} q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) -  \text{mode} p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})) =
+\mathsf{E}_q \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1}
+\] 
+Т.к. функция ограничена, то предел можно внести под знак интеграла:
+\[
+\lim_{i \to \infty} \mathsf{E}_q \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1} = 
 \]
-\[ = \lim_{i \to \infty} \mathsf{E}_{q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})}\mathbf{w} - \mathsf{E}_{p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}))} \mathbf{w} = 0.
+\[
+ =\mathsf{E}_q  \lim_{i \to \infty}  \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1} = 1.
 \]
 
-В пределе мода распределения $q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})$ совпадает с модой априорного распределения, отсюда относительная плотность стремится к единице почти всюду.
 \end{proof}
-Теорема утверждает, что при устремлении параметрической сложности модели к нулю, параметры модели станоятся неинформативными и подлежащими удалению. 
-% оба распределения могут не иметь предела
+
+Теорема утверждает, что при устремлении параметрической сложности модели к нулю, параметры модели станоятся неинформативными и подлежащими удалению в среднем по всем возможным значениям  структуры  $\boldsymbol{\Gamma}$ модели. Заметим, что теорема применима для случая, когда последовательность вариационных распределений $q$ не имеет предела. Так, в случае, если структура $\boldsymbol{\Gamma}$ определена однозначно, последовательность $q_i$ может являться последовательностью нормальных расп распределений, чье матожидание стремится к нулю. Априорным распределением $p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}) = p(\mathbf{w}|\mathbf{h})$ при этом может являться семейство нормальных распределений с нулевым средним.
 
 \section{Обобщающая задача}
 Рассмотрим основные критерии выбора вероятностных моделей.
@@ -491,6 +494,26 @@ TODO
 
 \textbf{Обобщающая задача: переформулировка через градиент}
 
+
+
+Для вычисления приближенного значения вариационной оценки обоснованности~\eqref{eq:full_elbo} предлагается использовать приближение методом Монте-Каарло с порождением $R$ реализаций величин $\mathbf{w}, \boldsymbol{\Gamma}$:
+\[
+    \sum_{r=1}^R \text{log}p(\mathbf{y}|\boldsymbol{\mu}+\boldsymbol{\alpha}_q \circ \hat{\epsilon}_r, \hat{\boldsymbol{\Gamma}}_r, \mathbf{X}) - \sum_{r=1}^R \left(\text{log}q_{\boldsymbol{\Gamma}}(\hat{\boldsymbol{\Gamma}}_r|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})) - p(\hat{\boldsymbol{\Gamma}}|\mathbf{h},\boldsymbol{\lambda})\right) -
+\]
+\[
+-\sum^{(i,j) \in E}\sum_{k=1}^{K_{i,j}} \hat{D}_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}^{i,j}_k|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}^{i,j}_k|\boldsymbol{\Gamma}, \mathbf{h})\right),
+\]
+где 
+\[
+     \hat{D}_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}^{i,j}_k|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}^{i,j}_k|\boldsymbol{\Gamma}, \mathbf{h})\right) = 
+\]
+\[
+= \sum_{r=1}^R\frac{1}{2}\left( \left(\hat{\gamma}^{i,j}_r[k]\right)^{-1}\text{tr}(\mathbf{A}_q\mathbf{A}^{-1}) + \boldsymbol{\mu}^{\mathsf{T}}\hat{\gamma}^{i,j}_r[k]^{-1}\mathbf{A}^{-1}\boldsymbol{\mu} - |\mathbf{W}| + \text{log}\frac{|\hat{\gamma}^{i,j}[r]_k\mathbf{A}|}{|\mathbf{A}_q|}\right),
+\]
+где $R$ --- количество реализаций случайных величин, по котором вычисляется значения вариационной оценки обоснованности, $\hat{\epsilon}_r \sim \mathcal{N}(0,1),$
+ $\hat{\boldsymbol{\Gamma}}_r = [\boldsymbol{\gamma}^{j,k}_r, (j,k) \in E]$ --- реализация случайной величины, соответствующей структуре $\boldsymbol{\Gamma}$.
+
+
 \textbf{Обобщающая задача: адекватность задачи}
 
 \textbf{Обобщающая задача: свойства коэффициентов}
@@ -500,8 +523,6 @@ TODO
 \textbf{Эксперимент: пример 1}
 
 \textbf{Эксперимент: пример 2}
-
-
 
 
 
