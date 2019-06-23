@@ -5,7 +5,7 @@
 Определим априорные распределения параметров и структуры модели следующим образом.
 Пусть параметры модели распределены нормально с нулевым средним:
 \[
-    \mathbf{w}^{j,k}_l \sim \mathcal{N}\bigl(\mathbf{0}, \gamma^{j,k}_k(\mathbf{A}^{j,k}_k)^{-1}\bigr),
+    \mathbf{w}^{j,k}_l \sim \mathcal{N}\bigl(\mathbf{0}, \gamma^{j,k}_l(\mathbf{A}^{j,k}_l)^{-1}\bigr),
 \]
 где $ (\mathbf{A}^{j,k}_l)^{-1}$ --- диагональная матрица. Апирорное распределение $p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})$ параметров $\mathbf{w}^{j,k}_l$ зависит не только от гиперпараметров $\mathbf{A}_k^{j,k}$, но и от структурного параметра $\gamma^{j,k}_l$.
 
@@ -22,7 +22,7 @@
 
 Перечислим свойства, которыми обладает распределение Gumbel-Softmax:
 \begin{enumerate}
-\item Реализацию $\hat{\gamma}_l,$ т.е. $l$-й компоненты случайной величины $\boldsymbol{\gamma}$  можно породить следующим образом:
+\item Реализация $\hat{\gamma}_l,$ т.е. $l$-й компоненты случайной величины $\boldsymbol{\gamma}$ порождается следующим образом:
 \[
     \hat{\gamma}_l = \frac{\text{exp}(\text{log}s_l+\hat{g}_l)/\lambda_{\text{temp}}}{\sum_{l'=1}^{K}\text{exp}(\text{log}s_{l'}+\hat{g}_{l'})/\lambda_{\text{temp}}},
 \]
@@ -52,18 +52,20 @@
 \begin{proof} 
 Формула плотности записывается следующим образом с точностью до множителя:
 \[
-       \frac{\lambda_{\text{temp}}^{K-1}}{\left(\sum_{l=1}^K s_l\gamma_l^{-\frac{-K-1}{K}\lambda_\text{temp}}\sum_{l'=1}^K [l \neq l']s_l\gamma_l^{-\frac{1}{K}\lambda_\text{temp}}\right)^{K}}
+    p(\boldsymbol{\gamma}|\mathbf{s}, {\lambda}_\text{temp}) =    \frac{\lambda_{\text{temp}}^{K-1}}{\left(\sum_{l=1}^K s_l\gamma_l^{-\frac{-K-1}{K}\lambda_\text{temp}}\sum_{l'=1}^K [l \neq l']s_l\gamma_l^{-\frac{1}{K}\lambda_\text{temp}}\right)^{K}}.
 \]
 
 
-Заметим, что числитель $\lambda_{\text{temp}}^{K-1}$ имеет меньшую скорость сходимости, чем знаменатель. 
-Знаменатель является суммой слагаемых вида:
+Заметим, что числитель $\lambda_{\text{temp}}^{K-1}$ имеет меньшую скорость сходимости, чем знаменатель, поэтому для вычисления предела достаточно проанализировать только знаменатель. 
+Он представлен суммой слагаемых вида:
 \begin{equation}
 \label{eq:gs}
-    \left(\frac{\prod_{l' \neq l} \gamma_{l'}^{\frac{1}{K}}}{\gamma_l^{\frac{K-1}{K}}}\right)^{\lambda_{\text{temp}}}.
+    \left(\frac{\prod_{l' \neq l} \gamma_{l'}^{\frac{1}{K}}}{\gamma_l^{\frac{K-1}{K}}}\right)^{\lambda_{\text{temp}}},
 \end{equation}
-Пусть хотя бы для одного $l$: $\gamma_l \neq \frac{1}{K}$. Пусть $l'$ соответствует индексу максимальной компоненты вектора $\boldsymbol{\gamma}$.
-Для $l=l'$ предел выражения~\eqref{eq:gs} при $\lambda_{\text{temp}}$ стремится к бесконечности. Для $l\neq l'$ предел выражения~\eqref{eq:gs} при $\lambda_{\text{temp}}$ стремится к нулю. Возводя сумму пределов в степень $-K$ получаем предел плотности, равный нулю.
+возведенных в степень $(-K)<0.$
+
+Пусть хотя бы для одной компоненты $l$ выполнено: $\gamma_l \neq \frac{1}{K}$. Пусть $l'$ соответствует индексу максимальной компоненты вектора $\boldsymbol{\gamma}$.
+Для $l=l'$ предел выражения~\eqref{eq:gs} при $\lambda_{\text{temp}}$ стремится к бесконечности. Для $l\neq l'$ предел выражения~\eqref{eq:gs} при $\lambda_{\text{temp}}$ стремится к нулю. Возводя сумму пределов в степень $(-K)$ получаем предел плотности, равный нулю.
 
 Пусть $\boldsymbol{\gamma} = \frac{1}{K}$.
 Тогда выражение с точностью до множителя упрощается до $\lambda^{K-1}$. Предел данного выражения стремится к бесконечности.
@@ -73,31 +75,33 @@
 
 
 Первое свойство Gumbel-Softmax распределения позволяет использовать репараметризацию при вычислении градиента в вариационном выводе (англ. reparametrization trick). 
-Идея репараметризации заключается в следующем. Рассмотрим для примера математическое ожидание логарифма правдоподобия выборки модели по некоторому непрерывному распределению $q$:
+Идею репараметризации поясним на следующем примере.
+\begin{example} Пусть структура $\boldsymbol{\Gamma}$ определена для модели $\mathbf{f}$ однозначно. Рассмотрим математическое ожидание логарифма правдоподобия выборки модели по некоторому непрерывному распределению $q$:
 \[
     \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})=  \int_{\mathbf{w}} \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})q(\mathbf{w})d\mathbf{w}.
 \]
-Продиффиринцируем данное выражение по параметрам $\boldsymbol{\theta}$ вариационного распределения $q$:
+Продифференцируем данное выражение по параметрам $\boldsymbol{\theta}$ вариационного распределения $q$:
 \[
-    \nabla_{\boldsymbol{\theta}} \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = \int_{\mathbf{w}}  \nabla_{\boldsymbol{\theta}}\text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})q(\mathbf{w})d\mathbf{w} + 
+    \nabla_{\boldsymbol{\theta}} \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = 
+\int_{\mathbf{w}}  \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})\nabla_{\boldsymbol{\theta}}q(\mathbf{w})d\mathbf{w}.
 \]
+Выражение общем виде не имеет аналитического решения. Пусть распределение $q$ для параметров $\mathbf{w}$ можно представить как функцию от непараметрического распределения:
 \[
-+\int_{\mathbf{w}}  \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})\nabla_{\boldsymbol{\theta}}q(\mathbf{w})d\mathbf{w}.
+    \mathbf{w} = g(\boldsymbol{\varepsilon}, \boldsymbol{\theta}),
 \]
-Второе слагаемое в общем виде не имеет аналитического решения. Пусть распределение $q$ можно представить как функцию от непараметрического распределения:
-\[
-    q(\mathbf{w}|\boldsymbol{\theta}) = g(\mathbf{w}, \varepsilon|\boldsymbol{\theta}).
-\]
+где $\boldsymbol{\varepsilon}$ --- случайная величина с известным распределением, не зависящим от $\boldsymbol{\theta}$.
 Тогда 
 \[
- \nabla_{\boldsymbol{\theta}} \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = \nabla_{\boldsymbol{\theta}} \mathsf{E}_{\varepsilon} \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = \int_{\varepsilon}  \nabla_{\boldsymbol{\theta}} \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})  p(\varepsilon) d\varepsilon =
+ \nabla_{\boldsymbol{\theta}} \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = \nabla_{\boldsymbol{\theta}} \mathsf{E}_{\boldsymbol{\varepsilon}} \text{log}~p(\mathbf{y}|g(\boldsymbol{\varepsilon}, \boldsymbol{\theta}), \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) =
 \]
 \[
-    = \mathsf{E}_\varepsilon \nabla_{\boldsymbol{\theta}} \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}).
+= \int_{\varepsilon}  \nabla_{\boldsymbol{\theta}} \text{log}~p(\mathbf{y}|g(\varepsilon, \boldsymbol{\theta}), \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})  p(\varepsilon) d\varepsilon 
+    = \mathsf{E}_\varepsilon \nabla_{\boldsymbol{\theta}} \text{log}~p(\mathbf{y}|g(\varepsilon, \boldsymbol{\theta}), \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}).
 \]
 Таким образом, распределение, позволяющее произвести репараметризацию, является более удобным для вычисления интегральных оценок.
 Кроме того, данный подход позволяет значительно повысить точность вычисления градиента от функций, зависящих от случайных величин~\cite{reparametrization}.
 % отсюда: http://gregorygundersen.com/blog/2018/04/29/reparameterization/
+\end{example}
 
 Пример распределения Gumbel-Softmax при различных параметрах представлен на Рис.~\ref{fig:gs}. В качестве альтернативы для априорного распределения на структуре выступает  распределение Дирихле и равномерное распределение. Выбор в качестве распределения на структуре произведения Gumbel-Softmax распределения обоснован выбором этого же распределения в качестве вариационного. 
 
@@ -149,9 +153,9 @@ y={(0cm,1.7cm)},
 \end{figure}
 
 
-Заметим, что предлагаемое априорное распределение неоднозначно: одно и то же распределение  можно получить с различными значениями гиперпарамета $\mathbf{A}^{i,j}_k$ и структурного параметра $\gamma^{i,j}_k$. В качестве регуляризатора для матрицы $(\mathbf{A}^{i,j}_k)^{-1}$ предлагается использовать обратное гамма-распределение:
+Заметим, что предлагаемое априорное распределение неоднозначно: одно и то же распределение  можно получить с различными значениями гиперпарамета $\mathbf{A}^{j,k}_l$ и структурного параметра $\gamma^{j,k}_l$. В качестве регуляризатора для матрицы $(\mathbf{A}^{j,k}_l)^{-1}$ предлагается использовать обратное гамма-распределение:
 \[
-    (\mathbf{A}^{i,j}_k)^{-1} \sim \text{inv-gamma}(\lambda_1,\lambda_2),
+    (\mathbf{A}^{j,k}_l)^{-1} \sim \text{inv-gamma}(\lambda_1,\lambda_2),
 \]
 где $\lambda_1,\lambda_2 \in \boldsymbol{\lambda}$ --- метапараметры оптимизации. 
 Использование обратного гамма-распределения в качестве распределения гиперпараметров можно найти в~\cite{bishop,mackay}. В данной работе обратное распределение выступает как регуляризатор гиперпараметров.
@@ -168,7 +172,7 @@ y={(0cm,1.7cm)},
 Таким образом, предлагаемая вероятностная модель содержит следующие компоненты:
 \begin{enumerate}
 \item Параметры $\mathbf{w}$ модели, распределенные нормально.
-\item Структура модели $\boldsymbol{\Gamma}$ распределены по распределению Gumbel-Softmax.
+\item Структура модели $\boldsymbol{\Gamma}$, структурные параметры $\{\boldsymbol{\gamma}^{j,k}, (j,k) \in E\}$ распределены по распределению Gumbel-Softmax.
 \item Гиперпараметры: $\mathbf{h} = [\text{diag}(\mathbf{A}), \mathbf{s}]$, где $\mathbf{A}$ --- конкатенация матриц $\mathbf{A}^{j,k}, (j,k) \in E,$ $\mathbf{s}$ --- конкатенация параметров Gumbel-Softmax распределений $\mathbf{s}^{j,k}, (j,k) \in E$, где $E$ --- множество ребер, соответствующих графу рассматриваемого параметрического семейства.
 \item Метапараметры: $\boldsymbol{\lambda} = [\lambda_1, \lambda_2].$
 \end{enumerate}
@@ -238,7 +242,10 @@ D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\bolds
 
 Декомпозируем распределение $q$ по свойству условной дивергенции:
 \[
-D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})) = D_\text{KL}\left(q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right) + D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})\right).    
+D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})) = 
+\]
+\[
+=D_\text{KL}\left(q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right) + D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})\right).    
 \]
 \end{proof}
 
@@ -248,7 +255,7 @@ D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},
 \]
 где $\mathbf{A}_q$ --- диагональная матрица с диагональю $\boldsymbol{\alpha}_q$.
 
-В качестве вариационного распределения $q_{\boldsymbol{\Gamma}}$ предлагается использовать произведение распределений Gumbel-Softmax. Конкатенацию параметров концентрации распределений обозначим $\mathbf{s}_q$. Его температуру обозначим $\theta_\text{temp}$.
+В качестве вариационного распределения $q_{\boldsymbol{\Gamma}}$ предлагается использовать произведение распределений Gumbel-Softmax. Конкатенацию параметров концентрации распределений обозначим $\mathbf{s}_q$. Его температуру, общую для всех структурных параметров $\boldsymbol{\gamma} \in \boldsymbol{\Gamma}$, обозначим $\theta_\text{temp}$.
 
 Вариационными параметрами распределения $q$ являются параметры распределений $q_{\mathbf{w}}, q_{\boldsymbol{\Gamma}}$:
 \[
@@ -266,16 +273,16 @@ D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},
 
 Для анализа сложности полученной модели введем понятие \textit{параметрической сложности}. 
 \begin{defin} 
-Параметрической сложностью  $C_p(\boldsymbol{\theta})$ модели с вариационными параметрами $\boldsymbol{\theta}$ на компакте $U_\mathbf{h} \subset \mathbb{H}$ назовем минимальную дивергенцию между вариационным и априорным распределением:
+Параметрической сложностью  $C_p(\boldsymbol{\theta}|U_\mathbf{h},\boldsymbol{\lambda})$ модели с вариационными параметрами $\boldsymbol{\theta}$ на компакте $U_\mathbf{h} \subset \mathbb{H}$ назовем минимальную дивергенцию между вариационным и априорным распределением:
 \[
-C_p(\boldsymbol{\theta}|U_\mathbf{h}) = \min_{\mathbf{h} \in U_\mathbf{h}} \text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})\right).
+C_p(\boldsymbol{\theta}|U_\mathbf{h},\boldsymbol{\lambda}) = \min_{\mathbf{h} \in U_\mathbf{h}} \text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})\right).
 \]
 \end{defin}
 Параметрическая сложность модели соответствует ожидаемой длине описания параметров модели при условии заданного параметрического априорного распределения~\cite{hinton_mdl}.
 
 Одним из критериев удаления неинформативных параметров в вероятностных моделях является отношение вариационной плотности параметров в моде распределения к вариационной плотности параметра в нуле~\cite{nips}:
 \[
-    \frac{q_\mathbf{w}(w = \mu|\boldsymbol{\theta}_\mathbf{w})}{q(w = 0|\boldsymbol{\theta}_\mathbf{w})} = \text{exp}\left(-\frac{2\alpha_q^2}{\mu^2}\right),
+    \frac{q_\mathbf{w}(w = \mu_q|\boldsymbol{\theta}_\mathbf{w})}{q(w = 0|\boldsymbol{\theta}_\mathbf{w})} = \text{exp}\left(-\frac{2\alpha_q^2}{\mu_q^2}\right),
 \]
 где $q_\mathbf{w}(w|\boldsymbol{\theta}_\mathbf{w}) \sim \mathcal{N}(\mu_q, \alpha_q).$
 
@@ -299,20 +306,26 @@ C_p(\boldsymbol{\theta}|U_\mathbf{h}) = \min_{\mathbf{h} \in U_\mathbf{h}} \text
 \item заданы компактные множества $U_\mathbf{h} \subset \mathbb{H}, U_{\boldsymbol{\theta}} \subset \amsmathbb{\Theta}$;
 
 
-\item мода априорного распределения $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}, \boldsymbol{\lambda})$ не зависит от гиперпараметров $\mathbf{h}$ на $U_\mathbf{h}$:
+\item Усредненные по распределению мода априорного распределения $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}, \boldsymbol{\lambda})$ не зависит от гиперпараметров $\mathbf{h}$ и структуры $\boldsymbol{\Gamma}$ на $U_\mathbf{h}, \amsmathbb{\Gamma}$:
 \[
-    p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}_1, \boldsymbol{\lambda}) = p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}_2, \boldsymbol{\lambda}) =  p(\mathbf{w},\boldsymbol{\Gamma}, \boldsymbol{\lambda}) \forall \mathbf{h}_1,\mathbf{h}_2 \in U_{\mathbf{h}}. 
+    \text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}_1, \mathbf{h}_1, \boldsymbol{\lambda}) = p(\mathbf{w}|\boldsymbol{\Gamma}_2, \mathbf{h}_2, \boldsymbol{\lambda}) = \mathbf{M} \forall \mathbf{h}_1, \mathbf{h}_2 \in U_\mathbf{h}, \boldsymbol{\Gamma}_1, \boldsymbol{\Gamma}_2 \in \amsmathbb{\Gamma}.
 \]
 
-\item вариационное распределение $q_\mathbf{w}$ и априорное распределение $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}))$  являются абсолютно непрерывными и унимодальными на  $U_\mathbf{h} \subset \mathbb{H}, U_{\boldsymbol{\theta}}$.
+\item вариационное распределение $q_\mathbf{w}$ и априорное распределение $p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})$  являются абсолютно непрерывными и унимодальными на  $U_\mathbf{h}, U_{\boldsymbol{\theta}}$.
 
-\item мода и матожидание вариационного распределение $q$ и априорного распределение $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}))$  распределения совпадают.
+\item Параметры модели $\mathbf{w}$ имеют конечные вторые моменты по распределениям $q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}), p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})$.
 
-\item задана  бесконечная последовательность векторов вариационных параметров $\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,\dots$, такая что $\lim_{i \to \infty}C_p(\boldsymbol{\theta_i}|U_{\mathbf{h}}) = 0, \boldsymbol{\theta}_i \in U_{\boldsymbol{\theta}}.$ 
+\item мода и матожидание вариационного распределение $q_\mathbf{w}$ и априорного распределения $p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda})$  совпадают:
+\[
+    \text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda}) = \mathsf{E}_{p(\mathbf{w}| \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})} \mathbf{w};
+\]
+\[
+  \text{mode}~q(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}) = \mathsf{E}_{q_\mathbf{w}(\mathbf{w}|\boldsymbol{\Gamma},  \boldsymbol{\theta}_\mathbf{w})} \mathbf{w};
+\]
 
-\item $\mathbf{h}_i$. 
+\item задана  бесконечная последовательность векторов вариационных параметров $\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,\dots$, такая что $\lim_{i \to \infty}C_p(\boldsymbol{\theta_i}|U_{\mathbf{h}}, \boldsymbol{\lambda}) = 0, \boldsymbol{\theta}_i \in U_{\boldsymbol{\theta}}.$ 
+
 \end{enumerate}
-$\mathbf{h}_i$.
 Тогда следующее выражение стремится к единице:
 \[
    \mathsf{E}_q \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1} \to 1.
@@ -326,28 +339,36 @@ $\mathbf{h}_i$.
 \[
     ||F_q(\boldsymbol{\theta}) - F_p(\mathbf{h})||_\text{TV},\leq\sqrt{2\text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})\right)},
 \]
-где $|\cdot|_\text{TV}$ --- расстояние по вариации, $F_q, F_p$ --- функции распределения   $q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})$ и $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}, \boldsymbol{\lambda})$.
+где $||\cdot||_\text{TV}$ --- расстояние по вариации, $F_q, F_p$ --- функции распределения   $q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})$ и $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}, \boldsymbol{\lambda})$.
 Отсюда $ \lim_{i \to \infty} ||F_q(\boldsymbol{\theta}) - F_p(\mathbf{h})||_\text{TV} = 0.$
 Из сходимости по вариации следует слабая сходимость распределений.
 
 Рассмотрим разность мод:
 \[
-\mathsf{E}_{q_{\boldsymbol{\Gamma}}}\text{mode}~q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) - \mathsf{E}_{p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})} \text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}) =
+\mathsf{E}_{q_{\boldsymbol{\Gamma}}}\text{mode}~q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) - \mathsf{E}_{p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})} \text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}) = 
+\]
+\[
+=\mathsf{E}_{q_{\boldsymbol{\Gamma}}} \mathsf{E}_{q_\mathbf{w}} \mathbf{w} - \mathsf{E}_{p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})} \mathsf{E}_{p(\mathbf{w}| \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})} \mathbf{w} =
 \]
 \[
 = \mathsf{E}_{q}\mathbf{w} - \mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})}\mathbf{w}.
 \]
 
-Т.к. вторые моменты величины $\mathbf{w}$ конечны для вариационного и априорного распределения, то функции $\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})}\mathbf{w}, \mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h})}$ абсолютно интегрируемы, что в сочетании со слабой сходимостью позволяет записать:
+Т.к. вторые моменты величины $\mathbf{w}$ конечны для вариационного и априорного распределения, то функции $\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})}\mathbf{w}, \mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h})}\mathbf{w}$ абсолютно интегрируемы, что в сочетании со слабой сходимостью позволяет записать:
 \[
   \lim_{i \to \infty}\bigl( \mathsf{E}_{q}\mathbf{w} -  \mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})}\mathbf{w} \bigr) = 0.
 \]
-Таким образом в пределе моды вариационного распределения $q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})$ и априорного распределения $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h})$ совпадают.
+
+Т.к. вторые моменты случайных величин конечны, то конечны и первые моменты:
+\[
+  \lim_{i \to \infty} \mathsf{E}_{q}\mathbf{w}= \lim_{i \to \infty}\mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})}\mathbf{w} = \mathbf{M}.
+\]
+Таким образом в пределе усредненные по структуре моды вариационного распределения $q(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta})$ и априорного распределения $p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})$ совпадают.
 %http://www.math.chalmers.se/~serik/WeakConv/C-space.pdf
 %https://math.stackexchange.com/questions/2923/do-convergence-in-distribution-along-with-uniform-integrability-imply-convergenc
 % https://web.ma.utexas.edu/users/gordanz/notes/uniform_integrability.pdf   
 %file:///home/legin/%D0%97%D0%B0%D0%B3%D1%80%D1%83%D0%B7%D0%BA%D0%B8/weak_convergence.pdf
-Т.к. наибольшее значение распределения $q$ сосредоточено в моде распределения $q$, то $\boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1}$ ограничена сверху единицей. Рассмотрим матожидание функции, обратной к отношению вариационных плотностей:
+Т.к. наибольшее значение распределения $q_\mathbf{w}$ сосредоточено в моде распределения $q_\mathbf{w}$, то $\boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1}$ ограничена сверху единицей. Рассмотрим матожидание функции, обратной к отношению вариационных плотностей:
 \[
 \mathsf{E}_q \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1}
 \] 
@@ -356,16 +377,31 @@ $\mathbf{h}_i$.
 \lim_{i \to \infty} \mathsf{E}_q \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1} = 
 \]
 \[
- =\mathsf{E}_q  \lim_{i \to \infty}  \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1} = 1.
+ =\mathsf{E}_q  \lim_{i \to \infty}  \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1} =
+\]
+\[
+    \mathsf{E}_q \lim_{i \to \infty} \prod_{w \in \mathbf{w}}\frac{q\bigl(\text{mode}~p\left({w}|\boldsymbol{\Gamma}, \mathbf{h},\boldsymbol{\lambda}\right)|\boldsymbol{\Gamma},\boldsymbol{\theta}_\mathbf{w}\bigr)}{q\bigl(\text{mode}~q\left(w|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}\right)|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}\bigr)}=
+\]
+\[
+     \mathsf{E}_q \frac{q_\mathbf{w}(\mathbf{M})}{q_\mathbf{w}(\mathbf{M})} = 1.
 \]
 
 \end{proof}
 
-Теорема утверждает, что при устремлении параметрической сложности модели к нулю, параметры модели станоятся неинформативными и подлежащими удалению в среднем по всем возможным значениям  структуры  $\boldsymbol{\Gamma}$ модели. Заметим, что теорема применима для случая, когда последовательность вариационных распределений $q$ не имеет предела. Так, в случае, если структура $\boldsymbol{\Gamma}$ определена однозначно, последовательность $q_i$ может являться последовательностью нормальных расп распределений, чье матожидание стремится к нулю. Априорным распределением $p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}) = p(\mathbf{w}|\mathbf{h})$ при этом может являться семейство нормальных распределений с нулевым средним.
+Теорема утверждает, что при устремлении параметрической сложности модели к нулю, параметры модели станоятся неинформативными и подлежащими удалению в среднем по всем возможным значениям  структуры  $\boldsymbol{\Gamma}$ модели. Заметим, что теорема применима для случая, когда последовательность вариационных распределений $q$ не имеет предела. Так, в случае, если структура $\boldsymbol{\Gamma}$ определена однозначно, последовательность $q_i$ может являться последовательностью нормальных распределений, чье матожидание стремится к нулю:
+\[
+    q_i \sim \mathcal{N}((\boldsymbol{\mu}_q)_i, (\mathbf{A}^{-1}_q)_i), (\boldsymbol{\mu}_q)_i \to \mathbf{0}.
+\]
+Априорным распределением $p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda}) = p(\mathbf{w}|\mathbf{h},\boldsymbol{\lambda})$ при этом может являться семейство нормальных распределений с нулевым средним:
+\[
+    p(\mathbf{w}|\mathbf{h},\boldsymbol{\lambda}) = \mathcal{N}(\mathbf{0}, \mathbf{A}^{-1}).
+\]
+При этом последовательность $q_i$ не обязана иметь предел.
 
 \section{Обобщающая задача}
-Рассмотрим основные критерии выбора вероятностных моделей.
+В данном разделе проводится анализ основных критериев выбора моделей, а также предлагается их обобщение на случай моделей, испольюзующих вариационное распределение $q$ для аппроксимации неизвестного апостериорного распределения параметров $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})$.
 
+Рассмотрим основные статистические критерии выбора вероятностных моделей. 
 \begin{enumerate}
 \item Критерий максимального правдоподобия:
 \[
@@ -376,10 +412,10 @@ $\mathbf{h}_i$.
 Для использования данного метода в качестве задачи выбора модели предлагается следующее обобщение:
 \begin{equation}
 \label{eq:optim_ml}
-    L =  \mathsf{E}_q \text{log} \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}).
+    L =  \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w}).
 \end{equation}
 Данное обобщение эквивалентно  методу правдоподобия при выборе в качестве $q$ эмпирического распределения парамтетров и структуры.
-Метод не предполагает оптимизации гиперпараметров. Для формального соответствия данной задачи задаче выбора положим $L=Q$.
+Метод не предполагает оптимизации гиперпараметров. Для формального соответствия данной задачи задаче выбора модели, т.е. двухуровневой задачи оптимизации, положим $L=Q$.
 
 
 \item Метод максимальной апостериорной вероятности. 
@@ -389,7 +425,7 @@ $\mathbf{h}_i$.
 Аналогично предыдущему методу сформулируем вариационное обобщение данной задачи:
 \begin{equation}
 \label{eq:optim_map}
-    L = Q = \mathsf{E}_q \text{log} \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w})+\text{log}p(\mathbf{w}|\boldsymbol{\lambda}) + \text{log}p(\boldsymbol{\gamma}|\mathbf{X}, \mathbf{w}).
+    L = Q = \mathsf{E}_q \bigl(\text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w})+\text{log}p(\mathbf{w}|\boldsymbol{\lambda}) + \text{log}p(\boldsymbol{\Gamma}|\mathbf{X}, \mathbf{w})\bigr).
 \end{equation}
 В рамках данной задачи оптимизации параметры априорных распределений $\mathbf{A}, \mathbf{s}$ выступают в качестве метапараметров и не подлежат оптимизации.
 
@@ -407,7 +443,7 @@ $\mathbf{h}_i$.
 
 \item Критерий Акаике:
 \[
-   Q =  \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - |\mathbb{W}|.
+   \text{AIC} =  \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - |\mathbb{W}|.
 \]
 Заметим,что в условия выбора модели на параметрическом множестве моделей данный критерий не имеет смысла, т.к. количество параметров для каждой модели одинаково. Предлагается следующая переформулировка:
 \begin{equation}
@@ -415,13 +451,16 @@ $\mathbf{h}_i$.
     L = Q = \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - 
 \end{equation}
 \[
--|\{w: D_\text{KL}(\theta, \mathbf{h})<\lambda, \mathbf{h} = \argmin_{\mathbf{h}' \in U_\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}) | p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}',\boldsymbol{\lambda})\}|,
+-|\{w: D_\text{KL}(\theta, \mathbf{h})<\lambda\}|,
 \]
-где $\lambda$ --- метапараметр алгоритма, $U_\mathbf{h}  \subset \mathbb{H}$ --- область определения задачи по гиперпараметрам.
+где 
+\begin{equation}
+\label{eq:aic_compl}
+ \mathbf{h} = \argmin_{\mathbf{h}' \in U_\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}) | p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}',\boldsymbol{\lambda})\end{equation}, $\lambda$ --- метапараметр алгоритма, $U_\mathbf{h}  \subset \mathbb{H}$ --- область определения задачи по гиперпараметрам.
 
 \item Информационный критерий Шварца:
 \[
-    \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - 0.5\text{log}(m)|\mathbb{W}|.
+    \text{BIC} = \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - 0.5\text{log}(m)|\mathbb{W}|.
 \]
 Переформулируем данный критерий аналогично критерию AIC:
 \begin{equation}
@@ -429,26 +468,27 @@ $\mathbf{h}_i$.
     L = Q = BIC_{\lambda} = \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) -
 \end{equation}
 \[
- \text{log}(m)|\{w: D_\text{KL}(\theta, \mathbf{h})<\lambda, \mathbf{h} = \argmin_{\mathbf{h}' \in U_\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}) | p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}',\boldsymbol{\lambda})\}|.
+ \text{log}(m)|\{w: D_\text{KL}(\theta, \mathbf{h})<\lambda\}|,
 \]
-
+гиперпараметр $\mathbf{h}$ определ аналогично~\eqref{eq:aic_compl}.
 
 \item Метод вариационной оценки обоснованности.
 \begin{equation}
-\label{eq:optim_elbo_method}
-    L = Q = \mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - D_\text{KL}(q|p).
+\label{eq:optim_elbo_method}   
+    L = Q = \mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}) - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\boldsymbol{\Gamma}, \mathbf{w}|\mathbf{h},\boldsymbol{\lambda})).
 \end{equation}
-
+В рамках данной задачи, все гиперпараметры $\mathbf{h}$ подлежат оптимизации.
 
 \item Hold-out кросс-валидация.
 \begin{equation}
 \label{eq:optim_hold_out}
-    L = \mathsf{E}_q \text{log}p(\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h}),
+    L = \mathsf{E}_q \text{log}p(\mathbf{y}_\text{train}, \mathbf{w}|\mathbf{X}_\text{train}, \mathbf{h}, \boldsymbol{\lambda}),
 \end{equation}
 \[
-    Q = \mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}).
+    Q = \mathsf{E}_q \text{log}p(\mathbf{y}_\text{test}|\mathbf{X}_\text{test}, \mathbf{w}),
 \]
-
+где $(\mathbf{X}_\text{train}, \mathbf{y}_\text{train}), (\mathbf{X}_\text{test}, \mathbf{y}_\text{test})$ --- разбиение выборки на обучающую и контрольную подвыборку.
+В рамках данной задачи, все гиперпараметры $\mathbf{h}$ подлежат оптимизации.
 
 \end{enumerate}
 
@@ -460,20 +500,27 @@ $\mathbf{h}_i$.
 \item Критерий позволяет производить перебор структур для отбора наилучших модели.
 \end{enumerate}
 
-Формализуем рассмотренные критерии. Оптимизационную задачу, которая удовлетворяет всем перечисленным свойствам, будет называть \textit{обобщающей}.
+Формализуем рассмотренные критерии. Оптимизационную задачу, которая удовлетворяет всем перечисленным свойствам при некоторых значинях метапараметров, будет называть \textit{обобщающей}.
 
 \begin{defin}
-Двухуровневую задачу оптимизации будем называть \textit{обобщающей} на области $U \subset \amsmathbb{\Theta} \times \mathbb{H} \times \amsmathbb{\Lambda}$, если она удовлетворяет следующим свойствам:
+Двухуровневую задачу оптимизации будем называть \textit{обобщающей} на компакте $U = U_{\boldsymbol{\theta}} \times U_{\mathbf{h}} \times U_{\boldsymbol{\lambda}} \subset \amsmathbb{\Theta} \times \mathbb{H} \times \amsmathbb{\Lambda}$, если она удовлетворяет следующим свойствам:
 \begin{enumerate}
 \item Для каждого значения гиперпараметров $\mathbf{h}$ оптимальное решение нижней задачи оптимизации $\boldsymbol{\theta}^{*}$ определено однозначно.
 
-\item Свойство максимизации правдоподобия выборки: существует $\boldsymbol{\lambda} \in U_{\lambda}$ и  $K_1 \in \mathbb{R}_{+}$, такие что для любых векторов гиперпараметров, удовлетворяющих неравенству $\mathbf{h}_1, \mathbf{h}_2 \in  U_{h}, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_1$, выполняется неравенство $\mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_1, \lambda_{\text{temp}}, \mathbf{f})>\text{log}\mathsf{E}_q ~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_2, \lambda_{\text{temp}}, \mathbf{f})$.
+\item Свойство максимизации правдоподобия выборки: существует $\boldsymbol{\lambda} \in U_{\lambda}$ и  $K_1>0$, такие что для любых векторов гиперпараметров, удовлетворяющих неравенству $\mathbf{h}_1, \mathbf{h}_2 \in  U_{h}, Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_1$, выполняется неравенство $\mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}^{*}(\mathbf{h}_1), \lambda_{\text{temp}}, \mathbf{f})>\mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}^{*}(\mathbf{h}_2), \lambda_{\text{temp}}, \mathbf{f})$.
 
-\item Свойство минимизации параметрической сложности:  существует  $\boldsymbol{\lambda} \in U_{\lambda}$ и $K_2 \in \mathbb{R}_{+}$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2 \in U_h$, удовлетворяющих неравенству $Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_2$ и при этом имеющие равенство ожидаемых правдоподобий выборок  $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}_1, \lambda_{\text{temp}}, \mathbf{f}) = \text{log}\mathsf{E}_q ~p(\mathbf{y}|\boldsymbol{\theta}_2, \lambda_{\text{temp}}, \mathbf{f})$, параметрическая сложность первой модели меньше, чем второй: $C_p(\boldsymbol{\theta}^{*}(\mathbf{h}_1)|U_\mathbf{h})<C_p(\boldsymbol{\theta}^{*}(\mathbf{h}_2|U_\mathbf{h})$.
+\item Свойство минимизации параметрической сложности:  существует  $\boldsymbol{\lambda} \in U_{\lambda}$ и $K_2>0$, такие что для любых векторов гиперпараметров $\mathbf{h}_1, \mathbf{h}_2 \in U_h$, удовлетворяющих неравенству $Q(\mathbf{h}_1) - Q(\mathbf{h}_2) > K_2$ и при этом имеющие равенство ожидаемых правдоподобий выборок  $\mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}^{*}(\mathbf{h}_1), \lambda_{\text{temp}}, \mathbf{f}) = \mathsf{E}_q \text{log}~p(\mathbf{y}|\boldsymbol{\theta}^{*}(\mathbf{h}_1), \lambda_{\text{temp}}, \mathbf{f})$, параметрическая сложность первой модели меньше, чем второй: $C_p(\boldsymbol{\theta}^{*}(\mathbf{h}_1)|U_\mathbf{h},\boldsymbol{\lambda})<C_p(\boldsymbol{\theta}^{*}(\mathbf{h}_2)|U_\mathbf{h},\boldsymbol{\lambda})$.
 
-\item Свойства приближения оценки обоснованности: существует значение гиперпараметров $\boldsymbol{\lambda}$, такое что оптимизация задачи эквивалента оптимизации вариационной оценки обоснованности модели: $\argmax_{\mathbf{h} \in U_h}Q(\argmax_{\boldsymbol{\theta}} \in U_{\boldsymbol{\theta}} L) \approx \argmax_{\mathbf{h} \in U_h}\argmax_{\boldsymbol{\theta}} \mathsf{E}_q p(\mathbf{y}|\mathbf{w}, \mathbf{X}) - {D}_{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})).$
+\item Свойства приближения оценки обоснованности: существует значение гиперпараметров $\boldsymbol{\lambda}$, такое что оптимизация задачи эквивалента оптимизации вариационной оценки обоснованности модели: $$\argmax_{\mathbf{h} \in U_h}Q(\argmax_{\boldsymbol{\theta} \in U_{\boldsymbol{\theta}}} L) \approx $$
+\[
+ \approx \argmax_{\mathbf{h} \in U_h}\argmax_{\boldsymbol{\theta}} \left(\mathsf{E}_q p(\mathbf{y}|\mathbf{w}, \mathbf{X}) - {D}_{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))\right).
+\]
 
-\item Свйоство перебора структур: существует константа $K_3$, такая что для любых двух векторов $\mathbf{h}_{1}, \mathbf{h}_2$ и соответствующих векторов $\boldsymbol{\theta}_1^{*},\boldsymbol{\theta}_2^{*}: D_\text{KL}(q_{\boldsymbol{\Gamma}_2}, q_{\boldsymbol{\Gamma}_1})>K_3, D_\text{KL}(q_{\boldsymbol{\Gamma}_1}, q_{\boldsymbol{\Gamma}_2})>K_3$  существуют значения гиперпараметров $\boldsymbol{\lambda_1},\boldsymbol{\lambda_2}$, такие что  $Q(\mathbf{h}_1, \lambda_1) > Q(\mathbf{h}_2, \lambda_1), Q(\mathbf{h}_1, \lambda_1) < Q(\mathbf{h}_2, \lambda_2)$.
+\item Свойство перебора структур: существует набор метапараметров $\boldsymbol{\lambda}$ и константа $K_3$, такие что для любых двух векторов $\mathbf{h}_{1}, \mathbf{h}_2$ и соответствующих векторов $\boldsymbol{\theta}_1 = \boldsymbol{\theta}^{*}(\mathbf{h}_1),\boldsymbol{\theta}_2^{*}= \boldsymbol{\theta}^{*}(\mathbf{h}_2)$, полученных при метапараметрах $\lambda$ и удовлетворяющих неравенству $D_\text{KL}(q_{\boldsymbol{\Gamma}_2}, q_{\boldsymbol{\Gamma}_1})>K_3, D_\text{KL}(q_{\boldsymbol{\Gamma}_1}, q_{\boldsymbol{\Gamma}_2})>K_3$  существуют значения гиперпараметров $\boldsymbol{\lambda_1},\boldsymbol{\lambda_2}$, такие что:
+\begin{enumerate}
+\item Соответствие между $\boldsymbol{\theta}_1$ и $\mathbf{h}_1$ и соответсвие между  между $\boldsymbol{\theta}_2$ и $\mathbf{h}_2$ сохраняются при метапараметрах $\boldsymbol{\lambda}_1, \boldsymbol{\lambda}_2$.
+\item $Q(\mathbf{h}_1, \lambda_1) > Q(\mathbf{h}_2, \lambda_1), Q(\mathbf{h}_1, \lambda_1) < Q(\mathbf{h}_2, \lambda_2)$.
+\end{enumerate}  
 
 \item Свойство нерперывности: $\mathbf{h}^{*}, \boldsymbol{\theta}^{*}$ непрерывны по метапараметрам.
 \end{enumerate}
@@ -490,8 +537,8 @@ TODO
 \end{proof}
 
 \begin{theorem}
-Пусть задано непустое множество непрерывных по параметрам распределний на структуре $\mathbf{P}$. 
-Пусть функции потерь и валидации $L,Q$ являются непрерывно-дифференцируемыми на компакте $U\subset \amsmathbb{\Theta} \times \mathbb{H} \times \amsmathbb{\Lambda}$, где параметры распределений $\mathbf{P} \in \amsmathbb{\Lambda}.$ 
+Пусть задано непустое множество непрерывных по параметрам распределений на структуре $\mathbf{P}$. 
+Пусть функции потерь и валидации $L,Q$ являются непрерывно-дифференцируемыми на компакте  $U = U_{\boldsymbol{\theta}} \times U_{\mathbf{h}} \times U_{\boldsymbol{\lambda}} \subset \amsmathbb{\Theta} \times \mathbb{H} \times \amsmathbb{\Lambda}$, где параметры распределений $\mathbf{P} \in \amsmathbb{\Lambda}$. Пусть также определены для метапараметров, определенных ниже, $\lambda_\text{likelihood}^\text{Q}, \lambda^\text{prior}_\text{Q}, \boldsymbol{\lambda}^\text{struct}_\text{Q}, \lambda^\text{prior}_\text{L}$ область определения включает значения $\{0,1\}$.   
 Тогда следующая задача является обобщающей на $U$.
 \begin{equation}
 \tag{$Q^{*}$}
@@ -521,18 +568,18 @@ TODO
 Для доказательста теоремы требуется доказать критерии 1-6 из определения обобщающей задачи.
 Критерий 1 следует из условий задачи.
 
-Докажем критерий 2. Пусть $\lambda^\text{prior}_\text{Q} = 0, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$. Зафиксируем некоторое значение метапараметров $\lambda_1, \lambda_2$. Т.к. $U_\mathbf{h}$ --- компакт, возьмем в качестве константы $K_1$ разницу между максимальным и минимальным значением $p(\mathbf{h}|\mathbf{f})$:
+Докажем критерий 2. Пусть $\lambda^\text{prior}_\text{Q} = 0, \lambda^\text{likelihood}_\text{Q}=1, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$. Зафиксируем некоторое значение метапараметров $\lambda_1, \lambda_2$. Т.к. $U_\mathbf{h}$ --- компакт, возьмем в качестве константы $K_1$ разницу между максимальным и минимальным значением $p(\mathbf{h}|\mathbf{f})$:
 \[
-    K = \max_{\mathbf{h}} \text{log}~p (\mathbf{h}|\mathbf{f}) - \min_{\mathbf{h}} \text{log}~p(\mathbf{h}|\mathbf{f}).
+    K_1 = \max_{\mathbf{h}} \text{log}~p (\mathbf{h}|\mathbf{f}) - \min_{\mathbf{h}} \text{log}~p(\mathbf{h}|\mathbf{f}).
 \]
-Тогда $Q(\mathbf{h}_1) - Q(\mathbf{h}_2) = \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_1 \lambda_{\text{temp}}, \mathbf{f}) - \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_2, \lambda_{\text{temp}}, \mathbf{f}) + \text{log}~p(\mathbf{h}_2|\mathbf{f}) - \text{log}~p(\mathbf{h}_1|\mathbf{f})>K_1.$ Отсюда следует $\mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_1 \lambda_{\text{temp}}, \mathbf{f}) > \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_2 \lambda_{\text{temp}}, \mathbf{f}).$
+Тогда $$Q(\mathbf{h}_1) - Q(\mathbf{h}_2) = \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}^{*}(\mathbf{h}_1) \lambda_{\text{temp}}, \mathbf{f}) - \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}^{*}(\mathbf{h}_2), \lambda_{\text{temp}}, \mathbf{f}) +$$ $$+ \text{log}~p(\mathbf{h}_2|\mathbf{f}) - \text{log}~p(\mathbf{h}_1|\mathbf{f})>K_1.$$ Отсюда следует $$\mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}^{*}(\mathbf{h}_1) \lambda_{\text{temp}}, \mathbf{f}) > \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}^{*}(\mathbf{h}_2) \lambda_{\text{temp}}, \mathbf{f}).$$
 
-Докажем критерий 3.  Пусть $\lambda^\text{likelihood}_\text{Q} = 0, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$. Зафиксируем некоторое значение метапараметров $\lambda_1, \lambda_2$. Т.к. $U_\mathbf{h}$ --- компакт, возьмем в качестве константы $K_1$ разницу между максимальным и минимальным значением $p(\mathbf{h}|\mathbf{f})$:
-TODO
+Докажем критерий 3. TODO
 
-Докажем критерий 4. Пусть $\lambda^\text{likelihood}_\text{Q} = \lambda^\text{prior}_\text{Q}=\lambda^\text{prior}_\text{L}=1, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$. Тогда оптимизационную задачу можно записать как: TODO, что и требовалось доказать.
 
-Докажем критерий 5. Пусть $P$ состоит из распределения того же семейства, что и априорное семейство на структуре. Возьмем в качестве параметров этого распределения параметры распределения $p(\boldsymbol{\Gamma}|\mathbf{h}, \lambda_\text{temp}).$ Тогда при $\lambda_{comb}>0$ значение $Q(\mathbf{h}_1)$ увеличится, при  $\lambda_{comb}>0$ значение $Q(\mathbf{h}_1)$  уменьшится. TODO: вопрос как подбирать $\lambda$, чтобы она была в компакте.
+Докажем критерий 4. Пусть $\lambda^\text{likelihood}_\text{Q} = \lambda^\text{prior}_\text{Q}=\lambda^\text{prior}_\text{L}=1, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$. Тогда оптимизационную задачу можно записать как: $$\argmax_{\mathbf{h} \in U_h}\argmax_{\boldsymbol{\theta}} \left(\mathsf{E}_q p(\mathbf{y}|\mathbf{w}, \mathbf{X}) - {D}_{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))\right),$$ что и требовалось доказать.
+
+Докажем критерий 5. TODO
 
 Докажем критерий 6. TODO
 \end{proof}
@@ -591,12 +638,12 @@ TODO
 В данном разделе рассматриваются свойства предложенной задачи при различных значениях метапараметров, а также характер ассимптотического поведения задач.
 
 \begin{theorem}
-Пусть ${\lambda_\text{prior}^L} > 0, m \gg 0, \frac{m}{\lambda_\text{prior}^L} \in \mathbb{N}.$ Тогда оптимизация функции
+Пусть $m>>0$, ${\lambda_\text{prior}^L} > 0, m \gg 0, \frac{m}{\lambda_\text{prior}^L} \in \mathbb{N}.$ Тогда оптимизация функции
 \[
 L = 
-{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \lambda_{\text{temp}},\mathbf{f})}} - {\lambda_\text{prior}^L\text{D}_{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}, \mathbf{f}})))}\vspace{-0.2cm}
-\] эквивалентна минимизации $\mathsf{E}_{\hat{\mathbf{X}}, \hat{\mathbf{y}}\sim p(\mathbf{X}, \mathbf{y})}\text{D}_{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma} | \hat{\mathbf{X}}, \hat{\mathbf{y}},\mathbf{h},\lambda_{\text{temp}},\mathbf{f})),$ где $\hat{\mathbf{X}}, \hat{\mathbf{y}}$ --- случайные подвыборки мощностью $\frac{m}{{\lambda_\text{prior}^L}}$ из генеральной совопкупности.
-
+{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \lambda_{\text{temp}},\mathbf{f})}} - {\lambda_\text{prior}^L\text{D}_{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}, \mathbf{f}})}
+\] эквивалентна оптимизации вариационной оценки обоснованности  $\mathsf{E}_q \text{log}~{p(\hat{\mathbf{y}} | \hat{\mathbf{X}}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \lambda_{\text{temp}},\mathbf{f})} - L\text{D}_{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}, \mathbf{f}})$
+для произвольной случайной подвыборки $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ мощности $\frac{m}{{\lambda_\text{prior}^L}}$ из генеральной совопкупности.
 \end{theorem}
 \begin{proof}
 Рассмотрим величину  $\frac{1}{m}L$: \\
@@ -604,23 +651,22 @@ L =
     \frac{1}{m}L = \frac{1}{m}\mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X},  \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}) - \frac{\lambda_\text{prior}^L}{m}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})).
 \]
 
-По усиленному закону больших чисел: 
+При $m >> 0$ по усиленному закону больших чисел данная функция эквивалентна:
 \[
-    \frac{1}{m}L \to_{m \to \infty}^{\text{п.н.}} \frac{1}{m}\mathsf{E}_\mathbf{X}\mathsf{E}_{q} \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) -\frac{\lambda_\text{prior}^L}{m}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})).
+    \frac{1}{m}L \approx  \mathsf{E}_{y, \mathbf{x}} \mathsf{E}_{q} \text{log}p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}) -\frac{\lambda_\text{prior}^L}{m}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})).
 \]
 
-Аналогично рассмотрим вариационную оценку обоснованности для произвольной выборки мощностью $m_0 = \frac{m}{\gamma}$, усредненную на мощность:
+Аналогично рассмотрим вариационную оценку обоснованности для произвольной выборки мощностью $m_0 = \frac{m}{\lambda_\text{prior}^L}$, усредненную на мощность выборки:
 \[
-    \frac{1}{m_0}\mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X},  \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}) - \frac{1}{m_0}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) \to_{m \to \infty}^{\text{п.н.}}
+    \frac{1}{m_0}\mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X},  \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}) - \frac{1}{m_0}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) \approx
 \]
 \[
-\to_{m \to \infty}^{\text{п.н.}} \frac{1}{m_0}\mathsf{E}_\mathbf{X}\mathsf{E}_{q} \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) -\frac{1}{m_0}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})).
+\approx  \mathsf{E}_{y, \mathbf{x}} \mathsf{E}_{q} \text{log}p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}) -\frac{1}{m_0}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) = 
 \]
-Таким образом, задачи оптимизации совпадают. Задача нахождения обоснованности эквивалентна минимизации дивергецнии:
 \[
-\text{D}_{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma} | \hat{\mathbf{X}}, \hat{\mathbf{y}},\mathbf{h},\lambda_{\text{temp}},\mathbf{f}).
+= \mathsf{E}_{y, \mathbf{x}} \mathsf{E}_{q} \text{log}p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}) -\frac{\lambda_\text{prior}^L}{m}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})).
 \]
-
+Таким образом, задачи оптимизации совпадают, что и требовалось доказать.
 \end{proof}
 Таким образом, для достаточно большого $m$ и $\lambda^{\text{prior}}_L>0, \lambda^{\text{prior}}_L \neq 1$ оптимизация параметров и гиперпараметров эквивалентна нахождению оценки обоснованности для выборки другой мощности: чем выше значение $ \lambda^{\text{prior}}_L$, тем выше мощность выборки, для которой проводится оптимизация.
 
