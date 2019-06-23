@@ -511,6 +511,15 @@ TODO
     K = \max_{\mathbf{h}} \text{log}~p (\mathbf{h}|\mathbf{f}) - \min_{\mathbf{h}} \text{log}~p(\mathbf{h}|\mathbf{f}).
 \]
 Тогда $Q(\mathbf{h}_1) - Q(\mathbf{h}_2) = \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_1 \lambda_{\text{temp}}, \mathbf{f}) - \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_2, \lambda_{\text{temp}}, \mathbf{f}) + \text{log}~p(\mathbf{h}_2|\mathbf{f}) - \text{log}~p(\mathbf{h}_1|\mathbf{f})>K_1.$ Отсюда следует $\mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_1 \lambda_{\text{temp}}, \mathbf{f}) > \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_2 \lambda_{\text{temp}}, \mathbf{f}).$
+
+Докажем критерий 3.  Пусть $\lambda^\text{likelihood}_\text{Q} = 0, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$. Зафиксируем некоторое значение метапараметров $\lambda_1, \lambda_2$. Т.к. $U_\mathbf{h}$ --- компакт, возьмем в качестве константы $K_1$ разницу между максимальным и минимальным значением $p(\mathbf{h}|\mathbf{f})$:
+TODO
+
+Докажем критерий 4. Пусть $\lambda^\text{likelihood}_\text{Q} = \lambda^\text{prior}_\text{Q}=\lambda^\text{prior}_\text{L}=1, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$. Тогда оптимизационную задачу можно записать как: TODO, что и требовалось доказать.
+
+Докажем критерий 5. TODO
+
+Докажем критерий 6. TODO
 \end{proof}
 
 Метапараметрами данной задачи являются коэффициенты $\lambda^\text{prior}_\text{Q}, \lambda^\text{prior}_\text{L}$, отвечающие за регуляризацию верхней и нижней задачи оптимизации, коэффициент $\lambda_\text{likelihood}^\text{Q}$ за максимизацию правдоподобия, а также параметры распрделений $\mathbf{P}$ и вектор коэффициентов перед ними $\boldsymbol{\lambda}^\text{struct}_\text{Q}$. 
@@ -527,30 +536,175 @@ TODO
 
 
 
-Для вычисления приближенного значения вариационной оценки обоснованности~\eqref{eq:full_elbo} предлагается использовать приближение методом Монте-Каарло с порождением $R$ реализаций величин $\mathbf{w}, \boldsymbol{\Gamma}$:
+Для вычисления приближенного значения функций $Q$ и $L$ предлагается использовать приближение методом Монте-Каарло с порождением $R$ реализаций величин $\mathbf{w}, \boldsymbol{\Gamma}$:
+
 \[
-    \sum_{r=1}^R \text{log}p(\mathbf{y}|\boldsymbol{\mu}+\boldsymbol{\alpha}_q \circ \hat{\epsilon}_r, \hat{\boldsymbol{\Gamma}}_r, \mathbf{X}) - \sum_{r=1}^R \left(\text{log}q_{\boldsymbol{\Gamma}}(\hat{\boldsymbol{\Gamma}}_r|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})) - p(\hat{\boldsymbol{\Gamma}}|\mathbf{h},\boldsymbol{\lambda})\right) -
+   \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \boldsymbol{\theta}_1 \lambda_{\text{temp}}, \mathbf{f}) \approx   \sum_{r=1}^R \text{log}p(\mathbf{y}|\boldsymbol{\mu}+\boldsymbol{\alpha}_q \circ \hat{\epsilon}_r, \hat{\boldsymbol{\Gamma}}_r, \mathbf{X}).
 \]
 \[
--\sum^{(i,j) \in E}\sum_{k=1}^{K_{i,j}} \hat{D}_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}^{i,j}_k|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}^{i,j}_k|\boldsymbol{\Gamma}, \mathbf{h})\right),
-\]
-где 
-\[
-     \hat{D}_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}^{i,j}_k|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}^{i,j}_k|\boldsymbol{\Gamma}, \mathbf{h})\right) = 
+D_\text{KL}\left(q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right)   \approx  \sum_{r=1}^R \left(\text{log}q_{\boldsymbol{\Gamma}}(\hat{\boldsymbol{\Gamma}}_r|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})) - p(\hat{\boldsymbol{\Gamma}}|\mathbf{h},\boldsymbol{\lambda})\right),
 \]
 \[
-= \sum_{r=1}^R\frac{1}{2}\left( \left(\hat{\gamma}^{i,j}_r[k]\right)^{-1}\text{tr}(\mathbf{A}_q\mathbf{A}^{-1}) + \boldsymbol{\mu}^{\mathsf{T}}\hat{\gamma}^{i,j}_r[k]^{-1}\mathbf{A}^{-1}\boldsymbol{\mu} - |\mathbf{W}| + \text{log}\frac{|\hat{\gamma}^{i,j}[r]_k\mathbf{A}|}{|\mathbf{A}_q|}\right),
+D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right)  \approx  \sum_{(j,k) \in E}\sum_{l=1}^{K^{j,k}} D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}^{j,k}_l|\boldsymbol{\theta}_\mathbf{w},\gamma^{j,k}_l)|p(\mathbf{w}^{j,k}_l|\gamma^{j,k}_l, \mathbf{h})\right)=
+\]
+\[ 
+-\sum^{(j,k) \in E}\sum_{l=1}^{K_{j,k}} = \sum_{r=1}^R\frac{1}{2}\left( \left(\hat{\gamma}^{j,k}_r[l]\right)^{-1}\text{tr}((\mathbf{A}^{j,k}_l)_q(\mathbf{A}^{j,k}_l)^{-1}) + (\boldsymbol{\mu}^{j,k}_l)^{\mathsf{T}}\hat{\gamma}^{j,k}_r[l]^{-1}(\mathbf{A}^{j,k}_l)^{-1}\boldsymbol{\mu^{j,k}_l} - |\mathbf{w}^{j,k}_l| + \text{log}\frac{|\hat{\gamma}^{j,k}[l]_r\mathbf{A}^{j,k}_l|}{|(\mathbf{A}^{j,k}_l)_q|}\right),
 \]
 где $R$ --- количество реализаций случайных величин, по котором вычисляется значения вариационной оценки обоснованности, $\hat{\epsilon}_r \sim \mathcal{N}(0,1),$
  $\hat{\boldsymbol{\Gamma}}_r = [\boldsymbol{\gamma}^{j,k}_r, (j,k) \in E]$ --- реализация случайной величины, соответствующей структуре $\boldsymbol{\Gamma}$.
 
+Для решения двухуровневой задачи предлагается использовать градиентные методы. 
+\begin{theorem}
+Пусть $Q,L$ --- локально выпуклы и непрерывны в некоторой области $U_{W} \times U_{\Gamma} \times U_H \times U_\lambda \subset \mathbb{W}\times\amsmathbb{\Gamma}\times\mathbb{H}\times\amsmathbb{\Lambda}$, при  этом $U_H \times U_\lambda$ --- компакт. 
+Тогда решение задачи градиентной оптимизации стремится к локальному минимуму  $\mathbf{h}^{*} \in U$ исходной задачи оптимизации~\eqref{eq:qopt} при $\eta \to \infty$,
+$\mathbf{h}^{*}$ является непрерывной функцией по метапараметрам модели.
+\end{theorem}
 
-\textbf{Обобщающая задача: адекватность задачи}
+\begin{proof}
+TODO
+\end{proof}
 
-\textbf{Обобщающая задача: свойства коэффициентов}
+\section{Анализ обобщающей задачи}
+В данном разделе рассматриваются свойства предложенной задачи при различных значениях метапараметров, а также характер ассимптотического поведения задач.
 
-\textbf{Решение задачи}
+\begin{theorem}
+Пусть задана выборка $\mathbf{X}, \mathbf{y}$ мощности $m$.\\
+Пусть задана модель $\mathbf{f}(\mathbf{w}, \mathbf{X})$ и распределение $q$, апппроксимирующее апостериорное распределеине параметров $\mathbf{w}$ этой модели.\\
+Рассмотрим выражение $\frac{1}{m} \text{ELBO}_{\gamma}$:\\
+\[
+    \frac{1}{m}\text{ELBO}_{\gamma}(\mathbf{X}, \mathbf{y}, q)= \frac{1}{m}\mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - \frac{\gamma}{m}\text{KL}(q|p(\mathbf{w})),
+\]
+где $\gamma > 0$.
 
+Пусть $\frac{1}{m} \text{ELBO}_{\gamma}$ сходится п.н. при $m \to \infty$ к функции $L(q)$\\ \textit{(вообще, она еще от гиперпараметров зависит, но здесь это будет лишним, прим. Олег).}
+
+Тогда функция $\frac{1}{m_0} \text{ELBO}_{1}$ для  выборки мощности $m_0 = \frac{m}{\gamma}$ из той же генеральной совокупности сходится почти наверно к этой же функции $L(q)$:
+\[
+    \frac{1}{m_0} \text{ELBO}_{1}(\hat{\mathbf{X}}, \hat{\mathbf{y}}, q) \to^{\text{п.н.}} L(q),
+\]
+где $|\hat{\mathbf{X}}| = m_0$.
+\end{theorem}
+\begin{proof}
+Рассмотрим величину  $\frac{1}{m}\text{ELBO}_{\gamma}$: \\
+\[
+    \frac{1}{m}\text{ELBO}_{\gamma}(\mathbf{X}, \mathbf{y})= \frac{1}{m}\mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - \frac{\gamma}{m}\text{KL}(q|p(\mathbf{w})).
+\]
+
+По УЗБЧ: 
+\[
+    \frac{1}{m}\text{ELBO}_{\gamma}(\mathbf{X}, \mathbf{y}) \to_{m \to \infty}^{\text{п.н.}} \mathsf{E}_\mathbf{X}\mathsf{E}_{q} \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - \frac{\gamma}{m}\text{KL}(q|p(\mathbf{w})) = L(q).
+\]
+
+Аналогично рассмотрим $\frac{1}{m_0}\text{ELBO}_{1}$ для выборки мощностью $m_0 = \frac{m}{\gamma}$:
+\[
+    \frac{1}{m_0}\text{ELBO}_{1}(\hat{\mathbf{X}}, \hat{\mathbf{y}}) \to_{m \to \infty}^{\text{п.н.}} \mathsf{E}_\mathbf{X}\mathsf{E}_{q} \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - \frac{1}{m_0}\text{KL}(q|p(\mathbf{w})) = 
+\]
+\[
+=  \mathsf{E}_\mathbf{X}\mathsf{E}_{q} \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - \frac{\gamma}{m}\text{KL}(q|p(\mathbf{w})) = L(q),
+\]
+предельные функции совпадают, что и требовалось доказать.
+\end{proof}
+Таким образом, для достаточно большого $m$ и $\gamma>0, \gamma \neq 1$ оптимизация параметров и гиперпараметров эквивалентна оптимизации ELBO для выборки другой мощности:
+\[
+    \max_q \text{ELBO}_{\gamma}(\mathbf{X}, \mathbf{y}, q) \propto  \max_q \frac{1}{m}\text{ELBO}_{\gamma}(\mathbf{X}, \mathbf{y}, q) \sim  \max_q \frac{1}{m_0}\text{ELBO}_{1}(\hat{\mathbf{X}}, \hat{\mathbf{y}}, q) \sim
+\]
+\[
+\sim    \max_q \text{ELBO}_{1}(\hat{\mathbf{X}}, \hat{\mathbf{y}}, q)
+\]
+К примеру, оптимизация $\text{ELBO}_{\gamma}$ при $\gamma>1$ эквивалентна оптимизации ELBO для выборки меньшей мощности (и бОльшего вклада априорного распределения в оптимизацию).
+
+
+Следующие теоремы говорят о соответствии предлагаемой обобщающей задачи вероятностной модели. В частности, задача оптимизации параметров и гиперпараметров соответствует двухуровневому байесовскому выводу.
+\begin{theorem}
+Пусть задано параметрическое множество вариационных распределений: $q(\boldsymbol{\theta})$. 
+Пусть ${\lambda^L_\text{likelihood}} = {\lambda^L_\text{prior}=\lambda^Q_\text{prior}}>0, {\boldsymbol{\lambda}^Q_{\text{struct}}}=\mathbf{0}$. Тогда:
+\begin{enumerate}
+\item Задача оптимизации~\eqref{eq:qopt} доставляет максимум апостериорной вероятности гиперпараметров с использованием вариационной оценки обоснованности:
+\vspace{-0.3cm}
+\[
+    \text{log}\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f}) + {\text{log}p(\mathbf{h}|\mathbf{f})} \to \max_{\mathbf{h}}.
+\]
+\item Вариационное распределение $q$ приближает апостериорное распределение $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp},, \mathbf{f})$ наилучшим образом:
+\vspace{-0.3cm}
+\[
+    {D}_\text{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})) \to \min_{\boldsymbol{\theta}}.
+\]
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+TODO
+\end{proof}
+\begin{theorem}
+Пусть также распределение $q$ декомпозируется на два независимых распределения для параметров $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$ модели $\mathbf{f}$:
+\[
+    q = q_{\mathbf{w}}q_{\boldsymbol{\Gamma}}, q_{\boldsymbol{\Gamma}} \approx p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \mathbf{f}), q_{\mathbf{w}} \approx p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{y}, \mathbf{X}, \mathbf{h}, \mathbf{f}).
+\]
+Тогда вариационные распределения $q_{\mathbf{w}}, q_{\boldsymbol{\Gamma}}$приближают апостериорные распределения $ p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f}), p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})$ наилучшим образом:
+\[
+    {D}_\text{KL}(q_{\boldsymbol{\Gamma}}||p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})) \to \min, \quad
+    {D}_\text{KL}(q_{\mathbf{w}}||p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \mathbf{f})) \to \min.
+\]
+\end{theorem}
+\begin{proof}
+TODO
+\end{proof}
+
+Следующие теоремы посвящены ассимптотическим свойствам представленной обобщающей задачи.
+\begin{theorem}
+Пусть ${\lambda_{\text{likelihood}}^Q}= {\lambda_{\text{prior}}^L}>0, {\boldsymbol{\lambda}^Q_{\text{struct}} }= \bf{0}$.
+Тогда предел оптимизации
+\[
+\lim_{{\lambda^Q_\text{prior}} \to \infty} \lim_{\eta \to \infty}   T^\eta\bigl(Q, \mathbf{h}, T^\eta(L, \boldsymbol{\theta}_0, \mathbf{h})\bigr)
+\]  
+доставляет минимум параметрической сложности. 
+Существует компактная область ${U}$, такая что для любой точки $\boldsymbol{\theta}_0 \in U$ предел данной оптимизации доставляет нулевую параметрическую сложность: $C_p = 0$.
+\end{theorem}
+\begin{proof}
+TODO
+\end{proof}
+
+\begin{theorem}
+Пусть ${\lambda^L_{\text{likelihood}}} = 1 ,{\boldsymbol{\lambda}^Q_{\text{struct}}} = \bf 0$.
+Пусть  $\mathbf{f}_1, \mathbf{f}_2$ --- результаты градиентной оптимизации при разных значениях гиперпараметров ${\lambda_{\text{prior}}^{Q,1},\lambda_{\text{prior}}^{Q,2}, \lambda_{\text{prior}}^{Q,1}<\lambda_{\text{prior}}^{Q,2}}$, полученных при начальном значении вариационных параметров $\boldsymbol{\theta}_0$ и гиперпараметров $\mathbf{h}_0$.
+Пусть $\boldsymbol{\theta}_0, \mathbf{h}_0$ принадлежат области  $U$, в которой соответствующие функции $L$ и $Q$ являются локально-выпуклыми.
+Тогда:
+\footnotesize
+\[
+    C_p(\mathbf{f}_1) - C_p(\mathbf{f}_2)  \geq {\lambda_\text{prior}^L(\lambda_\text{prior}^L - \lambda_\text{prior}^{Q,1})}\text{sup}_{\boldsymbol{\theta}, \mathbf{h} \in U}|\nabla^2_{\boldsymbol{\theta}, \mathbf{h}} {D_{KL}(q|p)} (\nabla^2_{\boldsymbol{\theta}} L)^{-1}   \nabla_{\boldsymbol{\theta}} {D_{KL}(q|p))}|.
+\]
+\end{theorem}
+\begin{proof}
+TODO
+\end{proof}
+
+Для анализа свойств структуры модели $\boldsymbol{\Gamma}$ введем понятие структурной сложности.
+\begin{defin}
+Структурной сложностью $C_s$ модели назовем энтропию структур $\boldsymbol{\Gamma}$, полученных из вариационного распределения $q$:
+\[
+    C_s = -\mathsf{E}_q \mathsf{E}_\Gamma \text{log} p_{\boldsymbol{\Gamma}}.
+\]
+\end{defin}
+TODO: пояснение
+
+\begin{theorem}
+Пусть $\lambda_{\text{train}} >0$, $\boldsymbol{\theta}_1, \boldsymbol{\theta}_2$ --- вариационные параметры, такие что $\boldsymbol{\theta}_1$ лежит внутри произведения симплексов структуры, $\boldsymbol{\theta}_2$ --- на вершинах симплексов.
+Тогда \[
+\lim_{\lambda_\text{temp} \to 0} \frac{L(\boldsymbol{\theta}_2)}{L(\boldsymbol{\theta}_1)} \to 0.
+\]
+\end{theorem}
+\begin{proof}
+TODO
+\end{proof}
+\begin{theorem}
+Пусть $\lambda_{\text{train}} >0$, $\boldsymbol{\theta}_1, \boldsymbol{\theta}_2$ --- вариационные параметры, такие что $\boldsymbol{\theta}_1$ лежит внутри произведения симплексов структуры, $\boldsymbol{\theta}_2$ --- в центре симплексов.
+Тогда \[
+\lim_{\lambda_\text{temp} \to \infty} \frac{L(\boldsymbol{\theta}_2)}{L(\boldsymbol{\theta}_1)} \to 0.
+\]
+\end{theorem}
+\begin{proof}
+TODO
+\end{proof}
+TODO: вывод
 \textbf{Эксперимент: пример 1}
 
 \textbf{Эксперимент: пример 2}
