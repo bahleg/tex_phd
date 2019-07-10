@@ -509,7 +509,7 @@ L=Q =\mathsf{E}_q\bigl(\text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w},\boldsymbo
 \mathsf{E}_q p(\mathbf{y}|\mathbf{w}, \mathbf{X})-{D}_{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}) + \text{log}~p(\mathbf{h}|\boldsymbol{\lambda})).
 $$ для всех $\boldsymbol{\theta}\in U_{\boldsymbol{\theta}}, \mathbf{h} \in U_{\mathbf{h}}.$ TODO
 
-\item Критерий перебора структур: существует набор метапараметров $\boldsymbol{\lambda}$ и константа $K_3>0$, $K_3 < \max_{\mathbf{h}_1, \mathbf{h}_2} D_\text{KL}(p (\boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda}) | p (\boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda}))$, такие что для локальных оптимумов задачи оптимизации $\mathbf{h}_{1}, \mathbf{h}_2$, полученных при метапараметрах $\lambda$ и удовлетворяющих неравенствам $D_\text{KL}(p (\boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})| p (\boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})) > K_3, p(\boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})| p(\boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})) > K_3$, $Q(\mathbf{h}_1) > Q(\mathbf{h}_2)$  существует значение метапараметров $\boldsymbol{\lambda}'$, такие что
+\item Критерий перебора оптимальных структур: существует набор метапараметров $\boldsymbol{\lambda}$ и константа $K_3>0$, $K_3 < \max_{\mathbf{h}_1, \mathbf{h}_2} D_\text{KL}(p (\boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda}) | p (\boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda}))$, такие что для локальных оптимумов задачи оптимизации $\mathbf{h}_{1}, \mathbf{h}_2$, полученных при метапараметрах $\lambda$ и удовлетворяющих неравенствам $D_\text{KL}(p (\boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})| p (\boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})) > K_3, p(\boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})| p(\boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})) > K_3$, $Q(\mathbf{h}_1) > Q(\mathbf{h}_2)$  существует значение метапараметров $\boldsymbol{\lambda}'$, такие что
 \begin{itemize}
 \item Соответствие между вариационными параметрами $\boldsymbol{\theta}^{*}(\mathbf{h}_1), \boldsymbol{\theta}^{*}(\mathbf{h}_2)$ сохраняется при  $\boldsymbol{\lambda}'$.
 \item  $Q(\mathbf{h}_1) < Q(\mathbf{h}_2)$ при $\boldsymbol{\lambda}'$.
@@ -535,10 +535,10 @@ $$ для всех $\boldsymbol{\theta}\in U_{\boldsymbol{\theta}}, \mathbf{h} \
 \end{proof}
 
 \begin{theorem}
-Пусть $q_{\boldsymbol{\Gamma}}$ --- абсолютно непрерывное распределение с дифференцируемой плотностью, такой что плотность принимает нулевое значение не более чем счетное количество раз. Тогда задача~\eqref{eq:optim_elbo_method} не является обобщающей.
+Пусть $q_{\boldsymbol{\Gamma}}$ --- абсолютно непрерывное распределение с дифференцируемой плотностью, такой что градиент плотности  является нулевым не более чем счетное количество раз. Тогда задача~\eqref{eq:optim_elbo_method} не является обобщающей.
 \end{theorem}
 \begin{proof}
-Пусть выполнены условия свойства 6 о переборе структур. 
+Пусть выполнены условия критерия 6 о переборе структур. 
 Тогда для некоторых векторов метапараметров $\boldsymbol{\lambda},\boldsymbol{\lambda}'$:
 \[
     \nabla_{\boldsymbol{\theta}} \mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)} \text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}) -\nabla_{\boldsymbol{\theta}}  \text{D}_{\text{KL}}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1) | p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})) = 
@@ -557,7 +557,7 @@ $$ для всех $\boldsymbol{\theta}\in U_{\boldsymbol{\theta}}, \mathbf{h} \
 \[
 \lambda_\text{temp} = \lambda_\text{temp}',\quad, \lambda_\text{temp} \in \boldsymbol{\lambda}, \lambda_\text{temp}' \in \boldsymbol{\lambda}'.
 \]
-Таким образом, метапараметры $\boldsymbol{\lambda},\boldsymbol{\lambda}'$ отличаются лишь на $\lambda_1, \lambda_2$. 
+Таким образом, метапараметры $\boldsymbol{\lambda},\boldsymbol{\lambda}'$ отличаются лишь на метапараметры  $\lambda_1, \lambda_2$ регуляризации ковариационной матрицы. 
 Возьмем в качестве векторов гиперпараметров $\mathbf{h}_1,\mathbf{h}_2$ гиперпараметры, отличающиеся только параметрами распределения структуры:
 \[
     \mathbf{h}_1 = [\mathbf{s}_1, \text{diag}(\mathbf{A}_1)], \mathbf{h}_2 = [\mathbf{s}_2, \text{diag}(\mathbf{A}_2)],\quad \mathbf{s}_1 \neq \mathbf{s}_2, \mathbf{A}_1 = \mathbf{A}_2.
@@ -594,25 +594,26 @@ $$ для всех $\boldsymbol{\theta}\in U_{\boldsymbol{\theta}}, \mathbf{h} \
 \begin{theorem}
 Пусть:
 \begin{enumerate} 
-\item задано непустое множество непрерывных по параметрам распределений на структуре $\mathbf{P}$.
+\item задано непустое множество непрерывных по параметрам распределений на структуре $\mathbf{P}$;
 
-\item вариационное распределение $q = q_{\  boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}}) q_{\mathbf{w}}(\mathbf{w}| \boldsymbol{\Gamma},\boldsymbol{\theta}_{\boldsymbol{\Gamma}})$ является  абсолютно непрерывным, плотность которого непрерывна по метапараметрам $\boldsymbol{\lambda}$.
+\item вариационное распределение $q = q_{\  boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}}) q_{\mathbf{w}}(\mathbf{w}| \boldsymbol{\Gamma},\boldsymbol{\theta}_{\boldsymbol{\Gamma}})$ является  абсолютно непрерывным, плотность которого непрерывна по метапараметрам $\boldsymbol{\lambda}$;
 
-\item Задан компакт  $U = U_{\boldsymbol{\theta}} \times U_{\mathbf{h}} \times U_{\boldsymbol{\lambda}} \subset \amsmathbb{\Theta} \times \mathbb{H} \times \amsmathbb{\Lambda}$, где параметры распределений $\mathbf{P} \in \amsmathbb{\Lambda}$, область $U_{\boldsymbol{\theta}}$ декомпозируется на две области $U_{\boldsymbol{\theta}} = U_{\boldsymbol{\theta}_{\mathbf{w}}} \times U_{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}}$;
-\item Область определения каждого параметра $w \in \mathbf{w}$, гиперпараметра $h \in \mathbf{h}$ и метапараметра $\lambda \in \boldsymbol{\lambda}$ не является является пустым и не является точкой.
+\item задан компакт  $U = U_{\boldsymbol{\theta}} \times U_{\mathbf{h}} \times U_{\boldsymbol{\lambda}} \subset \amsmathbb{\Theta} \times \mathbb{H} \times \amsmathbb{\Lambda}$, где параметры распределений $\mathbf{P} \in \amsmathbb{\Lambda}$, область $U_{\boldsymbol{\theta}}$ декомпозируется на две области $U_{\boldsymbol{\theta}} = U_{\boldsymbol{\theta}_{\mathbf{w}}} \times U_{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}}$;
 
-\item Для каждого значения гиперпараметров $\mathbf{h}$ оптимальное решение нижней задачи оптимизации $\boldsymbol{\theta}^{*}$ определено однозначно при любых значениях метапараметров $\boldsymbol{\lambda} \in U_{\lambda}$
+\item область определения каждого параметра $w \in \mathbf{w}$, гиперпараметра $h \in \mathbf{h}$ и метапараметра $\lambda \in \boldsymbol{\lambda}$ не является является пустым и не является точкой;
 
-\item Область значений метапараметров $\lambda_\text{likelihood}^\text{Q}, \lambda^\text{prior}_\text{Q}, \boldsymbol{\lambda}^\text{struct}_\text{Q}, \lambda^\text{prior}_\text{L}$ включает отрезок от нуля до некоторго положительного числа.
+\item для каждого значения гиперпараметров $\mathbf{h}$ оптимальное решение нижней задачи оптимизации $\boldsymbol{\theta}^{*}$ определено однозначно при любых значениях метапараметров $\boldsymbol{\lambda} \in U_{\lambda}$;
 
-\item Существует значение метапараметров $\lambda_1, \lambda_2, \lambda_\text{likelihood}^\text{Q}$, такое что
+\item область значений метапараметров $\lambda_\text{likelihood}^\text{Q}, \lambda^\text{prior}_\text{Q}, \boldsymbol{\lambda}^\text{struct}_\text{Q}, \lambda^\text{prior}_\text{L}$ включает отрезок от нуля до некоторго положительного числа;
+
+\item существует значение метапараметров $\lambda_1, \lambda_2, \lambda_\text{likelihood}^\text{Q}$, такое что
 \[
 \max_{\mathbf{h}} \text{log} p (\mathbf{h}|\boldsymbol{\lambda})-\min_{\mathbf{h}} \text{log}~p(\mathbf{h}|\boldsymbol{\lambda}) < \max_{\mathbf{h}} Q(\mathbf{h}) -  \min_{\mathbf{h}} Q(\mathbf{h}).
 \] 
 при $\boldsymbol{\lambda}^\text{struct}_Q = \mathbf{0}, \lambda^\text{prior}_Q = 0$.
 
 \end{enumerate}
-Тогда задача~\eqref{eq:q_opt} является обобщающей на $U$.
+Тогда задача~\eqref{eq:qopt} является обобщающей на $U$.
 \end{theorem}
 \begin{proof}
 Для доказательста теоремы требуется доказать критерии 1-7 из определения обобщающей задачи.
@@ -620,11 +621,12 @@ $$ для всех $\boldsymbol{\theta}\in U_{\boldsymbol{\theta}}, \mathbf{h} \
 
 Докажем критерий 3. 
 Пусть $\lambda^{\text{prior}}_\text{Q} = 0, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$. 
-Пусть $\lambda_1, \lambda_2, \lambda_\text{likelihood}^\text{Q}$ удовлетворяют шестому условияю теоремы.
+Пусть $\lambda_1, \lambda_2, \lambda_\text{likelihood}^\text{Q}$ удовлетворяют седьмому условияю теоремы.
 Возьмем в качестве $K_1$ следующее выражение:
 \[
     K_1= \max_{\mathbf{h}} \text{log} p (\mathbf{h}|\boldsymbol{\lambda})-\min_{\mathbf{h}} \text{log}~p(\mathbf{h}|\boldsymbol{\lambda}).
 \]
+Пусть $\mathbf{h}_1, \mathbf{h}_2 \in U_\mathbf{h}, Q(\mathbf{h}_1)-Q(\mathbf{h}_2)>K_1$.
 Тогда 
 \[
 Q(\mathbf{h}_1)-Q(\mathbf{h}_2) = \lambda^\text{likelihood}_\text{Q} \mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)} \text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})-\]
@@ -632,53 +634,49 @@ Q(\mathbf{h}_1)-Q(\mathbf{h}_2) = \lambda^\text{likelihood}_\text{Q} \mathsf{E}_
 -\lambda^\text{likelihood}_\text{Q}  \mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)} \text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})
 +\text{log}~p(\mathbf{h}_2|\boldsymbol{\lambda})-\text{log}~p(\mathbf{h}_1|\boldsymbol{\lambda})>K_1.
 \]
-Отсюда следует выполнения критерия 3.
+Отсюда следует  выполнение критерия 3:
+\[
+\lambda^\text{likelihood}_\text{Q} \mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)} \text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}) - \lambda^\text{likelihood}_\text{Q} \mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)} \text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}) > 0.
+\]
 
 Докажем критерий 4. 
 Пусть $\lambda^{\text{likelihood}}_\text{Q} = 0, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$. 
-
-Пусть гиперпараметры удовлетворяют седьмому условию.
 Пусть 
 \[
 K_2 =  \max_{\mathbf{h}} \text{log}~p (\mathbf{h}|\boldsymbol{\lambda}) - \min_{\mathbf{h}} \text{log}~p (\mathbf{h}|\boldsymbol{\lambda}) -
 \]
-\[
--\frac{1}{\lambda^\text{prior}_\text{L}}\bigl(\min_{\mathbf{h}}\max{\boldsymbol{\theta}} -D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})+
-\]
-\[
-\mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)}\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w})  - \max_{\boldsymbol{\theta}} \mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)}\text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - 
-\]
-\[
--\min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) .
-\]
 
+Пусть $\mathbf{h}_1, \mathbf{h}_2 \in U_\mathbf{h}, Q(\mathbf{h}_1)-Q(\mathbf{h}_2)>K_1$.
 Рассмотрим разность параметрических сложностей двух векторов:
 \[
-C_p(\boldsymbol{\theta}_1)-C_p(\boldsymbol{\theta}_2) = \min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))-
+C_p(\boldsymbol{\theta}_2)-C_p(\boldsymbol{\theta}_1) = \min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))-
 \]
 \[
--\min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) \geq
+-\min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) \geq
 \]
+% добавляем D_kl вместо D_KL^*
 \[
 \geq
-\min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))- D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})) +
+\min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))- D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})) +
 \]
 \[
-+D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})) - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})) =
++D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})) - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})) =
+\]
+% Доводим до Q
+\[
+= Q(\mathbf{h}_2)-Q(\mathbf{h}_1)-\text{log}~p (\mathbf{h}_2|\boldsymbol{\lambda})+\text{log}~p (\mathbf{h}_1|\boldsymbol{\lambda})+
+\]
+\[+\min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) -  D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})) >
+\]
+% Доводим до K_2
+\[
+>K_2 -\text{log}~p (\mathbf{h}_2|\boldsymbol{\lambda})+\text{log}~p (\mathbf{h}_1|\boldsymbol{\lambda}) + \min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) 
 \]
 \[
-= Q(\mathbf{h}_1)-Q(\mathbf{h}_2)-\text{log}~p (\mathbf{h}_1|\boldsymbol{\lambda})+\text{log}~p (\mathbf{h}_2|\boldsymbol{\lambda})+
+-  D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})).
 \]
-\[+\min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) -  D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})) >
-\]
-\[
->K_2 -\text{log}~p (\mathbf{h}_1|\boldsymbol{\lambda})+\text{log}~p (\mathbf{h}_2|\boldsymbol{\lambda}) + \min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) 
-\]
-\[
--  D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})) \geq
-\]
-Рассмотрим разность $\min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))  - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})):$
-\[\min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))  - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})) =
+Рассмотрим разность:
+\[\min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))  - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})) =
 \]
 \[
 \min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))  + \max_{\boldsymbol{\theta}}  (\mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})} \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda}))) - \mathsf{E}_q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1) \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) \geq
@@ -723,9 +721,9 @@ Q(\mathbf{h}_1)-Q(\mathbf{h}_2) < 0
 Т.к. априорные распределения задаются нерперывными функциями плотности, и функция плотности распределения структуры $\boldsymbol{\Gamma}$ ограничена на компакте, то дивергенция $D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\gamma})$ непрерывна по метапараметрам. Т.к. слагаемые функций оптимизации непрерывны, то непрерывна и сами функции оптимизации.
 \end{proof}
 
-Метапараметрами данной задачи являются коэффициенты $\lambda^\text{prior}_\text{Q}, \lambda^\text{prior}_\text{L}$, отвечающие за регуляризацию верхней и нижней задачи оптимизации, коэффициент $\lambda_\text{likelihood}^\text{Q}$ за максимизацию правдоподобия, а также параметры распрделений $\mathbf{P}$ и вектор коэффициентов перед ними $\boldsymbol{\lambda}^\text{struct}_\text{Q}$. 
+Метапараметрами данной задачи являются коэффициенты $\lambda^\text{prior}_\text{Q}, \lambda^\text{prior}_\text{L}$, отвечающие за регуляризацию верхней и нижней задачи оптимизации, коэффициент $\lambda_\text{likelihood}^\text{Q}$ отвечает за максимизацию правдоподобия, а также параметры распрделений $\mathbf{P}$ и вектор коэффициентов перед ними $\boldsymbol{\lambda}^\text{struct}_\text{Q}$. 
 
-В предельном случае, когда температура $\lambda_\text{temp}$ близка к нулю, а множество $\mathbf{P}$ состоит из распределений, близких к дискретным соответствующим всем возможным структурам, калибровка $\boldsymbol{\lambda}^\text{struct}_\text{Q}$ порождает последовательность задач оптимизаций, схожую с перебором структур. Рассмотрим следующий пример. 
+В предельном случае, когда температура $\lambda_\text{temp}$ близка к нулю, а множество $\mathbf{P}$ состоит из распределений, близких к дискретным,а соответствующим всем возможным структурам, калибровка $\boldsymbol{\lambda}^\text{struct}_\text{Q}$ порождает последовательность задач оптимизаций, схожую с перебором структур. Рассмотрим следующий пример. 
 
 \begin{example} 
 Рассмотрим вырожденный случай поведения функции $Q$, когда $\lambda_\text{likelihood}^\text{Q} = \lambda^\text{prior}_\text{Q} = 0$. Пусть модель использует один структурный параметр, в качестве априорного распределения на структуре задано распределение Gumbel-Softmax с $\lambda_\text{temp}=1.0$. Пусть в качестве множества распределений $\mathbf{P}$ используется два распределения Gumbel-Softmax, сконцентрированных близко к вершинам симплекса:
