@@ -51,25 +51,23 @@ p(\lim_{\lambda_{\text{temp}}\to 0}\hat{\gamma}_{l}= 1|\mathbf{s}, {\lambda}_\te
 
 \begin{proof} 
 Формула плотности записывается следующим образом с точностью до множителя:
-\[
-    p(\boldsymbol{\gamma}|\mathbf{s}, {\lambda}_\text{temp}) \propto    \frac{\lambda_{\text{temp}}^{K-1}}{\left(\sum_{l=1}^K s_l\gamma_l^{-\frac{-K-1}{K}\lambda_\text{temp}}\sum_{l'=1}^K [l \neq l']s_l\gamma_l^{-\frac{1}{K}\lambda_\text{temp}}\right)^{K}}.
-\]
+\begin{equation}
+\label{eq:pdf_proof}
+    p(\boldsymbol{\gamma}|\mathbf{s}, {\lambda}_\text{temp}) \propto    \frac{\lambda_{\text{temp}}^{K-1}}{\left(\sum_{l=1}^K s_l\gamma_l^{-\frac{K-1}{K}\lambda_\text{temp}}\prod_{l'=1}^K [l \neq l']\gamma_l^{\frac{1}{K}\lambda_\text{temp}}\right)^{K}}.
+\end{equation}
 
-
-Заметим, что числитель $\lambda_{\text{temp}}^{K-1}$ имеет меньшую скорость сходимости, чем знаменатель, поэтому для вычисления предела достаточно проанализировать только знаменатель. 
-TODO: пояснение. Он представлен суммой слагаемых вида:
+Заметим, что числитель $\lambda_{\text{temp}}^{K-1}$ имеет меньшую скорость сходимости, чем знаменатель, поэтому для вычисления предела достаточно проанализировать только знаменатель. Знаменатель под степенью $(-K)$ представляется суммой слагаемых следующего вида: 
 \begin{equation}
 \label{eq:gs}
-    \left(\frac{\prod_{l' \neq l} \gamma_{l'}^{\frac{1}{K}}}{\gamma_l^{\frac{K-1}{K}}}\right)^{\lambda_{\text{temp}}},
+    \left(\frac{\prod_{l' \neq l} \gamma_{l'}^{\frac{1}{K}}}{\gamma_l^{\frac{K-1}{K}}}\right)^{\lambda_{\text{temp}}}.
 \end{equation}
-возведенных в степень $(-K)<0.$
 
-Рассмотрим два случая: когда вектор $\boldsymbol{gamma}$  лежит не в центре симплекса, и когда  $\boldsymbol{gamma}$ лежит в центре симплекса. 
+Рассмотрим два случая: когда вектор $\boldsymbol{\gamma}$  лежит не в центре симплекса, и когда  $\boldsymbol{\gamma}$ лежит в центре симплекса. 
 Пусть хотя бы для одной компоненты $l$ выполнено: $\gamma_l \neq \frac{1}{K}$. Пусть $l'$ соответствует индексу максимальной компоненты вектора $\boldsymbol{\gamma}$.
 Для $l=l'$ предел выражения~\eqref{eq:gs} при $\lambda_{\text{temp}}$ стремится к бесконечности. Для $l\neq l'$ предел выражения~\eqref{eq:gs} при $\lambda_{\text{temp}}$ стремится к нулю. Возводя сумму пределов в степень $(-K)$ получаем предел плотности, равный нулю.
 
-Рассмотрим второй случай. Пусть $\boldsymbol{\gamma} = \frac{1}{K}$.
-Тогда выражение~\eqref{eq:gs} с точностью до множителя упрощается до $\lambda^{K-1}$. Предел данного выражения стремится к бесконечности.
+Рассмотрим второй случай. Пусть ${\gamma}_l = \frac{1}{K}$ для всех $l$.
+Тогда выражение~\eqref{eq:pdf_proof} с точностью до множителя упрощается до $\lambda^{K-1}$. Предел данного выражения стремится к бесконечности.
 Таким образом, предел плотности Gumbel-Softmax равен выражению~\eqref{eq:theorem_gs}, что и требовалось доказать.
 
 \end{proof}
@@ -232,10 +230,19 @@ D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\bolds
 \end{theorem}
 
 \begin{proof}
-TODO: пояснения.
+Рассмотрим обоснованность:
+\[
+text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) =  \text{log}~\iint_{\boldsymbol{\Gamma},\mathbf{w}}p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma},\boldsymbol{\lambda})p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda})p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})d\boldsymbol{\Gamma}d\mathbf{w}  =
+\]
+\[
+  =   \text{log}~\iint_{\boldsymbol{\Gamma},\mathbf{w}} p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma},\boldsymbol{\lambda})p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda})p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\frac{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})}{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})}d\boldsymbol{\Gamma}d\mathbf{w} =
+\]
+\[
+  =  \text{log} \mathsf{E}_q \frac{p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})}{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})}.
+\]
 Используя неравенство Йенсена получим 
 \[
-\text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) \geq
+ \text{log} \mathsf{E}_q \frac{p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})}{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})}     \geq  \mathsf{E}_q\text{log}~\frac{p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})}{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})} =
 \]
 \[
    \mathsf{E}_{q} \text{log}p(\mathbf{y}|\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{X})-D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})).
@@ -342,17 +349,17 @@ C_p(\boldsymbol{\theta}|U_\mathbf{h},\boldsymbol{\lambda}) = \min_{\mathbf{h} \i
 Из сходимости по вариации следует слабая сходимость распределений.
 Рассмотрим разность усредненных мод:
 \[
-\mathsf{E}_{q_{\boldsymbol{\Gamma}}}\text{mode}~q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})-\mathsf{E}_{p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})} \text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}) = 
+|\mathsf{E}_{q_{\boldsymbol{\Gamma}}}\text{mode}~q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})-\mathsf{E}_{p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})} \text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})| = 
 \]
 \[
-=\mathsf{E}_{q_{\boldsymbol{\Gamma}}} \mathsf{E}_{q_\mathbf{w}} \mathbf{w}-\mathsf{E}_{p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})} \mathsf{E}_{p(\mathbf{w}| \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})} \mathbf{w} =
+=|\mathsf{E}_{q_{\boldsymbol{\Gamma}}} \mathsf{E}_{q_\mathbf{w}} \mathbf{w}-\mathsf{E}_{p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})} \mathsf{E}_{p(\mathbf{w}| \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})} \mathbf{w}| =
 \]
 \[
-= \mathsf{E}_{q}\mathbf{w}-\mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})}\mathbf{w}.
+= |\mathsf{E}_{q}\mathbf{w}-\mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})}\mathbf{w}|.
 \]
-Т.к. вторые моменты величины $\mathbf{w}$ конечны для вариационного и априорного распределения, то функции $\mathsf{E}_{q}\mathbf{w}, \mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h})}\mathbf{w}$ равномерно интегрируемы. Если случайные величиные слабо сходятся и являются равномерно интегрируемыми, то предел выражению можно поставить под знак интеграла:
+Т.к. вторые моменты величины $\mathbf{w}$ конечны для вариационного и априорного распределения, то функции $\mathsf{E}_{q}\mathbf{w}, \mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h})}\mathbf{w}$ равномерно интегрируемы. Если случайные величиные слабо сходятся и являются равномерно интегрируемыми, то существует сходимость в среднем, предел выражения можно поставить под знак интеграла:
 \[
-  \lim_{i \to \infty}\bigl( \mathsf{E}_{q}\mathbf{w}- \mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})}\mathbf{w} \bigr) = 0.
+  \lim_{i \to \infty}\bigl( |\mathsf{E}_{q}\mathbf{w}- \mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})}\mathbf{w}| \bigr) \leq    \lim_{i \to \infty}\bigl( \mathsf{E}_{\mathbf{w}_1 \sim q, \mathbf{w}_2 \sim p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})}|\mathbf{w}_1- \mathbf{w}_2| \bigr) =0.
 \]
 Т.к. вторые моменты случайных величин конечны, то конечны и первые моменты:
 \[
@@ -370,15 +377,15 @@ C_p(\boldsymbol{\theta}|U_\mathbf{h},\boldsymbol{\lambda}) = \min_{\mathbf{h} \i
 Т.к. функция $\boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1}$  ограничена, то предел можно внести под знак интеграла:
 \[
 \lim_{i \to \infty} \mathsf{E}_q \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1} = 
- =\mathsf{E}_q  \lim_{i \to \infty}  \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1} =
+ \mathsf{E}_q  \lim_{i \to \infty}  \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1} =
 \]
 \[
     \mathsf{E}_q \lim_{i \to \infty} \prod_{w \in \mathbf{w}}\frac{q\bigl(\text{mode}~p\left({w}|\boldsymbol{\Gamma}, \mathbf{h},\boldsymbol{\lambda}\right)|\boldsymbol{\Gamma},\boldsymbol{\theta}_\mathbf{w}\bigr)}{q\bigl(\text{mode}~q\left(w|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}\right)|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}\bigr)}=
 \]
 \[
-     \mathsf{E}_q \frac{q_\mathbf{w}(\mathbf{M})}{q_\mathbf{w}(\mathbf{M})} = \mathsf{E}_{q_{\boldsymbol{\Gamma}}}\frac{q_\mathbf{w}(\mathbf{M})}{q_\mathbf{w}(\mathbf{M})} = 1.
+     \mathsf{E}_q \frac{q_\mathbf{w}(\mathbf{M})}{q_\mathbf{w}(\mathbf{M})} = 1.
 \]
-
+Заметим, что $ \mathsf{E}_q \frac{q_\mathbf{w}(\mathbf{M})}{q_\mathbf{w}(\mathbf{M})} = \mathsf{E}_{q_{\boldsymbol{\Gamma}}}\frac{q_\mathbf{w}(\mathbf{M})}{q_\mathbf{w}(\mathbf{M})}$ и получим итоговый результат.
 \end{proof}
 
 Теорема утверждает, что при устремлении параметрической сложности модели к нулю, все параметры модели подлежат удалению в среднем по всем возможным значениям  структуры $\boldsymbol{\Gamma}$ модели. Заметим, что теорема применима для случая, когда последовательность вариационных распределений $q$ не имеет предела. Так, в случае, если структура $\boldsymbol{\Gamma}$ определена однозначно, последовательность $q_i$ может являться последовательностью нормальных распределений, чье матожидание стремится к нулю:
@@ -555,14 +562,14 @@ $$ для всех $\boldsymbol{\theta}\in U_{\boldsymbol{\theta}}, \mathbf{h} \
 \]
 Т.к. выражение $ \nabla_{\boldsymbol{\theta}_\Gamma} q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_2)$ принимает нулевое значение в счетном количестве точек, то выражение $\text{log}~p(\boldsymbol{\Gamma}| \boldsymbol{\lambda}) - \text{log}~p(\boldsymbol{\Gamma}| \boldsymbol{\lambda}')$ равно нулю почти всюду, что означает что метапараметр температуры $\lambda_\text{temp}$  равен:
 \[
-\lambda_\text{temp} = \lambda_\text{temp}',\quad, \lambda_\text{temp} \in \boldsymbol{\lambda}, \lambda_\text{temp}' \in \boldsymbol{\lambda}'.
+\lambda_\text{temp} = \lambda_\text{temp}',\quad \lambda_\text{temp} \in \boldsymbol{\lambda}, \lambda_\text{temp}' \in \boldsymbol{\lambda}'.
 \]
 Таким образом, метапараметры $\boldsymbol{\lambda},\boldsymbol{\lambda}'$ отличаются лишь на метапараметры  $\lambda_1, \lambda_2$ регуляризации ковариационной матрицы~$\mathbf{A}^{-1}$. 
 Возьмем в качестве векторов гиперпараметров $\mathbf{h}_1,\mathbf{h}_2$ гиперпараметры, отличающиеся только параметрами распределения структуры:
 \[
     \mathbf{h}_1 = [\mathbf{s}_1, \text{diag}(\mathbf{A}_1)], \mathbf{h}_2 = [\mathbf{s}_2, \text{diag}(\mathbf{A}_2)],\quad \mathbf{s}_1 \neq \mathbf{s}_2, \mathbf{A}_1 = \mathbf{A}_2.
 \]
-Метапараметры $\lambda_1, \lambda_2$ не влияют на значение функции $Q$ при гиперпараметрах, отличающихся только параметрами распределения структуры, поэтому значение функции $Q$ для них будет неизменно при любых значениях $\lambda_1, \lambda_2$.
+Метапараметры $\lambda_1, \lambda_2$ не влияют на значение функции $Q$ при гиперпараметрах, отличающихся только параметрами распределения структуры, поэтому значение функции $Q$ для них будет неизменно при любых значениях $\lambda_1, \lambda_2$. Приходим к противоречию.
 
 \end{proof}
 
