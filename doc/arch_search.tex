@@ -542,7 +542,12 @@ $$ для всех $\boldsymbol{\theta}\in U_{\boldsymbol{\theta}}, \mathbf{h} \
 \end{proof}
 
 \begin{theorem}
-Пусть $q_{\boldsymbol{\Gamma}}$ --- абсолютно непрерывное распределение с дифференцируемой плотностью, такой что градиент плотности  является нулевым не более чем счетное количество раз. Тогда задача~\eqref{eq:optim_elbo_method} не является обобщающей.
+Пусть $q_{\boldsymbol{\Gamma}}$ --- абсолютно непрерывное распределение с дифференцируемой плотностью, такой что:
+\begin{enumerate}
+\item градиент плотности $\nabla_{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}} q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})$ является нулевым не более чем счетное количество раз. 
+\item выражение $\nabla_{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}} q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}}) \text{log}p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})$ ограничено на $U_{\boldsymbol{\theta}}$ некоторой случайной величиной с конечным первым моментом.
+\end{enumerate}
+Тогда задача~\eqref{eq:optim_elbo_method} не является обобщающей.
 \end{theorem}
 \begin{proof}
 Пусть выполнены условия критерия 6 о переборе структур. 
@@ -557,6 +562,7 @@ $$ для всех $\boldsymbol{\theta}\in U_{\boldsymbol{\theta}}, \mathbf{h} \
 \[
 \nabla_{\boldsymbol{\theta}}  \text{D}_{\text{KL}}(q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_2) | p(\boldsymbol{\Gamma}| \boldsymbol{\lambda})) = \nabla_{\boldsymbol{\theta}} \text{D}_{\text{KL}}(q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_2) | p(\boldsymbol{\Gamma}| \boldsymbol{\lambda}')),
 \] 
+Из второго условия теоремы следует, что по теореме Лебега о мажорируемой сходимости, осущестивм переход дифференцирования под знак интеграла:
 \[
 \int_{\boldsymbol{\Gamma} \in \amsmathbb{\Gamma}} \nabla_{\boldsymbol{\theta}_\Gamma} q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_2) (\text{log}~p(\boldsymbol{\Gamma}| \boldsymbol{\lambda}) - \text{log}~p(\boldsymbol{\Gamma}| \boldsymbol{\lambda}')) d\boldsymbol{\Gamma} = 0.
 \]
@@ -575,7 +581,6 @@ $$ для всех $\boldsymbol{\theta}\in U_{\boldsymbol{\theta}}, \mathbf{h} \
 
 В качестве обобщающей задачи оптимизации предлагается оптимизационную задачу следующего вида:
 \begin{equation}
-\tag{$Q^{*}$}
 \label{eq:qopt}
 \mathbf{h}^{*} = \argmax_{\mathbf{h}} Q = 
 \end{equation}
@@ -602,9 +607,9 @@ $$ для всех $\boldsymbol{\theta}\in U_{\boldsymbol{\theta}}, \mathbf{h} \
 \begin{theorem}
 Пусть:
 \begin{enumerate}[label={\arabic*)}] 
-\item задано непустое множество непрерывных по параметрам распределений на структуре $\mathbf{P}$;
+\item задано непустое множество непрерывных по параметрам распределений на структуре $\mathbf{P}$, где хотя бы одно распределение принадлежит Gumbel-Softmax-распределению.
 
-\item вариационное распределение $q = q_{\  boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}}) q_{\mathbf{w}}(\mathbf{w}| \boldsymbol{\Gamma},\boldsymbol{\theta}_{\boldsymbol{\Gamma}})$ является  абсолютно непрерывным, плотность которого непрерывна по метапараметрам $\boldsymbol{\lambda}$;
+\item вариационное распределение $q = q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}}) q_{\mathbf{w}}(\mathbf{w}| \boldsymbol{\Gamma},\boldsymbol{\theta}_{\boldsymbol{\Gamma}})$ является  абсолютно непрерывным, плотность которого непрерывна по метапараметрам $\boldsymbol{\lambda}$;
 
 \item задан компакт  $U = U_{\boldsymbol{\theta}} \times U_{\mathbf{h}} \times U_{\boldsymbol{\lambda}} \subset \amsmathbb{\Theta} \times \mathbb{H} \times \amsmathbb{\Lambda}$, где параметры распределений $\mathbf{P} \in \amsmathbb{\Lambda}$, область $U_{\boldsymbol{\theta}}$ декомпозируется на две области $U_{\boldsymbol{\theta}} = U_{\boldsymbol{\theta}_{\mathbf{w}}} \times U_{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}}$;
 
@@ -619,6 +624,22 @@ $$ для всех $\boldsymbol{\theta}\in U_{\boldsymbol{\theta}}, \mathbf{h} \
 \max_{\mathbf{h}} \text{log} p (\mathbf{h}|\boldsymbol{\lambda})-\min_{\mathbf{h}} \text{log}~p(\mathbf{h}|\boldsymbol{\lambda}) < \max_{\mathbf{h}} Q(\mathbf{h}) -  \min_{\mathbf{h}} Q(\mathbf{h}).
 \] 
 при $\boldsymbol{\lambda}^\text{struct}_Q = \mathbf{0}, \lambda^\text{prior}_Q = 0$.
+
+\item существует значение метапараметров $ \lambda^\text{prior}_\text{Q}, \lambda_1, \lambda_2, \lambda_\text{temp}$, такое что 
+\[
+    \max_{\mathbf{h}} \text{log}~p (\mathbf{h}|\boldsymbol{\lambda}) - \min_{\mathbf{h}} \text{log}~p (\mathbf{h}|\boldsymbol{\lambda})  + \max_{\mathbf{h}} \min_{\boldsymbol{\theta}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) -
+\]
+\[ \min_{\mathbf{h}, \boldsymbol{\theta}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) + \max_{\boldsymbol{\theta}}\frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w})  - 
+\]
+\[
+ - \min_{\boldsymbol{\theta}}\frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) < \max_{\boldsymbol{\theta}, \mathbf{h}} D_{\text{KL}} - \min_{\boldsymbol{\theta}, \mathbf{h}} D_{\text{KL}}.
+\]
+
+\item существуют значения метапараметров $\lambda^\text{prior}_\text{Q},\lambda^\text{likelihood}_\text{Q}, \lambda_1, \lambda_2, \lambda_\text{temp},$ такие что 
+\[
+\max_{\mathbf{h}} D_{\text{KL}} - \min_{\mathbf{h}} D_{\text{KL}} < \frac{\max_{\mathbf{h}} Q - \min_{\mathbf{h}} Q }{\max_{\lambda_\text{comb}}} 
+\]
+при $\boldsymbol{\lambda}^\text{comb}_\text{Q} = 0.$
 
 \end{enumerate}
 Тогда задача~\eqref{eq:qopt} является обобщающей на $U$.
@@ -648,7 +669,7 @@ Q(\mathbf{h}_1)-Q(\mathbf{h}_2) = \lambda^\text{likelihood}_\text{Q} \mathsf{E}_
 \]
 
 Докажем критерий 4. 
-Пусть $\lambda^{\text{likelihood}}_\text{Q} = 0, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$. 
+Пусть $\boldsymbol{\lambda}$ удовлетворяют восьмому условию и $\lambda^{\text{likelihood}}_\text{Q} = 0, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$.
 Пусть 
 \[
 K_2 =  \max_{\mathbf{h}} \text{log}~p (\mathbf{h}|\boldsymbol{\lambda}) - \min_{\mathbf{h}} \text{log}~p (\mathbf{h}|\boldsymbol{\lambda})  + \max_{\mathbf{h}} \min_{\boldsymbol{\theta}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) -
@@ -661,7 +682,7 @@ K_2 =  \max_{\mathbf{h}} \text{log}~p (\mathbf{h}|\boldsymbol{\lambda}) - \min_
 Пусть $\mathbf{h}_1, \mathbf{h}_2 \in U_\mathbf{h}, Q(\mathbf{h}_1)-Q(\mathbf{h}_2)>K_1$.
 Рассмотрим разность параметрических сложностей двух векторов:
 \[
-C_p(\boldsymbol{\theta}_2)-C_p(\boldsymbol{\theta}_1) = \min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) + \frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) 
+C_p(\boldsymbol{\theta}_2)-C_p(\boldsymbol{\theta}_1) = \min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) - 
 \]
 \[
 -\min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) \geq
@@ -676,31 +697,31 @@ C_p(\boldsymbol{\theta}_2)-C_p(\boldsymbol{\theta}_1) = \min_{\mathbf{h}} D_\tex
 \]
 % Доводим до Q
 \[
-= Q(\mathbf{h}_2)-Q(\mathbf{h}_1)-\text{log}~p (\mathbf{h}_2|\boldsymbol{\lambda})+\text{log}~p (\mathbf{h}_1|\boldsymbol{\lambda})+
+= Q(\mathbf{h}_1)-Q(\mathbf{h}_2)-\text{log}~p (\mathbf{h}_1|\boldsymbol{\lambda})+\text{log}~p (\mathbf{h}_2|\boldsymbol{\lambda})+
 \]
-\[+\min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) -  D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})) >
+\[+\min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) -  D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})) >
 \]
 % Доводим до K_2
 \[
->K_2 -\text{log}~p (\mathbf{h}_2|\boldsymbol{\lambda})+\text{log}~p (\mathbf{h}_1|\boldsymbol{\lambda}) + \min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) 
+>K_2 -\text{log}~p (\mathbf{h}_1|\boldsymbol{\lambda})+\text{log}~p (\mathbf{h}_2|\boldsymbol{\lambda}) + \min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) 
 \]
 \[
--  D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})).
+-  D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})).
 \]
 Рассмотрим разность:
-\[\min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))  - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})) =
+\[\min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))  - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})) =
 \]
 \[
 = \min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))  - \frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1) \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) +
 \]
 \[
-+ \max_{\boldsymbol{\theta}}  (\frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})} \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda}))) \geq
++ \max_{\boldsymbol{\theta}}  (\frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})} \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda}))) \geq
 \]
 % взяли максимум от правдоподобия
 \[
     \geq \min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) - \max_{\boldsymbol{\theta}}\frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) +
 \]
-\[ + \max_{\boldsymbol{\theta}}  (\min_{\boldsymbol{\theta}'} \frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta'})} \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})))  \geq
+\[ + \max_{\boldsymbol{\theta}}  (\min_{\boldsymbol{\theta}'} \frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta'})} \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})))  \geq
 \]
 % добавили минимум под максимум
 \[
@@ -709,7 +730,7 @@ C_p(\boldsymbol{\theta}_2)-C_p(\boldsymbol{\theta}_1) = \min_{\mathbf{h}} D_\tex
 \]
 \[
 + \min_{\boldsymbol{\theta}} \frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})} \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) 
-- \min_{\boldsymbol{\theta}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda}))) 
+- \min_{\boldsymbol{\theta}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda}))) 
  \geq
 \]
 % Взяли оценку от всех выражений
@@ -725,28 +746,32 @@ C_p(\boldsymbol{\theta}_2)-C_p(\boldsymbol{\theta}_1) = \min_{\mathbf{h}} D_\tex
 Докажем критерий 5. Пусть $\lambda^\text{likelihood}_\text{Q} = \lambda^\text{prior}_\text{L} = \lambda^\text{prior}_\text{Q} > 0$, $\boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$. Тогда функции $L$ и $Q$  можно записать как: $$L = Q \propto \left(\mathsf{E}_q p(\mathbf{y}|\mathbf{w}, \mathbf{X})-{D}_{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))\right),$$ что и требовалось доказать.
 
 Докажем критерий 6. 
-Пусть задан вектор метапараметров~$\boldsymbol{\lambda}$, удовлетворяющий восьмому условию теоремы. 
+Пусть задан вектор метапараметров~$\boldsymbol{\lambda}$, удовлетворяющий девятому условию теоремы и $\boldsymbol{\lambda} = \mathbf{0}$. 
 Возьмем в качестве $K_4$ следующее выражение:
 \[
-K_4 = 2 \frac{\max_{\mathbf{h}} Q - \min_{\mathbf{h}} Q }{\max_{\lambda_\text{comb}}}.
+K_4 = \frac{\max_{\mathbf{h}} Q - \min_{\mathbf{h}} Q }{\max_{\lambda_\text{comb}}}.
 \]
 
 
 
-Пусть вектор метапараметров $\boldsymbol{\lambda}'$ отличается от $\boldsymbol{\lambda}$ лишь метапараметром $\lambda_\text{comb}$. Для  обоих векторов метапараметров нижняя задача  оптимизации $L$ одинакова, поэтому выполняется первое условие свойства.
-Без ограничения общности предположим, что $Q(\mathbf{h}_1)-Q(\mathbf{h}_2) > 0$ при $\boldsymbol{\lambda}.$
-Положим распределение из $\mathbf{P}$ имеющим то же распределение, что и априорное $\mathbf{P} = \{p'(\boldsymbol{\Gamma})\}, p(\boldsymbol{\Gamma}) \sim \text{GS}(\mathbf{s}', \lambda_\text{temp}')\}$. 
+Пусть вектор метапараметров $\boldsymbol{\lambda}'$ отличается от $\boldsymbol{\lambda}$ лишь метапараметром $\boldsymbol{\lambda}_\text{comb}$. Для  обоих векторов метапараметров нижняя задача  оптимизации $L$ совпадает, поэтому выполняется первое условие критерия.
 
-Положим для $\boldsymbol{\lambda}$ параметр $\lambda_\text{comb}$ равным нулю: $\lambda_\text{comb} = 0$.
+Без ограничения общности предположим, что $Q(\mathbf{h}_1)-Q(\mathbf{h}_2) > 0$ при $\boldsymbol{\lambda}.$ Также без ограничения общности будем полгаать, что множестве $\mathbf{P}$ состоит только из одного распределения на структуре $\boldsymbol{\Gamma}$, равного распределению на структуре $p(\boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda}).$
+%Положим распределение из $\mathbf{P}$ имеющим то же распределение, что и априорное $\mathbf{P} = \{p'(\boldsymbol{\Gamma})\}, p(\boldsymbol{\Gamma}) \sim \text{GS}(\mathbf{s}', \lambda_\text{temp}')\}$. 
+
 Положим для $\boldsymbol{\lambda}'$ параметр $\lambda_\text{comb}$ равным максимальному значению: $\lambda_\text{comb} = \max \lambda_\text{comb}'$.
 Тогда при $\boldsymbol{\lambda}'$ неравенство 
-\[
-Q(\mathbf{h}_1)-Q(\mathbf{h}_2) < 0 
+\[\
+Q(\mathbf{h}_1|\boldsymbol{\lambda}')-Q(\mathbf{h}_2|\boldsymbol{\lambda}')  = Q(\mathbf{h}_1|\boldsymbol{\lambda})-Q(\mathbf{h}_2|\boldsymbol{\lambda})  + \lambda'_\text{comb} D_\text{KL}(p(\boldsymbol{\Gamma}|\mathbf{h}_2,\boldsymbol{\lambda}')|p(\boldsymbol{\Gamma}|\mathbf{h}_1,\boldsymbol{\lambda}')) >
 \]
-по построению константы $K_4$.
+\[
+   Q(\mathbf{h}_1|\boldsymbol{\lambda})-Q(\mathbf{h}_2|\boldsymbol{\lambda})  +  \lambda'_\text{comb}K_4   = Q(\mathbf{h}_1|\boldsymbol{\lambda})-Q(\mathbf{h}_2 + |\boldsymbol{\lambda})  + \max_{\mathbf{h}} Q - \min_{\mathbf{h}} Q   =0,
+\]
+что и требовалось доказать.
 
 Докажем критерий 7. Достаточным условием непрерывности функций $L$, $Q$ является непрерывность входящих в нее слагаемых. 
-Т.к. априорные распределения задаются нерперывными функциями плотности, и функция плотности распределения структуры $\boldsymbol{\Gamma}$ ограничена на компакте, то дивергенция $D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\gamma})$ непрерывна по метапараметрам. Т.к. слагаемые функций оптимизации непрерывны, то непрерывна и сами функции оптимизации.
+Т.к. априорные распределения задаются нерперывными функциями плотности $p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{h}), p(\boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})$, и функция плотности $p(\boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})$ распределения структуры $\boldsymbol{\Gamma}$ ограничена на компакте, то дивергенция $D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})$ непрерывна по метапараметрам.
+Т.к. остальные слагаемые функций оптимизаций $L,Q$ также непрерывны по метапараметрам, то непрерывна и сами функции оптимизации.
 \end{proof}
 
 Метапараметрами данной задачи~\eqref{eq:qopt} являются коэффициенты $\lambda^\text{prior}_\text{Q}, \lambda^\text{prior}_\text{L}$, отвечающие за регуляризацию верхней и нижней задачи оптимизации, коэффициент $\lambda_\text{likelihood}^\text{Q}$ отвечает за максимизацию правдоподобия, а также параметры распрделений $\mathbf{P}$ и вектор коэффициентов перед ними $\boldsymbol{\lambda}^\text{struct}_\text{Q}$. 
@@ -828,69 +853,141 @@ TODO
 В данном разделе рассматриваются свойства предложенной задачи при различных значениях метапараметров, а также характер ассимптотического поведения задач.
 
 \begin{theorem}
-Пусть $m>>0$, ${\lambda_\text{prior}^L} > 0, m \gg 0, \frac{m}{\lambda_\text{prior}^L} \in \mathbb{N}.$ Тогда оптимизация функции
+Пусть $m \gg 0$, ${\lambda_\text{prior}^L} > 0, \frac{m}{\lambda_\text{prior}^L}   \in \mathbb{N}, \frac{m}{\lambda_\text{prior}^L}  \gg 0.$ Тогда оптимизация функции
 \[
 L = 
-{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \lambda_{\text{temp}},\mathbf{f})}}-{\lambda_\text{prior}^L\text{D}_{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}, \mathbf{f}})}
-\] эквивалентна оптимизации вариационной оценки обоснованности  $\mathsf{E}_q \text{log}~{p(\hat{\mathbf{y}} | \hat{\mathbf{X}}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \lambda_{\text{temp}},\mathbf{f})}-L\text{D}_{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}, \mathbf{f}})$
+{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})}}-{\lambda_\text{prior}^L \text{D}_{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})||p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}})}
+\] эквивалентна оптимизации вариационной оценки обоснованности  $\mathsf{E}_q \text{log}~{p(\hat{\mathbf{y}} | \hat{\mathbf{X}}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \lambda_{\text{temp}},\mathbf{f})}\text{D}_{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})||p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}})$
 для произвольной случайной подвыборки $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ мощности $\frac{m}{{\lambda_\text{prior}^L}}$ из генеральной совопкупности.
 \end{theorem}
 \begin{proof}
 Рассмотрим величину  $\frac{1}{m}L$: \\
-\[
+\begin{equation}
+\label{eq:l_m}
     \frac{1}{m}L = \frac{1}{m}\mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X},  \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})-\frac{\lambda_\text{prior}^L}{m}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})).
-\]
+\end{equation}
 
-При $m >> 0$ по усиленному закону больших чисел данная функция эквивалентна:
+При $m \gg 0$ по усиленному закону больших чисел данная функция эквивалентна:
 \[
     \frac{1}{m}L \approx  \mathsf{E}_{y, \mathbf{x}} \mathsf{E}_{q} \text{log}p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}) -\frac{\lambda_\text{prior}^L}{m}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})).
 \]
 
 Аналогично рассмотрим вариационную оценку обоснованности для произвольной выборки мощностью $m_0 = \frac{m}{\lambda_\text{prior}^L}$, усредненную на мощность выборки:
-\[
+\begin{equation}
+\label{eq:l_m0}
     \frac{1}{m_0}\mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X},  \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})-\frac{1}{m_0}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) \approx
-\]
+\end{equation}
 \[
 \approx  \mathsf{E}_{y, \mathbf{x}} \mathsf{E}_{q} \text{log}p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}) -\frac{1}{m_0}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) = 
 \]
 \[
 = \mathsf{E}_{y, \mathbf{x}} \mathsf{E}_{q} \text{log}p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}) -\frac{\lambda_\text{prior}^L}{m}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})).
 \]
-Таким образом, задачи оптимизации совпадают, что и требовалось доказать.
+Таким образом, задачи оптимизации функций~\eqref{eq:l_m},\eqref{eq:l_m0} совпадают, что и требовалось доказать.
 \end{proof}
 Таким образом, для достаточно большого $m$ и $\lambda^{\text{prior}}_L>0, \lambda^{\text{prior}}_L \neq 1$ оптимизация параметров и гиперпараметров эквивалентна нахождению оценки обоснованности для выборки другой мощности: чем выше значение $ \lambda^{\text{prior}}_L$, тем выше мощность выборки, для которой проводится оптимизация.
 
+
 Следующие теоремы говорят о соответствии предлагаемой обобщающей задачи вероятностной модели. В частности, задача оптимизации параметров и гиперпараметров соответствует двухуровневому байесовскому выводу.
 \begin{theorem}
-Пусть задано параметрическое множество вариационных распределений: $q(\boldsymbol{\theta})$. 
-Пусть ${\lambda^L_\text{likelihood}} = {\lambda^L_\text{prior}=\lambda^Q_\text{prior}}>0, {\boldsymbol{\lambda}^Q_{\text{struct}}}=\mathbf{0}$. Тогда:
+Пусть ${\lambda^Q_\text{likelihood}} = {\lambda^L_\text{prior}=\lambda^Q_\text{prior}}=1, {\boldsymbol{\lambda}^Q_{\text{struct}}}=\mathbf{0}$. Тогда:
 \begin{enumerate}
 \item Задача оптимизации~\eqref{eq:qopt} доставляет максимум апостериорной вероятности гиперпараметров с использованием вариационной оценки обоснованности:
 \vspace{-0.3cm}
 \[
     \text{log}\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})+{\text{log}p(\mathbf{h}|\mathbf{f})} \to \max_{\mathbf{h}}.
 \]
-\item Вариационное распределение $q$ приближает апостериорное распределение $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})$ наилучшим образом:
+\item Вариационное распределение $q$ приближает апостериорное распределение $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}, \mathbf{f})$ наилучшим образом:
 \vspace{-0.3cm}
 \[
-    {D}_\text{KL}(q||p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})) \to \min_{\boldsymbol{\theta}}.
+    {D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})) \to \min_{\boldsymbol{\theta}}.
 \]
 \end{enumerate}
 \end{theorem}
 \begin{proof}
-TODO
-\end{proof}
-\begin{theorem}
-Пусть также распределение $q$ декомпозируется на два независимых распределения для параметров $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$ модели $\mathbf{f}$.
-Тогда вариационные распределения $q_{\mathbf{w}}, q_{\boldsymbol{\Gamma}}$приближают апостериорные распределения $ p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f}), p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})$ наилучшим образом:
+При $\lambda^Q_\text{likelihood} = \lambda^L_\text{prior} = 1$ как верхняя, так и нижняя задачи оптимизации~\eqref{eq:qopt} эквивалентны оптимизации вариационной оценки обоснованности, поэтому первое утверждение выполняется.
+
+Докажем второе утвреждение. Рассмотрим логарифм обоснованности модели: 
 \[
-    {D}_\text{KL}(q_{\boldsymbol{\Gamma}}||p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})) \to \min, \quad
-    {D}_\text{KL}(q_{\mathbf{w}}||p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \mathbf{f})) \to \min.
+\text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = \mathsf{E}_q \text{log}\frac{p(\mathbf{y}|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma})p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})}{q(\mathbf{w}, \boldsymbol{\Gamma}| \boldsymbol{\theta})} +
 \]
+\[
++ {D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})) = 
+\]
+\[
+ \mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}) -{D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) + {D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})).
+\]
+Из данного равенства следует:
+\[
+\text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) - {D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})) =
+\]
+\[
+    \mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}) -{D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})),
+\]
+где правая часть равенства соответствует вариационной оценки обоснованности. Выражение $\text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})$ не зависит от вариационного распределения  $q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})$, поэтому максимизации вариационной оценки эквивалентна минимизации дивергенции ${D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}))$.
+\end{proof}
+
+
+
+
+
+\begin{theorem}
+Пусть $\frac{{\lambda_{\text{prior}}^Q}}{{\lambda_{\text{likelihood}}^Q}} = {\lambda_{\text{prior}}^L}$. 
+Тогда задачи оптимизации~\eqref{eq:qopt} представима в виде одноуровневой задачи оптимизации:
+\[
+= {\lambda_\text{likelihood}^\text{Q}\mathsf{E}_{{q(\mathbf{w}, \boldsymbol{\Gamma}| \boldsymbol{\theta})}} \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})}}
+ -\]
+\vspace{-0.3cm}
+\[- {\lambda^\text{prior}_\text{Q}\text{D}_{KL}\bigl( q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)}  -\]
+\vspace{-0.3cm}
+\[
+-{\sum_{p' \in \mathbf{P}, \lambda \in \boldsymbol{\lambda}^\text{struct}_\text{Q}} \lambda\text{D}_{KL}(\boldsymbol{\Gamma} | p')+\text{log}p(\mathbf{h}|\mathbf{f})} \to \max_{\mathbf{h}, \boldsymbol{\theta}}. 
+\]  
 \end{theorem}
 \begin{proof}
-TODO
+Параметры вариационного распределения $q$ не зависят от слагаемых вида $\text{log}p(\mathbf{h}|\mathbf{f})$ и $\text{D}_{KL}(\boldsymbol{\Gamma} | p'), p' \in \mathbf{P},$ поэтому нижняя задача оптимизации:
+\[
+    \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})} -
+\]
+\[
+    - {\lambda^\text{prior}_\text{L}\text{D}_{KL}\bigl( q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)} \to \max_{\boldsymbol{\theta}}
+\]
+эквивалентна следующей задаче:
+\[
+    \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})} -
+\]
+\[
+    - {\lambda^\text{prior}_\text{L}\text{D}_{KL}\bigl( q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)} \to \max_{\boldsymbol{\theta}}
+\]
+\[
+-{\sum_{p' \in \mathbf{P}, \lambda \in \boldsymbol{\lambda}^\text{struct}_\text{Q}} \lambda\text{D}_{KL}(\boldsymbol{\Gamma} | p')+\text{log}p(\mathbf{h}|\mathbf{f})} \to \max_{\boldsymbol{\theta}}
+\] 
+для любого вектора $\boldsymbol{\lambda}^\text{struct}_\text{Q}$. 
+Т.к. выполнено равенство  $\frac{{\lambda_{\text{prior}}^Q}}{{\lambda_{\text{likelihood}}^Q}} = {\lambda_{\text{prior}}^L}$, то нижняя задача оптимизации экивалентна следующей задаче:
+\[
+= {\lambda_\text{likelihood}^\text{Q}\mathsf{E}_{{q(\mathbf{w}, \boldsymbol{\Gamma}| \boldsymbol{\theta})}} \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})}}
+ -\]
+\vspace{-0.3cm}
+\[- {\lambda^\text{prior}_\text{Q}\text{D}_{KL}\bigl( q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)}  -\]
+\vspace{-0.3cm}
+\[
+-{\sum_{p' \in \mathbf{P}, \lambda \in \boldsymbol{\lambda}^\text{struct}_\text{Q}} \lambda\text{D}_{KL}(\boldsymbol{\Gamma} | p')+\text{log}p(\mathbf{h}|\mathbf{f})} \to \max_{\boldsymbol{\theta}},
+\]  
+а значит верхняя и нижняя задачи совпадают:
+\[
+    \mathbf{h} = \argmax_{\mathbf{h}'} Q(\mathbf{h}, \boldsymbol{\theta}^{*}(\mathbf{h}')),
+\]
+где 
+\[
+     \boldsymbol{\theta}^{*}(\mathbf{h}') = \argmax_{\boldsymbol{\theta}'} Q(\mathbf{h}', \boldsymbol{\theta}')).
+\]
+Из свойства 
+\[
+    \max_{\mathbf{h}}\max_{\boldsymbol{\theta}} Q(\boldsymbol{\theta}, \mathbf{h}) = \max_{\boldsymbol{\theta}, \mathbf{h}} Q(\boldsymbol{\theta}, \mathbf{h})
+\]
+следует доказательство теоремы.
 \end{proof}
+
 
 Следующие теоремы посвящены ассимптотическим свойствам представленной обобщающей задачи.
 \begin{theorem}
