@@ -360,23 +360,25 @@ C_p(\boldsymbol{\theta}|U_\mathbf{h},\boldsymbol{\lambda}) = \min_{\mathbf{h} \i
     ||F_q(\boldsymbol{\theta})-F_p(\mathbf{h})||_\text{TV},\leq\sqrt{2\text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})\right)},
 \]
 где $||\cdot||_\text{TV}$ --- расстояние по вариации, $F_q, F_p$ --- функции распределения   $q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})$ и $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}, \boldsymbol{\lambda})$.
+Т.к. дивергенция состоит из двух неотрицательных величин, то обе они стремятся к нулю.
+Рассотрим вторую величину:
+\[
+   \lim 0 = \text{D}_\text{KL}(q_\mathbf{w}|p(\mathbf{w}) = |\int_{\boldsymbol{\Gamma}} \text{D}_\text{KL}(q_\mathbf{w}|p(\mathbf{w})q(\boldsymbol{\Gamma})| \geq \int_{q} ||F_q - F_p||_\text{TV}.  
+\]
 Отсюда $ \lim_{i \to \infty} ||F_q(\boldsymbol{\theta})-F_p(\mathbf{h})||_\text{TV} = 0.$
 По теореме Шеффе данное выражение можно переписать как:
 \[
-    \lim \frac{1}{2}\iint_{\mathbf{w},\boldsymbol{\Gamma}} |p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}, \boldsymbol{\lambda}) -  q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|d\boldsymbol{\Gamma}d\mathbf{w} = 0.
+    \lim \frac{1}{2}\iint_{\mathbf{w},\boldsymbol{\Gamma}} |p(\mathbf{w}| \mathbf{h}, \boldsymbol{\lambda}) -  q(\mathbf{w}|\boldsymbol{\theta})|q(\boldsymbol{\Gamma}) d\boldsymbol{\Gamma}d\mathbf{w} = 0.
 \]
 
+Для произвольного $\boldsymbol{\theta}_j$ рассмотрим выражение:
+\[
+    |\int_{\boldsymbol{\Gamma}} \frac{q_j(\mathsf{E}_q \mathbf{w})}{q(\mathbf{M})} -  \frac{q_j(\mathsf{E}_p \mathbf{w})}{{q(\mathbf{M})}}| \leq \int_{\boldsymbol{\Gamma}} |\frac{q_j(\mathsf{E}_q \mathbf{w})}{{q(\mathbf{M})}} -  \frac{q_j(\mathsf{E}_p \mathbf{w})}{{q(\mathbf{M})}}| \leq \frac{\max{L}}{\min q(\mathbf{M})}\int_{\boldsymbol{\Gamma}}  |\mathsf{E}_q \mathbf{w} - \mathsf{E}_p \mathbf{w}|  \leq
+\]
+\[
+    \leq L\int_{\boldsymbol{\Gamma}} |\mathbf{w}| |q - p|.
+\]
 
-Рассмотрим разность усредненных мод:
-\[
-|\mathsf{E}_{q_{\boldsymbol{\Gamma}}}\text{mode}~q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})-\mathsf{E}_{p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})} \text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})| = 
-\]
-\[
-=|\mathsf{E}_{q_{\boldsymbol{\Gamma}}} \mathsf{E}_{q_\mathbf{w}} \mathbf{w}-\mathsf{E}_{p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})} \mathsf{E}_{p(\mathbf{w}| \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})} \mathbf{w}| =
-\]
-\[
-= |\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})}\mathbf{w}-\mathsf{E}_{p(\mathbf{w}|\mathbf{h})}\mathbf{w}|.
-\]
 %https://math.stackexchange.com/questions/112786/convergence-in-law-and-uniformly-integrability
 Т.к. вторые моменты $\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})}\mathbf{w}^2,\mathsf{E}_{p(\mathbf{w}|\mathbf{h})}\mathbf{w}^2$ конечны, то случайная величина $\mathbf{w}$ равномерно интегрируема как при маргинальном распределении $q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})$, так и при маргинальном распределении $p(\mathbf{w}|\mathbf{h})$.
 Определим случайную величину $\boldsymbol{\nu}(t), t \geq 0$ следующим образом:
@@ -392,49 +394,30 @@ C_p(\boldsymbol{\theta}|U_\mathbf{h},\boldsymbol{\lambda}) = \min_{\mathbf{h} \i
 где матожидание берется по  распределениям  $q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})$ и $p(\mathbf{w}|\mathbf{h})$.
 Тогда 
 \[
-    |\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})}\mathbf{w}-\mathsf{E}_{p(\mathbf{w}|\mathbf{h})}\mathbf{w}| \leq \int_{\mathbf{w}} |\mathbf{w} -\boldsymbol{\nu}(t)||p(\mathbf{w}|\mathbf{h})-q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} + 
+    \int_{\boldsymbol{\Gamma}} |\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})}\mathbf{w}-\mathsf{E}_{p(\mathbf{w}|\mathbf{h})}\mathbf{w}| \leq     \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |\mathbf{w} -\boldsymbol{\nu}(t)||p(\mathbf{w}|\mathbf{h})-q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} + 
 \]
 \[
- + \int_{\mathbf{w}} |\boldsymbol{\nu}(t)||p(\mathbf{w}|\mathbf{h})-q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} \leq
+ +    \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |\boldsymbol{\nu}(t)||p(\mathbf{w}|\mathbf{h})-q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} \leq
 \]
 \[
-    \leq \int_{\mathbf{w}} |\mathbf{w} -\boldsymbol{\nu}(t)|p(\mathbf{w}|\mathbf{h}) d\mathbf{w} + \int_{\mathbf{w}} |\mathbf{w} -\boldsymbol{\nu}(t)|q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w}  +
+    \leq     \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |\mathbf{w} -\boldsymbol{\nu}(t)|p(\mathbf{w}|\mathbf{h}) d\mathbf{w} +    \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |\mathbf{w} -\boldsymbol{\nu}(t)|q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w}  +
 \]
-\[ +  \int_{\mathbf{w}} |\boldsymbol{\nu}(t)|p(\mathbf{w}|\mathbf{h}) - q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w}.
+\[ +      \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |\boldsymbol{\nu}(t)|p(\mathbf{w}|\mathbf{h}) - q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w}.
 \]
 Обозначим за $\mathbf{h}_i$ --- решение задачи~\eqref{eq:dkl_solve} для вектора $\boldsymbol{\theta}_i$.
 Т.к. $|\boldsymbol{\nu}(t)|$ --- ограничена, то 
 \[
-   \int_{\mathbf{w}} |\boldsymbol{\nu}(t)|p(\mathbf{w}|\mathbf{h}_i) - q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} \leq t \int_{\mathbf{w}} |p(\mathbf{w}|\mathbf{h}) - q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} =
+      \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |\boldsymbol{\nu}(t)|p(\mathbf{w}|\mathbf{h}_i) - q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} \leq t     \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |p(\mathbf{w}|\mathbf{h}) - q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} =
 \]
 \[
-= t\iint_{\mathbf{w},\boldsymbol{\Gamma}} |p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}_i, \boldsymbol{\lambda}) -  q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|d\boldsymbol{\Gamma}d\mathbf{w} \to_{i \to \infty} 0.
+= t    \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}_i, \boldsymbol{\lambda}) -  q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|d\boldsymbol{\Gamma}d\mathbf{w} \to_{i \to \infty} 0.
 \]
 \[
-   \lim_{i \to \infty} |\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})}\mathbf{w}-\mathsf{E}_{p(\mathbf{w}|\mathbf{h}_i)}\mathbf{w}| \leq \int_{\mathbf{w}} |\mathbf{w} -\boldsymbol{\nu}(t)||p(\mathbf{w}|\mathbf{h}_i)-q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} 
+   \lim_{i \to \infty}     \int_{\boldsymbol{\Gamma}}  |\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})}\mathbf{w}-\mathsf{E}_{p(\mathbf{w}|\mathbf{h}_i)}\mathbf{w}| \leq      \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |\mathbf{w} -\boldsymbol{\nu}(t)||p(\mathbf{w}|\mathbf{h}_i)-q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} 
 \]
-для любого $t$. Устремляя $t$ к бесконечности, получим $ \lim_{i \to \infty} |\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})}\mathbf{w}-\mathsf{E}_{p(\mathbf{w}|\mathbf{h}_i)}\mathbf{w}|  = 0.$
+для любого $t$. Устремляя $t$ к бесконечности, получим $ \lim_{i \to \infty}     \int_{\boldsymbol{\Gamma}}  |\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})}\mathbf{w}-\mathsf{E}_{p(\mathbf{w}|\mathbf{h}_i)}\mathbf{w}|  = 0.$
 Таким образом, мода $q(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w})$  стремится в среднем к моде априорного распределения $\mathbf{M}$.
 
-Рассмотрим предел интегралов:
-\[
-   0 = \lim_{i \to \infty} \mathsf{E}_{q({\boldsymbol{\Gamma}}|\boldsymbol{\theta}_{\boldsymbol{\Gamma},i})} \mathsf{E}_{q({\mathbf{w}}|\boldsymbol{\theta}_{\mathbf{w},i})} \mathbf{w}-\mathbf{M}| =  \lim_{i \to \infty}|\int_{\boldsymbol{\Gamma}}\int_{\mathbf{w}} |(\mathbf{w}-\mathbf{M})| q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma},i})  q(\mathbf{w}|\boldsymbol{\Gamma},\boldsymbol{\theta}_{\mathbf{w},i}) d\mathbf{w}d\boldsymbol{\Gamma}.
-\]
-Пусть $\boldsymbol{\theta}_j$ --- некоторые вариационные параметры, принадлежащие компакту $U_{\boldsymbol{\theta}}$. Т.к. $q$ --- непрерывно-дифференцируемая функция, то она является липшецевой. Пусть $C_L$ --- его констанста Липшища. Тогда:
-\[
-    \lim_{i \to \infty}|\int_{\boldsymbol{\Gamma}}q(\int_{\mathbf{w}} \mathbf{w} d\mathbf{w}) -q(\mathbf{M}) q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma},i})  d\boldsymbol{\Gamma} \leq
-\]
-\[ \leq  L\lim_{i \to \infty}|\int_{\boldsymbol{\Gamma}}\int_{\mathbf{w}} (\mathbf{w}-\mathbf{M}) q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma},i})  q(\mathbf{w}|\boldsymbol{\Gamma},\boldsymbol{\theta}_{\mathbf{w},i}) d\mathbf{w}d\boldsymbol{\Gamma} = 0.
-\]
-Тогда 
-\[
-    \lim_{i \to \infty}|\int_{\boldsymbol{\Gamma}}\frac{q(\int_{\mathbf{w}} \mathbf{w}}{q(\mathbf{M}} d\mathbf{w}) -1|  = 0.
-\]
-Устремим $j \to \infty$. Т.к.  выражение --- непрерывно-дифференцируемое, то возможно перестановка пределов:
-
-\[
-    \lim_{j \to \infty} \lim_{i \to \infty}|\int_{\boldsymbol{\Gamma}}\frac{q(\int_{\mathbf{w}} \mathbf{w}}{q(\mathbf{M}} d\mathbf{w}) -1|  = 0.
-\]
 \end{proof}
 
 Теорема утверждает, что при устремлении параметрической сложности модели к нулю, все параметры модели подлежат удалению в среднем по всем возможным значениям  структуры $\boldsymbol{\Gamma}$ модели. Заметим, что теорема применима для случая, когда последовательность вариационных распределений $q$ не имеет предела. Так, в случае, если структура $\boldsymbol{\Gamma}$ определена однозначно, последовательность $q_i$ может являться последовательностью нормальных распределений, чье матожидание стремится к нулю:
@@ -954,6 +937,24 @@ L =
 \end{proof}
 
 
+Таким образом, предлагаемая обобщающая задача позволяет производить оптимизацию вариационной оценки обоснвоанности, а также оптимизацию обоснованности для выбор с другим эффекитвным размером. Чем больше размер выборки, тем больше влияние априорного распределения, которое выступает в качестве регуляризатора. Можно регулировать сложность модели следующим образом:
+\begin{enumerate}
+\item Калибруя верхнюю оптимизацию;
+\item Калибруя нижнюю оптимизацию;
+\item Калибруя обе оптимизации.
+\end{enumerate}
+Последний вариант соответствует теореме о калибровке. 
+Рассмотрим различие варианта 1 и 2 на примере.
+\begin{example}
+Пусть задана модель и выборка и мы хотим уменьшить вес априорного распределения.
+В случае, если мы калибруем нижнюю оптимизацию (->0), на первом уровне задача совпадает с задачей поиска наиболее правдоподобных параметров, при этом на верхнем уровне мы ищем те параметры, которые отвечают наилучшим с точки зрения обоснованности.
+
+Если мы калибруем верхнюю оптимизацию или обе оптимизации, то это приведет к поиску наиболее правдоподобных параметров и гиперпараметров. 
+
+Таким образом, основная разница между калибровкой верхней и нижней оптимизации заключается в следующем:
+при калибровке нижнего уровня мы получаем модель, соответствующую критерию максимального правдоподобия.
+В случае калибровки верхнего уровня мы получаем модель с параметрами, полученными в соответствии с методом максимальной обоснованности, но при минимально возможной регуляризации априорным распределением.
+\end{example}
 
 
 

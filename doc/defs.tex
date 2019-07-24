@@ -1,0 +1,59 @@
+% nb: очень не люблю макросы. Но что поделать 
+% https://stackoverflow.com/questions/1509799/how-to-replace-latex-macros-with-their-definitions-using-latex
+\newcommand{\D}{\mathfrak{D}}
+\newcommand{\x}{\mathbf{x}}
+\newcommand{\X}{\mathbf{X}}
+\newcommand{\y}{\mathbf{y}}
+\newcommand{\Xb}{\mathbb{X}}
+\newcommand{\yb}{\mathbb{Y}}
+\newcommand{\F}{\mathfrak{F}}
+
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\Wb}{\mathbb{W}}
+\newcommand{\Uw}{U_\mathbf{w}}
+
+\newcommand{\G}{\boldsymbol{\Gamma}}
+\newcommand{\Gb}{\amsmathbb{\Gamma}}
+\newcommand{\UG}{U_{\boldsymbol{\Gamma}}}
+
+\newcommand{\h}{\mathbf{h}}
+\newcommand{\Hb}{\mathbb{H}}
+\newcommand{\Uh}{U_{\mathbf{h}}}
+
+\newcommand{\teta}{\boldsymbol{\theta}}
+\newcommand{\Tetab}{\amsmathbb{\Theta}}
+\newcommand{\Uteta}{U_{\boldsymbol{\theta}}}
+
+\newcommand{\tetaw}{\boldsymbol{\theta}_\mathbf{w}}
+\newcommand{\Tetawb}{\amsmathbb{\Theta}_\mathbf{w}}
+\newcommand{\Utetaw}{U_{\boldsymbol{\theta}_\mathbf{w}}}
+\newcommand{\tetaG}{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}}
+\newcommand{\TetaGb}{\amsmathbb{\Theta}_{\boldsymbol{\Gamma}}}
+\newcommand{\UtetaG}{U_{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}}}
+
+\newcommand{\lam}{\boldsymbol{\lambda}}
+\newcommand{\Lamb}{\amsmathbb{\lambda}}
+\newcommand{\Ulam}{U_{\boldsymbol{\lambda}}}
+
+\newcommand{\prior}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})}
+\newcommand{\priorG}{p(\boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})}
+\newcommand{\priorw}{p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h},\boldsymbol{\lambda})}
+
+
+\newcommand{\post}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h},\boldsymbol{\lambda})}
+\newcommand{\postG}{p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h},\boldsymbol{\lambda})}
+\newcommand{\postw}{p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \boldsymbol{\Gamma}, \mathbf{h},\boldsymbol{\lambda})}
+
+
+\newcommand{\q}{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})}
+\newcommand{\qG}{q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})}
+\newcommand{\qw}{q_\mathbf{w}(\mathbf{w}| \boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w})}
+
+\newcommand{\LL}{p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})}
+\newcommand{\EV}{p(\mathbf{y}|\mathbf{X}, \mathbf{h},\boldsymbol{\lambda})}
+
+\newcommand{\Loss}{L(\boldsymbol{\theta} |\mathbf{y},\mathbf{X},\mathbf{h},\boldsymbol{\lambda})}
+\newcommand{\Val}{Q(\mathbf{h}|\mathbf{y},\mathbf{X}, \boldsymbol{\theta},\boldsymbol{\lambda})}
+\newcommand{\E}{\mathsf{E}}
+\newcommand{\KL}[2]{D_\text{KL}\left(#1 || #2\right)}
+$M$ --- множество моделей без общей параметризации\\
