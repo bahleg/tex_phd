@@ -8,6 +8,8 @@
 \newcommand{\yb}{\mathbb{Y}}
 \newcommand{\F}{\mathfrak{F}}
 
+
+
 \newcommand{\w}{\mathbf{w}}
 \newcommand{\Wb}{\mathbb{W}}
 \newcommand{\Uw}{U_\mathbf{w}}
@@ -36,11 +38,13 @@
 \newcommand{\Ulam}{U_{\boldsymbol{\lambda}}}
 
 \newcommand{\prior}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})}
+\newcommand{\priorh}{p(\mathbf{h}|\boldsymbol{\lambda})}
 \newcommand{\priorG}{p(\boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})}
 \newcommand{\priorw}{p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h},\boldsymbol{\lambda})}
 
 
 \newcommand{\post}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h},\boldsymbol{\lambda})}
+\newcommand{\posth}{p(\mathbf{h}|\mathbf{y}, \mathbf{X},\boldsymbol{\lambda})}
 \newcommand{\postG}{p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h},\boldsymbol{\lambda})}
 \newcommand{\postw}{p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \boldsymbol{\Gamma}, \mathbf{h},\boldsymbol{\lambda})}
 
@@ -54,6 +58,14 @@
 
 \newcommand{\Loss}{L(\boldsymbol{\theta} |\mathbf{y},\mathbf{X},\mathbf{h},\boldsymbol{\lambda})}
 \newcommand{\Val}{Q(\mathbf{h}|\mathbf{y},\mathbf{X}, \boldsymbol{\theta},\boldsymbol{\lambda})}
+
+% прочее
+\newcommand{\model}{\mathbf{f}}
+\newcommand{\A}{\mathbf{A}}
+\newcommand{\s}{\mathbf{s}}
+\newcommand{\g}{\boldsymbol{\gamma}}
 \newcommand{\E}{\mathsf{E}}
-\newcommand{\KL}[2]{D_\text{KL}\left(#1 || #2\right)}
-$M$ --- множество моделей без общей параметризации\\
+\newcommand{\KL}[2]{D_\text{KL}\bigl(#1 || #2\bigr)}
+\newcommand{\lamT}{\lambda_{\text{temp}}}
+%\newcommand{\log}{\text{log}~}
+

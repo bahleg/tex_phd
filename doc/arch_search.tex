@@ -3,45 +3,45 @@
 
 \section{Вероятностная модель}
 Определим априорные распределения параметров и структуры модели следующим образом.
-Пусть для каждого ребра $(j,k) \in E$ и каждой базовой функции $\mathbf{g}^{j,k}_l$ параметры модели $\mathbf{w}^{j,k}_l$ распределены нормально с нулевым средним:
+Пусть для каждого ребра $(j,k) \in E$ и каждой базовой функции $\mathbf{g}^{j,k}_l$ параметры модели $\w^{j,k}_l$ распределены нормально с нулевым средним:
 \[
-    \mathbf{w}^{j,k}_l \sim \mathcal{N}\bigl(\mathbf{0}, \gamma^{j,k}_l(\mathbf{A}^{j,k}_l)^{-1}\bigr),
+    \w^{j,k}_l \sim \mathcal{N}\bigl(\mathbf{0}, \g^{j,k}_l(\A^{j,k}_l)^{-1}\bigr),
 \]
-где $ (\mathbf{A}^{j,k}_l)^{-1}$ --- диагональная матрица. Априорное распределение $p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})$ параметров $\mathbf{w}^{j,k}_l$ зависит не только от гиперпараметров $\mathbf{A}_k^{j,k}$, но и от структурного параметра $\gamma^{j,k}_l$.
+где $ (\A^{j,k}_l)^{-1}$ --- диагональная матрица. Априорное распределение $p(\w|\G, \h)$ параметров $\w^{j,k}_l$ зависит не только от гиперпараметров $\A_k^{j,k}$, но и от структурного параметра $\g^{j,k}_l$.
 
 
-В качестве априорного распределения для структуры $\boldsymbol{\Gamma}$ предлагается использовать произведение распределений Gumbel-Softmax ($\mathcal{GS}$)~\cite{gs}:
+В качестве априорного распределения для структуры $\G$ предлагается использовать произведение распределений Gumbel-Softmax ($\mathcal{GS}$)~\cite{gs}:
 \[
-    p(\boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda}) = \prod_{(j,k) \in E} p(\boldsymbol{\gamma}^{j,k}|\mathbf{s}^{j,k}, \lambda_\text{temp}),
+    \priorG = \prod_{(j,k) \in E} p(\g^{j,k}|\s^{j,k}, \lamT),
 \]
-где для каждого структурного параметра $\boldsymbol{\gamma}$ с количеством базовых функций $K$ вероятность $p(\boldsymbol{\gamma}|\mathbf{s}, \lambda_\text{temp})$ определна следующим образом:
+где для каждого структурного параметра $\g$ с количеством базовых функций $K$ вероятность $p(\g|\s, \lamT)$ определна следующим образом:
 \[
-    p(\boldsymbol{\gamma}|\mathbf{s}, \lambda_\text{temp}) = (K-1)!\lambda_{\text{temp}}^{K-1}\prod_{l=1}^K s_l\gamma_l^{-\lambda_\text{temp} -1} \left(\sum_{l=1}^K s_l\gamma_l^{-\lambda_\text{temp}}\right)^{-K},
+    p(\g|\s, \lamT) = (K-1)!\lamT^{K-1}\prod_{l=1}^K s_l\g_l^{-\lamT -1} \left(\sum_{l=1}^K s_l\g_l^{-\lamT}\right)^{-K},
 \]
-где $\mathbf{s} \in (0,\infty)^K$ --- гиперпараметр, отвечающий за смещенность плотности распределения относительно точек симплекса на $K$ вершинах, $\lambda_{\text{temp}}$ --- метапараметр температуры, отвечающий за концентрацию плотности вблизи вершин симплекса или в центре симплекса.
+где $\s \in (0,\infty)^K$ --- гиперпараметр, отвечающий за смещенность плотности распределения относительно точек симплекса на $K$ вершинах, $\lamT$ --- метапараметр температуры, отвечающий за концентрацию плотности вблизи вершин симплекса или в центре симплекса.
 
 Перечислим свойства, которыми обладает распределение Gumbel-Softmax:
 \begin{enumerate}
-\item Реализация $\hat{\gamma}_l,$ т.е. $l$-й компоненты случайной величины $\boldsymbol{\gamma}$ порождается следующим образом:
+\item Реализация $\hat{\gamma}_l,$ т.е. $l$-й компоненты случайной величины $\g$ порождается следующим образом:
 \[
-    \hat{\gamma}_l = \frac{\text{exp}(\text{log}s_l+\hat{g}_l)/\lambda_{\text{temp}}}{\sum_{l'=1}^{K}\text{exp}(\text{log}s_{l'}+\hat{g}_{l'})/\lambda_{\text{temp}}},
+    \hat{\gamma}_l = \frac{\text{exp}(\log s_l+\hat{g}_l)/\lamT}{\sum_{l'=1}^{K}\text{exp}(\log s_{l'}+\hat{g}_{l'})/\lamT},
 \]
-где $\hat{\mathbf{g}} \sim -\text{log}\bigl(-\text{log}~\mathcal{U}(0,1)^K\bigr).$ 
+где $\hat{\g} \sim -\log \bigl(-\log\mathcal{U}(0,1)^K\bigr).$ 
 
-\item Свойство округления: $p(\gamma_{l_1} > \gamma_{l_2}, l_1\neq l_2|\mathbf{s}, {\lambda}_\text{temp}) = \frac{s_l}{\sum_{l'}s_{l'}}.$
+\item Свойство округления: $p(\gamma_{l_1} > \gamma_{l_2}, l_1\neq l_2|\mathbf{s}, \lamT) = \frac{s_l}{\sum_{l'}s_{l'}}.$
 
 \item При устремлении температуры к нулю реализация $\hat{\gamma}$ случайной величины концентрируется на вершинах симплекса:
 \[
-p(\lim_{\lambda_{\text{temp}}\to 0}\hat{\gamma}_{l}= 1|\mathbf{s}, {\lambda}_\text{temp})=\frac{s_l}{\sum_{l'}s_{l'}}.
+p(\lim_{\lamT \to 0}\hat{\gamma}_{l}= 1|\mathbf{s}, \lamT)=\frac{s_l}{\sum_{l'}s_{l'}}.
 \]
 
 
 \item При устремлении температуры к бесконечности плотность распределения концентрируется в центре симплекса:
 \begin{equation}
 \label{eq:theorem_gs}
-    \lim_{\lambda_{\text{temp}} \to \infty}  p(\boldsymbol{\gamma}|\mathbf{s}, {\lambda}_\text{temp}) = 
+    \lim_{\lamT \to \infty}  p(\g|\s, \lamT) = 
     \begin{cases}
-    \infty, \boldsymbol{\gamma}_l = \frac{1}{K}, l \in \{1,\dots,K\},\\
+    \infty, \g = \frac{1}{K}, l \in \{1,\dots,K\},\\
     0, \text{ иначе.}
     \end{cases}
 \end{equation}
@@ -53,53 +53,53 @@ p(\lim_{\lambda_{\text{temp}}\to 0}\hat{\gamma}_{l}= 1|\mathbf{s}, {\lambda}_\te
 Формула плотности записывается следующим образом с точностью до множителя:
 \begin{equation}
 \label{eq:pdf_proof}
-    p(\boldsymbol{\gamma}|\mathbf{s}, {\lambda}_\text{temp}) \propto    \frac{\lambda_{\text{temp}}^{K-1}}{\left(\sum_{l=1}^K s_l\gamma_l^{-\frac{K-1}{K}\lambda_\text{temp}}\prod_{l'=1}^K [l \neq l']\gamma_l^{\frac{1}{K}\lambda_\text{temp}}\right)^{K}}.
+    p(\g|\s, \lamT) \propto    \frac{\lamT^{K-1}}{\left(\sum_{l=1}^K s_l\gamma_l^{-\frac{K-1}{K}\lamT}\prod_{l'=1}^K [l \neq l']\gamma_l^{\frac{1}{K}\lamT}\right)^{K}}.
 \end{equation}
 
-Заметим, что числитель $\lambda_{\text{temp}}^{K-1}$ имеет меньшую скорость сходимости, чем знаменатель, поэтому для вычисления предела достаточно проанализировать только знаменатель. Знаменатель под степенью $(-K)$ представляется суммой слагаемых следующего вида: 
+Заметим, что числитель $\lamT^{K-1}$ имеет меньшую скорость сходимости, чем знаменатель, поэтому для вычисления предела достаточно проанализировать только знаменатель. Знаменатель под степенью $(-K)$ представляется суммой слагаемых следующего вида: 
 \begin{equation}
 \label{eq:gs}
-    \left(\frac{\prod_{l' \neq l} \gamma_{l'}^{\frac{1}{K}}}{\gamma_l^{\frac{K-1}{K}}}\right)^{\lambda_{\text{temp}}}.
+    \left(\frac{\prod_{l' \neq l} \gamma_{l'}^{\frac{1}{K}}}{\gamma_l^{\frac{K-1}{K}}}\right)^{\lamT}.
 \end{equation}
 
-Рассмотрим два случая: когда вектор $\boldsymbol{\gamma}$  лежит не в центре симплекса, и когда  $\boldsymbol{\gamma}$ лежит в центре симплекса. 
-Пусть хотя бы для одной компоненты $l$ выполнено: $\gamma_l \neq \frac{1}{K}$. Пусть $l'$ соответствует индексу максимальной компоненты вектора $\boldsymbol{\gamma}$.
-Для $l=l'$ предел выражения~\eqref{eq:gs} при $\lambda_{\text{temp}}$ стремится к бесконечности. Для $l\neq l'$ предел выражения~\eqref{eq:gs} при $\lambda_{\text{temp}}$ стремится к нулю. Возводя сумму пределов в степень $(-K)$ получаем предел плотности, равный нулю.
+Рассмотрим два случая: когда вектор $\g$  лежит не в центре симплекса, и когда  $\g$ лежит в центре симплекса. 
+Пусть хотя бы для одной компоненты $l$ выполнено: $\gamma_l \neq \frac{1}{K}$. Пусть $l'$ соответствует индексу максимальной компоненты вектора $\g$.
+Для $l=l'$ предел выражения~\eqref{eq:gs} при $\lamT$ стремится к бесконечности. Для $l\neq l'$ предел выражения~\eqref{eq:gs} при $\lamT$ стремится к нулю. Возводя сумму пределов в степень $(-K)$ получаем предел плотности, равный нулю.
 
 Рассмотрим второй случай. Пусть ${\gamma}_l = \frac{1}{K}$ для всех $l$.
-Тогда выражение~\eqref{eq:pdf_proof} с точностью до множителя упрощается до $\lambda^{K-1}$. Предел данного выражения стремится к бесконечности.
+Тогда выражение~\eqref{eq:pdf_proof} с точностью до множителя упрощается до $\lamT^{K-1}$. Предел данного выражения стремится к бесконечности.
 Таким образом, предел плотности Gumbel-Softmax равен выражению~\eqref{eq:theorem_gs}, что и требовалось доказать.
 
 \end{proof}
 
 
 Первое свойство Gumbel-Softmax распределения позволяет использовать репараметризацию при вычислении градиента в вариационном выводе (англ. reparametrization trick). 
-\begin{defin} Репараметризацией случайной величины $\psi$, распределенную по распределению $q$ с параметрами $\boldsymbol{\theta}_\psi$ назовем представление величины с помощью другой случайной величины, имеющей  распределение, не зависящее от параметров $\boldsymbol{\theta}$:
+\begin{defin} Репараметризацией случайной величины $\psi$, распределенную по распределению $q$ с параметрами $\teta_\psi$ назовем представление величины с помощью другой случайной величины, имеющей  распределение, не зависящее от параметров $\teta$:
 \[
-    \psi \sim q \iff \hat{\psi} \sim g(\boldsymbol{\varepsilon},\boldsymbol{\theta}_\psi),
+    \psi \sim q \iff \hat{\psi} \sim g(\boldsymbol{\varepsilon},\teta_\psi),
 \]
-где $\boldsymbol{\varepsilon}$ --- случайная величина, чье распределение не зависит от параметров $\boldsymbol{\theta}_\psi$, $g$ --- некоторая детерминированная функция, $\hat{\psi}$ --- реализация случайной величины $\psi$.
+где $\boldsymbol{\varepsilon}$ --- случайная величина, чье распределение не зависит от параметров $\teta_\psi$, $g$ --- некоторая детерминированная функция, $\hat{\psi}$ --- реализация случайной величины $\psi$.
 \end{defin}
 
 Идею репараметризации поясним на следующем примере.
-\begin{example} Пусть структура $\boldsymbol{\Gamma}$ определена для модели $\mathbf{f}$ однозначно. Рассмотрим математическое ожидание логарифма правдоподобия выборки модели по некоторому непрерывному распределению $q$:
+\begin{example} Пусть структура $\G$ определена для модели $\model$ однозначно. Рассмотрим математическое ожидание логарифма правдоподобия выборки модели по некоторому непрерывному распределению $q$:
 \[
-    \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})=  \int_{\mathbf{w}} \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})q(\mathbf{w})d\mathbf{w}.
+    \E_q \log~\LL=  \int_{\w} \log~\LL \qw d\w.
 \]
-Продифференцируем данное выражение по параметрам $\boldsymbol{\theta}$ вариационного распределения $q$:
+Продифференцируем данное выражение по параметрам $\tetaw$ вариационного распределения $\qw$:
 \[
-    \nabla_{\boldsymbol{\theta}} \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = 
-\int_{\mathbf{w}}  \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})\nabla_{\boldsymbol{\theta}}q(\mathbf{w})d\mathbf{w}.
+    \nabla_{\tetaw} \E_\q \log \LL = 
+\int_{\w}  \log \LL \nabla_{\tetaw}\qw d\w.
 \]
 Выражение общем виде не имеет аналитического решения. Пусть распределение $q$ для параметров $\mathbf{w}$ подлежит репараметризации:
 \[
-    \mathbf{w} \sim q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w}) \iff \hat{\mathbf{w}} \sim g(\boldsymbol{\varepsilon},\boldsymbol{\theta}_\mathbf{w}).
+    \w \sim \qw \iff \hat{\w} \sim g(\boldsymbol{\varepsilon},\tetaw).
 \] 
 Тогда справедливо следующее выражение:
 \[
- \nabla_{\boldsymbol{\theta}} \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{w}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = \nabla_{\boldsymbol{\theta}} \mathsf{E}_{\boldsymbol{\varepsilon}} \text{log}~p(\mathbf{y}|g(\boldsymbol{\varepsilon}, \boldsymbol{\theta}), \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) =
+ \nabla_{\tetaw} \E_q \log \LL = \nabla_{\tetaw} \E_{\boldsymbol{\varepsilon}} \log p(\y|g(\boldsymbol{\varepsilon}, \tetaw), \X, \h, \lam) =
 \]
-\[= \int_{\boldsymbol{\varepsilon}}\nabla_{\boldsymbol{\theta}} \text{log}~p(\mathbf{y}|g(\varepsilon,\boldsymbol{\theta}), \mathbf{X}, \mathbf{h},\boldsymbol{\lambda}) p(\boldsymbol{\varepsilon}) d\boldsymbol{\varepsilon}=\mathsf{E}_{\boldsymbol{\varepsilon}} \nabla_{\boldsymbol{\theta}} \text{log}~p(\mathbf{y}|g(\boldsymbol{\varepsilon}, \boldsymbol{\theta}), \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}).\]
+\[= \int_{\boldsymbol{\varepsilon}}\nabla_{\tetaw} \log~p(\y|g(\varepsilon,\teta), \X, \h,\lam) p(\boldsymbol{\varepsilon}) d\boldsymbol{\varepsilon}=\E_{\boldsymbol{\varepsilon}} \nabla_{\teta} \log p(\y|g(\boldsymbol{\varepsilon}, \teta), \X, \h, \lam).\]
 Таким образом, распределение, позволяющее произвести репараметризацию, является более удобным для вычисления интегральных оценок.
 Кроме того, данный подход позволяет значительно повысить точность вычисления градиента от функций, зависящих от случайных величин~\cite{reparametrization}.
 % отсюда: http://gregorygundersen.com/blog/2018/04/29/reparameterization/
@@ -149,7 +149,7 @@ y={(0cm,1.7cm)},
 \subcaption{}
 \end{minipage}
 
-\caption{Пример распределения Gumbel-Softmax при различных значениях параметров: а)~$\lambda_{temp}\to0$, б)~$\lambda_{temp}=1, \mathbf{s}=[1,1,1]$, в)~$\lambda_{temp}=5, \mathbf{s}=[1,1,1]$, г)~$\lambda_{temp}=5, \mathbf{s}=[10,0.1,0.1].$}
+\caption{Пример распределения Gumbel-Softmax при различных значениях параметров: а)~$\lamT\to0$, б)~$\lamT=1, \s=[1,1,1]$, в)~$\lamT=5, \s=[1,1,1]$, г)~$\lamT=5, \mathbf{s}=[10,0.1,0.1].$}
 \label{fig:gs}
 
 \end{figure}
@@ -157,9 +157,9 @@ y={(0cm,1.7cm)},
 
 Заметим, что предлагаемое априорное распределение неоднозначно: одно и то же распределение  можно получить с различными значениями гиперпарамета $\mathbf{A}^{j,k}_l$ и структурного параметра $\gamma^{j,k}_l$. В качестве регуляризатора для матрицы $(\mathbf{A}^{j,k}_l)^{-1}$ предлагается использовать обратное гамма-распределение:
 \[
-    (\mathbf{A}^{j,k}_l)^{-1} \sim \text{inv-gamma}(\lambda_1,\lambda_2),
+    (\A^{j,k}_l)^{-1} \sim \text{inv-gamma}(\lambda_1,\lambda_2),
 \]
-где $\lambda_1,\lambda_2 \in \boldsymbol{\lambda}$ --- метапараметры оптимизации. 
+где $\lambda_1,\lambda_2 \in \lam$ --- метапараметры оптимизации. 
 Использование обратного гамма-распределения в качестве распределения гиперпараметров можно найти в~\cite{bishop,mackay}. В данной работе обратное распределение выступает как регуляризатор гиперпараметров.
 Варьируя метапарамы $\lambda_1,\lambda_2$ получается  более сильная или более слабая регуляризация~\cite{rvm}. Пример распределений $\text{inv-gamma}(\lambda_1,\lambda_2)$ для разных значений метапараметров $\lambda_1,\lambda_2$ изображен на Рис.~\ref{fig:inv-gamma}. Оптимизации без регуляризации соответствует случай предельного распределения $\lim_{\lambda_1,\lambda_2\to 0}\text{inv-gamma}(\lambda_1, \lambda_2)$.
 
@@ -173,10 +173,10 @@ y={(0cm,1.7cm)},
 
 Таким образом, предлагаемая вероятностная модель содержит следующие компоненты:
 \begin{enumerate}
-\item Параметры $\mathbf{w}$ модели, распределенные нормально.
-\item Структура модели $\boldsymbol{\Gamma}$, содержащая все структурные параметры $\{\boldsymbol{\gamma}^{j,k}, (j,k) \in E\}$ распределены по распределению Gumbel-Softmax.
-\item Гиперпараметры: $\mathbf{h} = [\text{diag}(\mathbf{A}), \mathbf{s}]$, где $\mathbf{A}$ --- конкатенация матриц $\mathbf{A}^{j,k}, (j,k) \in E,$ $\mathbf{s}$ --- конкатенация параметров Gumbel-Softmax распределений $\mathbf{s}^{j,k}, (j,k) \in E$, где $E$ --- множество ребер, соответствующих графу рассматриваемого параметрического семейства.
-\item Метапараметры: $\boldsymbol{\lambda} = [\lambda_1, \lambda_2, \lambda_\text{temp}].$ Эти параметры не подлежат оптимизации и задаются экспертно. 
+\item Параметры $\w$ модели, распределенные нормально.
+\item Структура модели $\G$, содержащая все структурные параметры $\{\g^{j,k}, (j,k) \in E\}$ распределены по распределению Gumbel-Softmax.
+\item Гиперпараметры: $\h = [\text{diag}(\A), \s]$, где $\A$ --- конкатенация матриц $\A^{j,k}, (j,k) \in E,$ $\s$ --- конкатенация параметров Gumbel-Softmax распределений $\s^{j,k}, (j,k) \in E$, где $E$ --- множество ребер, соответствующих графу рассматриваемого параметрического семейства.
+\item Метапараметры: $\lam = [\lambda_1, \lambda_2, \lamT].$ Эти параметры не подлежат оптимизации и задаются экспертно. 
 \end{enumerate}
 
 График вероятностной модели в формате плоских нотаций представлен на Рис.~\ref{fig:plate_prob}.
@@ -191,83 +191,83 @@ y={(0cm,1.7cm)},
 В качестве критерия выбора структуры модели предлагается использовать апостериорную вероятность гиперпараметров:
 \begin{equation}
 \label{eq:optimal_hyper}
-    p(\mathbf{h}|\mathbf{y}, \mathbf{X}, \boldsymbol{\lambda}) \propto p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) p(\mathbf{h}|\boldsymbol{\lambda}) \to \max_{\mathbf{h} \in \mathbb{H}},
+    \posth \propto \EV \priorh \to \max_{\h \in \Hb},
 \end{equation}
 где структура модели и параметры модели выбираются на основе полученных значений гиперпараметров:
 \[
-    \boldsymbol{\Gamma}^* = \argmax_{\boldsymbol{\Gamma} \in \amsmathbb{\Gamma}} p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}^*),
+    \G^* = \argmax_{\G \in \Gb} p(\G|\y, \X, \h^*, \lam ),
 \]
 \[
-    \mathbf{w}^* = \argmax_{\mathbf{w} \in \mathbb{W}} p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \boldsymbol{\Gamma}^*, \mathbf{h}^*),
+    \w^* = \argmax_{\w \in \Wb} p(\w|\y, \X, \G^*, \g^*),
 \]
-где $\mathbf{h}^*$ --- решение задачи оптимизации~\eqref{eq:optimal_hyper}.
+где $\h^*$ --- решение задачи оптимизации~\eqref{eq:optimal_hyper}.
 
-Для вычисления обоснованности $$p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = \iint_{\boldsymbol{\Gamma},\mathbf{w}}p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma},\boldsymbol{\lambda})p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda})p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})d\boldsymbol{\Gamma}d\mathbf{w}$$ из~\eqref{eq:optimal_hyper} предлагается использовать вариационную оценку обоснованности.
+Для вычисления обоснованности $$\EV = \iint_{\G, \w}\LL \priorw \priorG d\G d\w$$ из~\eqref{eq:optimal_hyper} предлагается использовать вариационную оценку обоснованности.
 
 \begin{theorem}
-Пусть $q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})  = q_\mathbf{w}(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta}_\mathbf{w})q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})$ --- вариационное распределение c параметрами $\boldsymbol{\theta}= [\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\theta}_{\boldsymbol{\Gamma}} ]$, аппроксимирующее апостериорное распределение структуры и параметров:
+Пусть $\q = \qw \qG$ --- вариационное распределение c параметрами $\teta= [\tetaw, \tetaG ]$, аппроксимирующее апостериорное распределение структуры и параметров:
 \[
-    q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta}) \approx p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}),
+    \q \approx \post,
 \]
 \[
-    q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma}) \approx p(\mathbf{w}|\mathbf{y}, \mathbf{X},  \boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda}),
+    \qw  \approx \postw,
 \]
 \[
-    q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}}) \approx p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X},  \mathbf{h}, \boldsymbol{\lambda}).
+    \qG \approx \qG.
 \]
 
 Тогда справедлива следующая оценка:
 \begin{equation}
 \label{eq:full_elbo}
-\text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) \geq
+\log \EV \geq
 \end{equation}
 \[
- \mathsf{E}_{\boldsymbol{\Gamma} \sim q_{\boldsymbol{\Gamma}}}\mathsf{E}_{\mathbf{w} \sim q_{\mathbf{w}}} \text{log}p(\mathbf{y}|\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{X})-D_\text{KL}\left(q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right) -
+ \E_{\G \sim \qG} \E_{\w \sim \qw} \log \LL - \KL{\qG}{\priorG} - 
 \]
 \[
--D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right),
+ - \KL{\qw}{\priorw},
 \]
-где $D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right)$ вычисляется по формуле условной дивергенции~\cite{TODO}:
+где $\KL{\qw}{\priorw}$ вычисляется по формуле условной дивергенции~\cite{TODO}:
 \[
-D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})\right) = \mathsf{E}_{\boldsymbol{\Gamma} \sim q_{\boldsymbol{\Gamma}}} \mathsf{E}_{\mathbf{w} \sim q_{\mathbf{w}}} \text{log}\left(\frac{q(\mathbf{w}|\boldsymbol{\Gamma})}{p(\mathbf{w}|\mathbf{h},\boldsymbol{\Gamma})}\right).
+\KL{\qw}{\priorw} = \E_{\G \sim \qG} \E_{\w \sim \qw} \log (\frac{\qw)}{\priorw}).
 \]
 \end{theorem}
 
 \begin{proof}
 Рассмотрим обоснованность:
 \[
-\text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) =  \text{log}~\iint_{\boldsymbol{\Gamma},\mathbf{w}}p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma},\boldsymbol{\lambda})p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda})p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})d\boldsymbol{\Gamma}d\mathbf{w}  =
+\log \EV  =  \log \iint_{\G,\w} \LL \priorw \priorG d\G d\w  =
 \]
 \[
-  =   \text{log}~\iint_{\boldsymbol{\Gamma},\mathbf{w}} p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma},\boldsymbol{\lambda})p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda})p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\frac{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})}{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})}d\boldsymbol{\Gamma}d\mathbf{w} =
+   = \log\iint_{\G,\w} \LL \priorw \frac{\qw}{\qw}d\G d\w =
 \]
 \[
-  =  \text{log} \mathsf{E}_q \frac{p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})}{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})}.
+  =  \log \E_{\q} \frac{\EV}{\q}.
 \]
 Используя неравенство Йенсена получим 
 \[
- \text{log} \mathsf{E}_q \frac{p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})}{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})}     \geq  \mathsf{E}_q\text{log}~\frac{p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})}{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})} =
+ \log \E_{\q} \frac{\EV}{\q} =
 \]
 \[
-   \mathsf{E}_{q} \text{log}p(\mathbf{y}|\mathbf{w}, \boldsymbol{\Gamma}, \mathbf{X})-D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})).
+   \E_{\q} \log \LL - \KL{\q}{\prior}.
 \]
 Декомпозируем распределение $q$ по свойству условной дивергенции:
 \[
-D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h})) = 
+\KL{\q}{\prior} = 
 \]
 \[
-=D_\text{KL}\left(q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})\right)+D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\boldsymbol{\Gamma})|p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})\right).    
+= \KL{\qG}{\priorG} + \E_{\G \sim \qG} \E_{\w \sim \qw} \log (\frac{\qw)}{\priorw}).    
 \]
 \end{proof}
-В качестве вариационного распределения $q_{\mathbf{w}}$ предлагается использовать нормальное распределение, не зависящее от структуры модели $\boldsymbol{\Gamma}$:
+В качестве вариационного распределения $\qw$ предлагается использовать нормальное распределение, не зависящее от структуры модели $\G$:
 \[
-    q_{\mathbf{w}} = \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}_q), 
+    \qw  \sim \mathcal{N}(\boldsymbol{\mu}_q, \A_q), 
 \]
-где $\mathbf{A}_q$ --- диагональная матрица с диагональю $\boldsymbol{\alpha}_q$.
+где $\A_q$ --- диагональная матрица с диагональю $\boldsymbol{\alpha}_q$.
 
-В качестве вариационного распределения $q_{\boldsymbol{\Gamma}}$ предлагается использовать произведение распределений Gumbel-Softmax. Конкатенацию параметров концентрации распределений обозначим $\mathbf{s}_q$. Его температуру, общую для всех структурных параметров $\boldsymbol{\gamma} \in \boldsymbol{\Gamma}$, обозначим $\theta_\text{temp}$.
-Вариационными параметрами распределения $q$ являются параметры распределений $q_{\mathbf{w}}, q_{\boldsymbol{\Gamma}}$:
-\[\boldsymbol{\theta}=[\boldsymbol{\mu}_q, \boldsymbol{\alpha}_q,\mathbf{s}_q, \theta_\text{temp}]. 
+В качестве вариационного распределения $\qG$ предлагается использовать произведение распределений Gumbel-Softmax. Конкатенацию параметров концентрации распределений обозначим $\s_q$. Его температуру, общую для всех структурных параметров $\g \in \G$, обозначим $\theta_\text{temp}$.
+Вариационными параметрами распределения $\q$ являются параметры распределений $\qw, \qG$:
+\[\teta =[\boldsymbol{\mu}_q, \boldsymbol{\alpha}_q,\s_q, \theta_\text{temp}]. 
 \]
 График вероятностной вариационной модели в формате плоских нотаций представлен на Рис.~\ref{fig:plate_qprob}.
 \begin{figure}
@@ -279,22 +279,22 @@ D_\text{KL}(q (\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},
 
 Для анализа сложности полученной модели введем понятие \textit{параметрической сложности}. 
 \begin{defin} 
-Параметрической сложностью  $C_p(\boldsymbol{\theta}|U_\mathbf{h},\boldsymbol{\lambda})$ модели с вариационными параметрами $\boldsymbol{\theta}$ на компакте $U_\mathbf{h} \subset \mathbb{H}$ назовем минимальную дивергенцию между вариационным и априорным распределением:
+Параметрической сложностью  $C_p(\teta|\Uh, \lam)$ модели с вариационными параметрами $\teta$ на компакте $\Uh \subset \Hb$ назовем минимальную дивергенцию между вариационным и априорным распределением:
 \[
-C_p(\boldsymbol{\theta}|U_\mathbf{h},\boldsymbol{\lambda}) = \min_{\mathbf{h} \in U_\mathbf{h}} \text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})\right).
+C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 \]
 \end{defin}
 Параметрическая сложность модели соответствует ожидаемой длине описания параметров модели при условии заданного параметрического априорного распределения~\cite{hinton_mdl}.
 
 Одним из критериев удаления неинформативных параметров в вероятностных моделях является отношение вариационной плотности параметров в моде распределения к вариационной плотности параметра в нуле~\cite{nips}:
-\[\frac{q_\mathbf{w}(w=\mu_q|\boldsymbol{\theta}_\mathbf{w})}{q_\mathbf{w}(w=0|\boldsymbol{\theta}_\mathbf{w})}= \text{exp}\left(-\frac{2\alpha_q^2}{\mu_q^2}\right),
+\[\frac{q_{\w}(w=\mu_q|\tetaw)}{\qw(w=0|\tetaw}= \text{exp}\left(-\frac{2\alpha_q^2}{\mu_q^2}\right),
 \]
-где $q_\mathbf{w}(w|\boldsymbol{\theta}_\mathbf{w}) \sim \mathcal{N}(\mu_q, \alpha_q).$
+где $\qw(w|\tetaw) \sim \mathcal{N}(\mu_q, \alpha_q).$
 
 Обобщим понятие относительной вариационной плотности на случай произвольных непрерывных распределений.
 \begin{defin}
-Относительной вариационной   плотностью параметра $w \in \mathbf{w}$  при условии структуры $\boldsymbol{\Gamma}$ и гиперпараметров $\mathbf{h}$ назовем отношение вариационной плотности в моде вариационного распределения параметра к вариационной плотности в моде априорного распределению параметра:
-\[\rho(w|\boldsymbol{\Gamma},\boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})=\frac{q\bigl(\text{mode}~q\left(w|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}\right)|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}\bigr)}{q\bigl(\text{mode}~p\left({w}|\boldsymbol{\Gamma}, \mathbf{h},\boldsymbol{\lambda}\right)|\boldsymbol{\Gamma},\boldsymbol{\theta}_\mathbf{w}\bigr)}.\]
+Относительной вариационной   плотностью параметра $w \in \w$  при условии структуры $\G$ и гиперпараметров $\h$ назовем отношение вариационной плотности в моде вариационного распределения параметра к вариационной плотности в моде априорного распределению параметра:
+%\[\rho(w|\G,\tetaw, \h,\Lamb)=\frac{\q_\w\bigl(\text{mode}~\qw}{q_\w\bigl(\text{mode}~\priorw|\boldsymbol{\Gamma},\boldsymbol{\theta}_\mathbf{w}\bigr)}.\]
 Относительной вариационной плотностью вектора параметров $\mathbf{w}$ назовем следующее выражение:
 \[
     \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda}) = \prod_{w \in \mathbf{w}}\rho(w|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda}).
