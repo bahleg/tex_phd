@@ -307,48 +307,43 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 \begin{theorem}
 Пусть
 \begin{enumerate}
-\item заданы компактные множества $U_\mathbf{h} \subset \mathbb{H}, U_{\boldsymbol{\theta}_\mathbf{w}} \times U_{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}} \subset \amsmathbb{\Theta}$;
+\item заданы компактные множества $\Uh \subset \Hb, \Utetaw \subset \Tetawb, \UtetaG \subset \TetaGb$;
 
 
-\item Мода априорного распределения $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}, \boldsymbol{\lambda})$ не зависит от гиперпараметров $\mathbf{h}$  на $U_\mathbf{h}$ и структуры $\boldsymbol{\Gamma}$ на $U_{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}}$:
-\[\text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma}_1, \mathbf{h}_1, \boldsymbol{\lambda})=\text{mode}~ p(\mathbf{w}|\boldsymbol{\Gamma}_2,\mathbf{h}_2, \boldsymbol{\lambda})=\mathbf{M}~\forall~\mathbf{h}_1, \mathbf{h}_2\in U_\mathbf{h},\boldsymbol{\Gamma}_1, \boldsymbol{\Gamma}_2\in U_{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}}.
+\item Мода априорного распределения $\prior$ не зависит от гиперпараметров $\h$  на $\Uh$ и структуры $\G$ на $\UtetaG$:
+\[\text{mode}~\priorw[][\G_1][\h_1]=\text{mode}~\priorw[][\G_1][\h_2]=\mathbf{M}~\forall~\h_1,\h_2 \in \Uh, \G_1,\G_2 \in \UG.
 \]
 
-\item вариационное распределение $q_\mathbf{w}$ и априорное распределение $p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h})$  являются абсолютно непрерывными и унимодальными на  $U_\mathbf{h}, U_{\boldsymbol{\theta}}$.
+\item вариационное распределение $\qw$ и априорное распределение $\priorw$  являются абсолютно непрерывными и унимодальными на  $U_\mathbf{h}, U_{\boldsymbol{\theta}}$.
 
 \item Решение задачи вида 
 \begin{equation}
 \label{eq:dkl_solve}
-\mathbf{h} = \argmin_{\mathbf{h} \in U_\mathbf{h}} \text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})\right)
-\end{equation} единственно для любого $\boldsymbol{\theta} \in U_{\boldsymbol{theta}}$.
+\h^{*} = \argmin_{\h \in \Uh} \KL{\q}{\prior}
+\end{equation} единственно для любого $\teta \in \Uteta$.
  
-\item Параметры модели $\mathbf{w}$ имеют конечные вторые моменты по маргинальным распределениям $q(\mathbf{w}|\boldsymbol{\theta}_{\mathbf{w}}), p(\mathbf{w}|\mathbf{h}, \boldsymbol{\lambda})$:
+\item Параметры модели $\w$ имеют конечные вторые моменты по маргинальным распределениям $\qw$:
 \[
-    \mathsf{E}_q \mathbf{w}^2 = \mathsf{E}_{q_{\boldsymbol{\Gamma}}}\mathsf{E}_{q_\mathbf{w}}\mathbf{w}^2 < \infty;
+    \E_\q \w^2 = \E_{\qG} \E_{\qw} \w^2 < \infty;
 \]
 \[
-    \mathsf{E}_{p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})}\mathbf{w}^2 = \mathsf{E}_{p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})} \mathsf{E}_{p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})}\mathbf{w}^2 < \infty,
-\]
-где 
-\[
-    p(\mathbf{w}|\mathbf{h},\boldsymbol{\lambda}) = \int_{\boldsymbol{\Gamma}} p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}), \quad
-        q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w}) = \int_{\boldsymbol{\Gamma}} q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}).
+    \E_{\prior} \w^2 = \E_{\priorG} \E_{\priorw} w^2 < \infty.
 \]
 
-\item мода и матожидание вариационного распределения $q_\mathbf{w}$ и априорного распределения $p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda})$  совпадают:
+\item мода и матожидание вариационного распределения $\qw$ и априорного распределения $\priorw$  совпадают:
 \[
-    \text{mode}~p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{h}, \boldsymbol{\lambda}) = \mathsf{E}_{p(\mathbf{w}| \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})} \mathbf{w};
+    \text{mode}~\priorw= \E_{\priorw} w;
 \]
 \[
-  \text{mode}~q(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}) = \mathsf{E}_{q_\mathbf{w}(\mathbf{w}|\boldsymbol{\Gamma},  \boldsymbol{\theta}_\mathbf{w})} \mathbf{w};
+  \text{mode}~\qw = \E_{\qw} w;
 \]
 
-\item задана  бесконечная последовательность векторов вариационных параметров $\boldsymbol{\theta}_1,\boldsymbol{\theta}_2,\dots, \boldsymbol{\theta}_i \in U_{\boldsymbol{\theta}}$, такая что $\lim_{i \to \infty}C_p(\boldsymbol{\theta_i}|U_{\mathbf{h}}, \boldsymbol{\lambda}) = 0.$ 
+\item задана  бесконечная последовательность векторов вариационных параметров $\teta_1,\teta_2,\dots,\teta_i \in \Uteta$, такая что $\lim_{i \to \infty}C_p(\teta_i|\Uh,\lam) = 0.$ 
 
 \end{enumerate}
 Тогда следующее выражение стремится к единице:
 \[
-   \mathsf{E}_{q_{\boldsymbol{\Gamma}}} \boldsymbol{\rho}(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w}, \mathbf{h},\boldsymbol{\lambda})^{-1} \to 1.
+   \E_{\qG} \boldsymbol{\rho}(\w|\G, \tetaw, \h, \lam)^{-1} \to 1.
 \]
 
 
@@ -357,168 +352,166 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 \begin{proof}
 Воспользуемся неравенством Пинскера:
 \[
-    ||F_q(\boldsymbol{\theta})-F_p(\mathbf{h})||_\text{TV},\leq\sqrt{2\text{D}_\text{KL}\left(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h})\right)},
+    ||F_q(\teta)-F_p(\h)||_\text{TV},\leq\sqrt{2\KL{\q}{\prior}},
 \]
-где $||\cdot||_\text{TV}$ --- расстояние по вариации, $F_q, F_p$ --- функции распределения   $q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})$ и $p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}, \boldsymbol{\lambda})$.
+где $||\cdot||_\text{TV}$ --- расстояние по вариации, $F_q, F_p$ --- функции распределения   $\q,\prior.$
 Т.к. дивергенция состоит из двух неотрицательных величин, то обе они стремятся к нулю.
 Рассотрим вторую величину:
 \[
-   \lim 0 = \text{D}_\text{KL}(q_\mathbf{w}|p(\mathbf{w}) = |\int_{\boldsymbol{\Gamma}} \text{D}_\text{KL}(q_\mathbf{w}|p(\mathbf{w})q(\boldsymbol{\Gamma})| \geq \int_{q} ||F_q - F_p||_\text{TV}.  
+   \lim 0 = \KL{\qw,\priorw} = |\int_{\G} \KL{\qw,\priorw} \geq \int_{\G} ||F_q - F_p||_\text{TV}d\G.  
 \]
-Отсюда $ \lim_{i \to \infty} ||F_q(\boldsymbol{\theta})-F_p(\mathbf{h})||_\text{TV} = 0.$
+Отсюда $ \lim_{i \to \infty} ||F_q(\teta)-F_p(\h)||_\text{TV} = 0.$
 По теореме Шеффе данное выражение можно переписать как:
 \[
-    \lim \frac{1}{2}\iint_{\mathbf{w},\boldsymbol{\Gamma}} |p(\mathbf{w}| \mathbf{h}, \boldsymbol{\lambda}) -  q(\mathbf{w}|\boldsymbol{\theta})|q(\boldsymbol{\Gamma}) d\boldsymbol{\Gamma}d\mathbf{w} = 0.
+    \lim \frac{1}{2}\iint_{\w,\G} |\priorw - \qw| d\G d\w = 0.
 \]
 
-Для произвольного $\boldsymbol{\theta}_j$ рассмотрим выражение:
+Для произвольного $\teta_j$ рассмотрим выражение:
 \[
-    |\int_{\boldsymbol{\Gamma}} \frac{q_j(\mathsf{E}_q \mathbf{w})}{q(\mathbf{M})} -  \frac{q_j(\mathsf{E}_p \mathbf{w})}{{q(\mathbf{M})}}| \leq \int_{\boldsymbol{\Gamma}} |\frac{q_j(\mathsf{E}_q \mathbf{w})}{{q(\mathbf{M})}} -  \frac{q_j(\mathsf{E}_p \mathbf{w})}{{q(\mathbf{M})}}| \leq \frac{\max{L}}{\min q(\mathbf{M})}\int_{\boldsymbol{\Gamma}}  |\mathsf{E}_q \mathbf{w} - \mathsf{E}_p \mathbf{w}|  \leq
+    |\int_{\G} \frac{q(\E \w)}{q(\mathbf{M})} -  \frac{q(\E \w)}{{q(\mathbf{M})}}| \leq \int_{\G} |\frac{q_j(\E \w)}{{q(\mathbf{M})}} -  \frac{q(\E \w)}{{q(\mathbf{M})}}| \leq \frac{\max{L}}{\min q(\mathbf{M})}\int_{\G}  |\E \w - \E \w|  \leq
 \]
 \[
-    \leq L\int_{\boldsymbol{\Gamma}} |\mathbf{w}| |q - p|.
+    \leq L\int_{\G} |\w| |\q - \prior|.
 \]
 
 %https://math.stackexchange.com/questions/112786/convergence-in-law-and-uniformly-integrability
-Т.к. вторые моменты $\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})}\mathbf{w}^2,\mathsf{E}_{p(\mathbf{w}|\mathbf{h})}\mathbf{w}^2$ конечны, то случайная величина $\mathbf{w}$ равномерно интегрируема как при маргинальном распределении $q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})$, так и при маргинальном распределении $p(\mathbf{w}|\mathbf{h})$.
+Т.к. вторые моменты $\E_{\qw} \w^2, \E_{\priorw} \w^2$ конечны, то случайная величина $\w$ равномерно интегрируема как при маргинальном распределении $\qw$, так и при маргинальном распределении $\priorw$.
 Определим случайную величину $\boldsymbol{\nu}(t), t \geq 0$ следующим образом:
 \[
-    \boldsymbol{\nu}(t) = \boldsymbol{\max}(-t \cdot \mathbf{1}, \boldsymbol{\min}(t \cdot \mathbf{1}, \mathbf{w})).
+    \boldsymbol{\nu}(t) = \boldsymbol{\max}(-t \cdot \mathbf{1}, \boldsymbol{\min}(t \cdot \mathbf{1}, \w)).
 \]
-Данная величина совпадает с $\mathbf{w}$ при $|\mathbf{w}| < t$ и принимает значение $t$ или $-t$ при $|\mathbf{w}| \geq t$,
+Данная величина совпадает с $\w$ при $|\w| < t$ и принимает значение $t$ или $-t$ при $|\w| \geq t$,
 
-По определению равномерной интегрируемости для $\mathbf{w}$ для любого числа $\varepsilon$ существует число $t_0$, такое что для любого $t \geq t_0$ справедливо выражение:
+По определению равномерной интегрируемости для $\w$ для любого числа $\varepsilon$ существует число $t_0$, такое что для любого $t \geq t_0$ справедливо выражение:
 \[
-    \mathsf{E}|\mathbf{w} - \boldsymbol{\nu}(t)| \leq \varepsilon.
+    \E|\w - \boldsymbol{\nu}(t)| \leq \varepsilon.
 \]
-где матожидание берется по  распределениям  $q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})$ и $p(\mathbf{w}|\mathbf{h})$.
+где матожидание берется по  распределениям  $\qw$ и $\priorw$.
 Тогда 
 \[
-    \int_{\boldsymbol{\Gamma}} |\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})}\mathbf{w}-\mathsf{E}_{p(\mathbf{w}|\mathbf{h})}\mathbf{w}| \leq     \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |\mathbf{w} -\boldsymbol{\nu}(t)||p(\mathbf{w}|\mathbf{h})-q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} + 
+    \int_{\G} |\E_{\qw} \w-\E_{\priorw} \w| \leq     \int_{\G}  \int_{\w} |\w -\boldsymbol{\nu}(t)||\priorw-\qw|d\w + 
 \]
 \[
- +    \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |\boldsymbol{\nu}(t)||p(\mathbf{w}|\mathbf{h})-q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} \leq
+ +    \int_{\G}  \int_{\w} |\boldsymbol{\nu}(t)||\priorw-\qw|d\w \leq
 \]
 \[
-    \leq     \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |\mathbf{w} -\boldsymbol{\nu}(t)|p(\mathbf{w}|\mathbf{h}) d\mathbf{w} +    \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |\mathbf{w} -\boldsymbol{\nu}(t)|q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w}  +
+    \leq     \int_{\G}  \int_{\w} |\w -\boldsymbol{\nu}(t)|\priorw d\w +    \int_{\G}  \int_{\w} |\w -\boldsymbol{\nu}(t)|\qw|d\w  +
 \]
-\[ +      \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |\boldsymbol{\nu}(t)|p(\mathbf{w}|\mathbf{h}) - q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w}.
+\[ +      \int_{\G}  \int_{\w} |\boldsymbol{\nu}(t)|\priorw - \qw|d\w.
 \]
-Обозначим за $\mathbf{h}_i$ --- решение задачи~\eqref{eq:dkl_solve} для вектора $\boldsymbol{\theta}_i$.
+Обозначим за $\h_i$ --- решение задачи~\eqref{eq:dkl_solve} для вектора $\teta_i$.
 Т.к. $|\boldsymbol{\nu}(t)|$ --- ограничена, то 
 \[
-      \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |\boldsymbol{\nu}(t)|p(\mathbf{w}|\mathbf{h}_i) - q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} \leq t     \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |p(\mathbf{w}|\mathbf{h}) - q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} =
+      \int_{\G}  \int_{\w} |\boldsymbol{\nu}(t)|\priorw - \qw \leq t     \int_{\G}  \int_{\w} |\priorw - \qw|d\w =
 \]
 \[
-= t    \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |p(\mathbf{w},\boldsymbol{\Gamma}| \mathbf{h}_i, \boldsymbol{\lambda}) -  q(\mathbf{w},\boldsymbol{\Gamma}|\boldsymbol{\theta})|d\boldsymbol{\Gamma}d\mathbf{w} \to_{i \to \infty} 0.
+= t    \int_{\boldsymbol{\Gamma}}  \int_{\w} |\prior - \q|d\G d\w \to_{i \to \infty} 0.
 \]
 \[
-   \lim_{i \to \infty}     \int_{\boldsymbol{\Gamma}}  |\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})}\mathbf{w}-\mathsf{E}_{p(\mathbf{w}|\mathbf{h}_i)}\mathbf{w}| \leq      \int_{\boldsymbol{\Gamma}}  \int_{\mathbf{w}} |\mathbf{w} -\boldsymbol{\nu}(t)||p(\mathbf{w}|\mathbf{h}_i)-q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})|d\mathbf{w} 
+   \lim_{i \to \infty}     \int_{\G}  |\E_{\qw}\w-\E_{\priorw}\w| \leq      \int_{\G}  \int_{\w} |\w -\boldsymbol{\nu}(t)||\priorw-\qw|d\w 
 \]
-для любого $t$. Устремляя $t$ к бесконечности, получим $ \lim_{i \to \infty}     \int_{\boldsymbol{\Gamma}}  |\mathsf{E}_{q(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w})}\mathbf{w}-\mathsf{E}_{p(\mathbf{w}|\mathbf{h}_i)}\mathbf{w}|  = 0.$
-Таким образом, мода $q(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_\mathbf{w})$  стремится в среднем к моде априорного распределения $\mathbf{M}$.
-
+для любого $t$. Устремляя $t$ к бесконечности, получим $ \lim_{i \to \infty}     \int_{\G}  |\E_{\qw}\w-\E_{\priorw}\w|  = 0.$
+Таким образом, мода $\qw$  стремится в среднем к моде априорного распределения $\mathbf{M}$.
 \end{proof}
 
-Теорема утверждает, что при устремлении параметрической сложности модели к нулю, все параметры модели подлежат удалению в среднем по всем возможным значениям  структуры $\boldsymbol{\Gamma}$ модели. Заметим, что теорема применима для случая, когда последовательность вариационных распределений $q$ не имеет предела. Так, в случае, если структура $\boldsymbol{\Gamma}$ определена однозначно, последовательность $q_i$ может являться последовательностью нормальных распределений, чье матожидание стремится к нулю:
+Теорема утверждает, что при устремлении параметрической сложности модели к нулю, все параметры модели подлежат удалению в среднем по всем возможным значениям  структуры $\G$ модели. Заметим, что теорема применима для случая, когда последовательность вариационных распределений $q$ не имеет предела. Так, в случае, если структура $\G$ определена однозначно, последовательность $\teta_i$ может являться последовательностью нормальных распределений, чье матожидание стремится к нулю:
 \[
-    q_i \sim \mathcal{N}((\boldsymbol{\mu}_q)_i, (\mathbf{A}^{-1}_q)_i), (\boldsymbol{\mu}_q)_i \to \mathbf{0}.
+    \teta_i \sim \mathcal{N}((\boldsymbol{\mu}_q)_i, (\A^{-1}_q)_i), (\boldsymbol{\mu}_q)_i \to \mathbf{0}.
 \]
-Априорным распределением $p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda}) = p(\mathbf{w}|\mathbf{h},\boldsymbol{\lambda})$ при этом может являться семейство нормальных распределений с нулевым средним:
+Априорным распределением $\prior = \priorw$ при этом может являться семейство нормальных распределений с нулевым средним:
 \[
-    p(\mathbf{w}|\mathbf{h},\boldsymbol{\lambda}) = \mathcal{N}(\mathbf{0}, \mathbf{A}^{-1}).
+    \priorw = \mathcal{N}(\mathbf{0}, \A^{-1}).
 \]
-При этом сама последовательность распределений $q_i$ не обязана иметь предел.
+При этом сама последовательность распределений $\teta_i$ не обязана иметь предел.
 
 \section{Обобщающая задача}
-В данном разделе проводится анализ основных критериев выбора моделей, а также предлагается их обобщение на случай моделей, испольюзующих вариационное распределение $q$ для аппроксимации неизвестного апостериорного распределения параметров $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})$.
+В данном разделе проводится анализ основных критериев выбора моделей, а также предлагается их обобщение на случай моделей, испольюзующих вариационное распределение $\q$ для аппроксимации неизвестного апостериорного распределения параметров $\prior$.
 
 Рассмотрим основные статистические критерии выбора вероятностных моделей. 
 \begin{enumerate}
 \item Критерий максимального правдоподобия:
-\[\text{log}p(\mathbf{y}|\mathbf{X},\mathbf{w}, \boldsymbol{\Gamma})\to \max_{\mathbf{w}\in \mathbb{W}, \boldsymbol{\Gamma}\in \amsmathbb{\Gamma}}.\]
+\[\log \LL \to \max_{\w \in \Uw, \G \in \UG}.\]
 Для использования данного критерия в качестве задачи выбора модели предлагается следующее обобщение:
 \begin{equation}
 \label{eq:optim_ml}
-    L =  \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}).
+    L =  \E_{\q} \log~\LL.
 \end{equation}
-Данное обобщение~\eqref{eq:optim_ml} эквивалентно  критерию правдоподобия при выборе в качестве $q$ эмпирического распределения парамтетров и структуры.
-Метод не предполагает оптимизации гиперпараметров $\mathbf{h}$. Для формального соответствия данной задачи задаче выбора модели~\eqref{TOD}, т.е. двухуровневой задачи оптимизации, положим $L=Q:$
+Данное обобщение~\eqref{eq:optim_ml} эквивалентно  критерию правдоподобия при выборе в качестве $\q$ эмпирического распределения парамтетров и структуры.
+Метод не предполагает оптимизации гиперпараметров $\h$. Для формального соответствия данной задачи задаче выбора модели~\eqref{TOD}, т.е. двухуровневой задачи оптимизации, положим $\Loss=\Val:$
 \[
-    L =  \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}) \to \max_{\boldsymbol{\theta}},
+    \Loss =  \E_{\q}\log \LL \to \max_{\teta},
 \]
 \[
-    Q =  \mathsf{E}_q \text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}).
+    \Val =  \E_{\q}\log \LL \to \max_{\h},
 \]
 
 
 
 \item Метод максимальной апостериорной вероятности. 
-\[\text{log}~p(\mathbf{y},\mathbf{w},\boldsymbol{\Gamma}|\mathbf{X}, \boldsymbol{\lambda} )\to \max_{\mathbf{w} \in \mathbb{W}, \boldsymbol{\Gamma}\in \amsmathbb{\Gamma}}.\]
+\[\log \LL \prior \to \max_{\w  \in \Uw, \G \in \UG}.\]
 Аналогично предыдущему методу сформулируем вариационное обобщение данной задачи:
 \begin{equation}
 \label{eq:optim_map}
-L=Q =\mathsf{E}_q\bigl(\text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w},\boldsymbol{\Gamma})+\text{log}p(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\lambda})\bigr).
+\Loss = \Val = \E_{\q} \bigl( \log\LL + \log\prior \bigr).
 \end{equation}
-Т.к. в рамках данной задачи~\eqref{eq:optim_map} не предполагается оптимизации гиперпараметров $\mathbf{h}$, положим параметры распределения $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})$ фиксированными:
+Т.к. в рамках данной задачи~\eqref{eq:optim_map} не предполагается оптимизации гиперпараметров $\h$, положим параметры распределения $\prior$ фиксированными:
 \[
-    \boldsymbol{\lambda} = [\lambda_1, \lambda_2, \lambda_{\text{temp}}, \mathbf{s}, \text{diag}(\mathbf{A})].
+   \lam = [\lambda_1, \lambda_2, \lamT, \s, \text{diag}(\A)].
 \]
 
 \item Перебор структуры:
 \begin{equation}
 \label{eq:optim_struct}
-    L =  Q = \mathsf{E}_q\text{log}p(\mathbf{y}, \mathbf{w}|\mathbf{X})[q_{\boldsymbol{\Gamma}} = p']
+    \Loss = \Val = \E_{\q} \log \LL [\qG = p']
 \end{equation}
-где $p'$ --- некоторое распределение на структуре $\boldsymbol{\Gamma}$, выступающее в качестве метапараметра.
+где $p'$ --- некоторое распределение на структуре $\G$, выступающее в качестве метапараметра.
 
 
 
 
 \item Критерий Акаике:
 \[
-   \text{AIC} =  \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})-|\mathbb{W}|.
+   \text{AIC} =  \log \LL |\Wb|.
 \]
-Т.к. все рассматриваемые модели принадлежат одному параметрическому семейству моделей $\mathfrak{F}$, то количество параметров у всех рассматриваемых моделей  совпадает . Тогда критерий Акаике совпадает с критерием максимального правдоподобия. Для использования критерия Акаике для сравнения моделей, принадлежащих одному параметрическому семейству~$\mathfrak{F}$ предлагается следующая переформулировка:
+Т.к. все рассматриваемые модели принадлежат одному параметрическому семейству моделей $\F$, то количество параметров у всех рассматриваемых моделей  совпадает. Тогда критерий Акаике совпадает с критерием максимального правдоподобия. Для использования критерия Акаике для сравнения моделей, принадлежащих одному параметрическому семейству~$\F$ предлагается следующая переформулировка:
 \begin{equation}
 \label{eq:optim_aic}
-    L = Q = \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})
--|\{w: D_\text{KL}(\theta, \mathbf{h})<\lambda_{\text{prune}}\}|,
+    \Loss = \Val = \log \LL - |\{w: \KL{\teta}{\h}<\lambda_\text{prune}\}|,
 \end{equation}
 где 
-\begin{equation}\label{eq:aic_compl}\mathbf{h}=\argmin_{\mathbf{h}'\in U_\mathbf{h}}D_\text{KL}(q(\mathbf{w},\boldsymbol{\Gamma})| p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}',\boldsymbol{\lambda}),\end{equation} $\lambda_{\text{prune}}$ --- метапараметр алгоритма, $U_\mathbf{h}  \subset \mathbb{H}$ --- область определения задачи по гиперпараметрам. Предложенное обобщение~\eqref{eq:optim_aic} применимо только в случае, если выражение~\eqref{eq:aic_compl} определено однозначно, т.е. существует единственный вектор гиперпараметров на $U_\mathbf{h},$ доставляющий минимум дивергенции $D_\text{KL}(q(\mathbf{w},\boldsymbol{\Gamma})| p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda}).$
+\begin{equation}\label{eq:aic_compl}\h=\argmin_{\h' \in \Uh} \KL{\q}{\prior},\end{equation} $\lambda_{\text{prune}}$ --- метапараметр алгоритма, $\Uh  \subset \Hb$ --- область определения задачи по гиперпараметрам. Предложенное обобщение~\eqref{eq:optim_aic} применимо только в случае, если выражение~\eqref{eq:aic_compl} определено однозначно, т.е. существует единственный вектор гиперпараметров на $\Uh,$ доставляющий минимум дивергенции $\KL{\q,\prior}.$
 
 \item Информационный критерий Шварца:
 \[
-    \text{BIC} = \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w})-0.5\text{log}(m)|\mathbb{W}|.
+    \text{BIC} = \log \LL -0.5\log(m)|\Wb|.
 \]
 Переформулируем данный критерий аналогично критерию AIC:
 \begin{equation}
 \label{eq:optim_bic}
-    L = Q = BIC_{\lambda} = \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - \text{log}(m)|\{w: D_\text{KL}(\theta, \mathbf{h})<\lambda_{\text{prune}}\}|,
+    \Loss = \Val = BIC_{\lambda} = \log \LL - \log m |\{w: \KL{\q}{\h}<\lambda_{\text{prune}}\}|,
 \end{equation}
 метапараметр $\lambda_{\text{prune}}$ определен аналогично~\eqref{eq:aic_compl}.
 
 \item Метод вариационной оценки обоснованности:
 \begin{equation}
 \label{eq:optim_elbo_method}   
-    L = \mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})-D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\boldsymbol{\Gamma}, \mathbf{w}|\mathbf{h},\boldsymbol{\lambda}))  + \text{log}~p(\mathbf{h}|\boldsymbol{\lambda}) \to \max_{\boldsymbol{\theta}},
+    \Loss = \E_{\q} \log \LL - \KL{\q,\prior} + \priorh \to \max_{\teta},
 \end{equation}
 \[
-    Q = \mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})-D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\boldsymbol{\Gamma}, \mathbf{w}|\mathbf{h},\boldsymbol{\lambda}))  + \text{log}~p(\mathbf{h}|\boldsymbol{\lambda}) \to \max_{\mathbf{h}},
+     \Loss = \E_{\q} \log \LL - \KL{\q,\prior} + \priorh \to \max_{\h},
 \]
-В рамках данной задачи функции $L$ и $Q$ совпадают, все гиперпараметры $\mathbf{h}$ подлежат оптимизации.
+В рамках данной задачи функции $\Loss$ и $\Val$ совпадают, все гиперпараметры $\h$ подлежат оптимизации.
 
 \item Валидация на отложенной выборке:
 \begin{equation}
 \label{eq:optim_hold_out}
-    L = \mathsf{E}_q \text{log}p(\mathbf{y}_\text{train}, \mathbf{w}, \boldsymbol{\Gamma}|\mathbf{X}_\text{train}, \mathbf{h}, \boldsymbol{\lambda}) \to \max_{\boldsymbol{\theta}},
+    \Loss = \E_{\q} \log \LL + \prior \to \teta,
 \end{equation}
 \[
-    Q = \mathsf{E}_q \text{log}p(\mathbf{y}_\text{test}|\mathbf{X}_\text{test}, \mathbf{w}, \boldsymbol{\Gamma}) \to \max_{\mathbf{h}},
+    \Val = \E_{\q} \log \LL \to \max_{h},
 \]
-где $(\mathbf{X}_\text{train}, \mathbf{y}_\text{train}), (\mathbf{X}_\text{test}, \mathbf{y}_\text{test})$ --- разбиение выборки на обучающую и контрольную подвыборку.
-В рамках данной задачи, все гиперпараметры $\mathbf{h}$ подлежат оптимизации.
+где $(\X_\text{train}, \y_\text{train}), (\X_\text{test}, \y_\text{test})$ --- разбиение выборки на обучающую и контрольную подвыборку.
+В рамках данной задачи, все гиперпараметры $\h$ подлежат оптимизации.
 
 \end{enumerate}
 

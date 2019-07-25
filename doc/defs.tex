@@ -37,10 +37,11 @@
 \newcommand{\Lamb}{\amsmathbb{\lambda}}
 \newcommand{\Ulam}{U_{\boldsymbol{\lambda}}}
 
-\newcommand{\prior}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})}
+%\newcommand{\prior}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})}
+\newcommandx{\prior}[4][1=\mathbf{w},2=\boldsymbol{\Gamma},3=\mathbf{h},4=\boldsymbol{\lambda}]{p(#1,#2|#3,#4)}
 \newcommand{\priorh}{p(\mathbf{h}|\boldsymbol{\lambda})}
 \newcommand{\priorG}{p(\boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})}
-\newcommand{\priorw}{p(\mathbf{w}|\boldsymbol{\Gamma}, \mathbf{h},\boldsymbol{\lambda})}
+\newcommandx{\priorw}[4][1=\mathbf{w},2=\boldsymbol{\Gamma},3=\mathbf{h},4=\boldsymbol{\lambda},usedefault]{p(#1|#2,#3,#4)}
 
 
 \newcommand{\post}{p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h},\boldsymbol{\lambda})}
