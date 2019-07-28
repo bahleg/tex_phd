@@ -51,10 +51,12 @@
 
 
 \newcommandx{\q}[1][1=\boldsymbol{\theta}, usedefault]{q(\mathbf{w}, \boldsymbol{\Gamma}|#1)}
-\newcommand{\qG}{q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})}
+\newcommandx{\qG}[2][1=\boldsymbol{\Gamma},2=\boldsymbol{\theta}_{\boldsymbol{\Gamma}},usedefault]{q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|#1,#2)}
 \newcommandx{\qw}[3][1=\mathbf{w}, 2=\boldsymbol{\Gamma},3=\boldsymbol{\theta}_\mathbf{w},usedefault]{q_\mathbf{w}(#1|#2,#3)}
 
-\newcommand{\LL}{p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})}
+
+\newcommandx{\LL}[4][1=\mathbf{y},2=\mathbf{X},3=\mathbf{w},4=\boldsymbol{\Gamma},usedefault]{p(#1|#2,#3,#4)}
+
 \newcommand{\EV}{p(\mathbf{y}|\mathbf{X}, \mathbf{h},\boldsymbol{\lambda})}
 
 \newcommand{\Loss}{L(\boldsymbol{\theta} |\mathbf{y},\mathbf{X},\mathbf{h},\boldsymbol{\lambda})}
