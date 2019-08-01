@@ -375,7 +375,7 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 \[
 \geq \lim_{i \to \infty}  \int_{\G} ||F_q((\tetaw)_i)-F_p(\h_i)||_\text{TV}\qG[][(\tetaG)_i] d\G.  
 \]
-Отсюда $ \lim_{i \to \infty} ||F_q((\tetaw)_i)-F_p(\h_i)||_\text{TV} = 0.$
+Отсюда $\lim_{i \to \infty} \int_{\G}||F_q((\tetaw)_i)-F_p(\h_i)||_\text{TV} \qG[][(\tetaG)_i] d\G = 0.$
 По теореме Шеффе данное выражение можно переписать как:
 \[
     \lim_{i \to \infty}   \frac{1}{2}\iint_{\w,\G} |\priorw[][][\h_i] - \qw[][][(\tetaw)_i]| \qG[][(\tetaG)_i] d\G d\w = 0.
@@ -383,13 +383,16 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 
 Для произвольного $\teta=[\tetaw, \tetaG]$ рассмотрим выражение:
 \[
-   \left|\int_{\G} \left(\frac{\qw[\text{mode}\qw]}{\qw[\text{mode}\priorw]} -  \frac{\qw[\E_{\qw} \w]}{[\qw[\mathbf{M}]} \right)\qG d\G \right| =
+   \left|\int_{\G} \left(\frac{\qw[\text{mode}~\qw]}{\qw[\text{mode}~\priorw]} \right)\qG d\G  - 1 \right| =
 \]
-\[  = \left|\int_{\G} \left( \frac{\qw[\E_{\qw}\w]}{\qw[\mathbf{M}]} -  \frac{\qw[\E_{\qw} \w]}{[\qw[\mathbf{M}]} \right) \qG d\G\right| \leq 
+\[
+ =  \left|\int_{\G} \left(\frac{\qw[\text{mode}~\qw]}{\qw[\text{mode}~\priorw]} -  \frac{\qw[\text{mode}~\priorw]}{\qw[\text{mode}~\priorw]]} \right)\qG d\G \right| =
+\]
+\[  = \left|\int_{\G} \left( \frac{\qw[\E_{\qw}\w]}{\qw[\mathbf{M}]} -  \frac{\qw[\E_{\priorw} \w]}{\qw[\mathbf{M}]} \right) \qG d\G\right| \leq 
 \]
 \[
 \leq 
-\int_{\G} \left|\frac{\qw[\E_{\qw} \w)]}{{\qw[\mathbf{M}]}} -   \frac{\qw[\E_{\qw} \w]}{\qw[\mathbf{M}]}\qG d\G\right| \leq
+\int_{\G} \left|\frac{\qw[\E_{\qw} \w)]}{{\qw[\mathbf{M}]}} -   \frac{\qw[\E_{\priorw} \w]}{\qw[\mathbf{M}]}\qG d\G\right| \leq
 \]
 \[
 \frac{C_l}{\min_{\tetaw \in \Uteta} \qw[\mathbf{M}]}\int_{\G}  |\E_{\qw}\w - \E_{\priorw}\w|\qG d\G  \leq
@@ -425,31 +428,48 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 Рассмотрим первое слагаемое суммы~\eqref{eq:tmp}. Т.к. вторые моменты $\E_{\qG}\E_{\qw} \w^2, \E_{\qG}\E_{\priorw} \w^2$ конечны, то случайная величина $\w$ равномерно интегрируема как при маргинальном распределении $\int_{\G}\qG\qw d\G$, так и при маргинальном распределении $\int_{\G}\qG\priorw d\G$.
 По определению равномерной интегрируемости для $\w$ для любого числа $\varepsilon$ существует число $t_0$, такое что для любого $t \geq t_0$, любого $\h \in \Uh, \teta \in \Uteta$,  справедливо выражение:
 \[
-    \E|\w - \boldsymbol{\nu}(t)| d\w d\G \leq \varepsilon.
+    \E_{\qG}\E_{\qw}|\w - \boldsymbol{\nu}(t)| = \iint_{\w,\G}|\w - \boldsymbol{\nu}(t)|\qw\qG d\w d\G \leq \varepsilon,
 \]
-где матожидание берется по  распределениям $\int_{\G}\qG\qw d\G$,$\int_{\G}\qG\priorw d\G$. Тогда
+\[
+    \E_{\qG}\E_{\priorw}|\w - \boldsymbol{\nu}(t)| = \iint_{\w,\G}|\w - \boldsymbol{\nu}(t)|\priorw\qG d\w d\G \leq \varepsilon.
+\]
+Тогда
 \[
    \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)|\priorw  - \qw| d\w d\G   \leq  
 \]
 \[
-  \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)|\priorw  +   \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)|\qw d\G d\w
+  \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)|\priorw  +   \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)|\qw d\G d\w < 2 \varepsilon
 \]
-для любого $t$. Устремляя $t$ и $i$ к бесконечности, получим $$\lim_{t \to \infty}  \lim_{i \to \infty}    \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)|\priorw[][][\h_i]  - \qw[][][(\tetaw)_i| \qG[(\tetaG)_i] d\w d\G = 0.$$
+для любого $t \geq t_0$. Обозначим за $\varepsilon(t)$ минимальное число $\varepsilon$, удовлетворяющее предыдущим неравенствам. Тогда
+$$
+ \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)|\priorw  - \qw| d\w d\G  \leq 2 \varepsilon(t),
+$$
+где $\lim_{t \to \infty} \varepsilon(t) = 0$.
 
 Рассмотрим второе слагаемое.
 $$
-0 \leq \lim_{i \to \infty} \iint_{\G,\w} |\boldsymbol{\nu}(t)| |\qw[][][(\tetaw)_i] - \priorw[][][\h_i]|\qG[][(\tetaG)_i] d\w d\G = 
+\iint_{\G,\w} |\boldsymbol{\nu}(t)| |\qw - \priorw d\w d\G \leq 
 $$
-\[
-\lim_{i \to \infty}\lim_{t \to \infty} \iint_{\G,\w} |\boldsymbol{\nu}(t)| |\qw[][][(\tetaw)_i] - \priorw[][][\h_i]|\qG[][(\tetaG)_i] d\w d\G \leq
-\]
-\[
-  \lim_{i \to \infty}\lim_{t \to \infty}  \iint_{\G,\w} |\boldsymbol{\nu}(t) -\boldsymbol{\nu}(t)| |\qw[][][(\tetaw)_i] - \priorw[][][\h_i]|\qG[][(\tetaG)_i] d\w d\G   + 
-\]
-\[
-+   \lim_{i \to \infty}\lim_{t \to \infty}    \iint_{\G,\w} |\boldsymbol{\nu}(t)| |\qw[][][(\tetaw)_i] - \priorw[][][\h_i]|\qG[][(\tetaG)_i] d\w d\G =0,
-\]
-где $\teta_i = [(\tetaw)_i, (\tetaG)_i].$
+$$
+  \leq  t \iint_{\G,\w}  |\qw - \priorw|\qG d\w d\G.
+$$
+
+Переходя к пределу в ~\eqref{eq:tmp} получим:
+$$
+    \lim_{i \to \infty} \iint_{\G,\w} |\w| |\qw - \priorw[][][\h_i]|\qG[][(\tetaG)_i] d\w d\G  =
+$$
+$$
+= \lim_{t \to \infty}\lim_{i \to \infty}\iint_{\G,\w} |\w| |\qw[][][(\tetaw)_i] - \priorw[][][\h_i]|\qG[][(\tetaG)_i] d\w d\G \leq
+$$
+$$
+    \lim_{t \to \infty}\lim_{i \to \infty} \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)||\priorw[][][\h_i] -\qw[][][(\tetaw)_i]| d\w d\G   +
+$$
+$$
+ + \iint_{\G,\w} |\boldsymbol{\nu}(t)| |\qw[][][(\tetaw)_i] - \priorw[][][\h_i]|\qG[][(\tetaG)_i] d\w d\G \leq
+$$
+$$
+     \lim_{t \to \infty}  2\varepsilon(t)  + \lim_{t \to \infty}\lim_{i \to \infty}  t \iint_{\G,\w}  |\qw[][][(\tetaw)_i] - \priorw[][][\h_i]\qG[][(\tetaG)_i] = 0.
+$$
 
 Таким образом выражение $\left|\int_{\G} \frac{\qw[\text{mode}\qw]}{\qw[\text{mode}\priorw]}\qG d\G \right|$ стремится к единице, что и требовалось доказать.
 \end{proof}
