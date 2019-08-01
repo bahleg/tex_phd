@@ -370,13 +370,19 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 \[
   0 =   \lim_{i \to \infty} \E_{\G \sim \qG[][(\tetaG)_i]} \E_{\w \sim \qw[][][(\tetaw)_i]} \log \left(\frac{\qw[][][(\tetaw)_i]}{\priorw[][][\h_i]}\right) = 
 \]
+%\begin{center}
+{расписывая матожидание как интеграл}
+%\end{center}
 \[
  \lim_{i \to \infty} \left|\int_{\G} \int_{\w} \log \left(\frac{\qw[][][(\tetaw)_i]}{\priorw[][][\h_i]}\right)\qG[][(\tetaG)_i]\qw[][][(\tetaw)_i] d\w d\w \right| \geq  
 \]
+%\begin{center}
+{по неравенству Пинскера}
+%\end{center}
 \[
 \geq \lim_{i \to \infty}  \int_{\G} ||F_q((\tetaw)_i)-F_p(\h_i)||_\text{TV}\qG[][(\tetaG)_i] d\G.  
 \]
-Отсюда $\lim_{i \to \infty} \int_{\G}||F_q((\tetaw)_i)-F_p(\h_i)||_\text{TV} \qG[][(\tetaG)_i] d\G = 0.$
+Отсюда $$\lim_{i \to \infty} \int_{\G}||F_q((\tetaw)_i)-F_p(\h_i)||_\text{TV} \qG[][(\tetaG)_i] d\G = 0.$$
 По теореме Шеффе данное выражение можно переписать как:
 \[
     \lim_{i \to \infty}   \frac{1}{2}\iint_{\w,\G} |\priorw[][][\h_i] - \qw[][][(\tetaw)_i]| \qG[][(\tetaG)_i] d\G d\w = 0.
@@ -386,18 +392,23 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 \[
    \left|\int_{\G} \left(\frac{\qw[\text{mode}~\qw]}{\qw[\text{mode}~\priorw]} \right)\qG d\G  - 1 \right| =
 \]
+представляя единицу как $\frac{\qw[\text{mode}~\priorw]}{\qw[\text{mode}~\priorw]]}$
 \[
  =  \left|\int_{\G} \left(\frac{\qw[\text{mode}~\qw]}{\qw[\text{mode}~\priorw]} -  \frac{\qw[\text{mode}~\priorw]}{\qw[\text{mode}~\priorw]]} \right)\qG d\G \right| =
 \]
+заменяя моду на матожидание (по условию теоремы)
 \[  = \left|\int_{\G} \left( \frac{\qw[\E_{\qw}\w]}{\qw[\mathbf{M}]} -  \frac{\qw[\E_{\priorw} \w]}{\qw[\mathbf{M}]} \right) \qG d\G\right| \leq 
 \]
+занося модуль под знак интеграла
 \[
 \leq 
 \int_{\G} \left|\frac{\qw[\E_{\qw} \w)]}{{\qw[\mathbf{M}]}} -   \frac{\qw[\E_{\priorw} \w]}{\qw[\mathbf{M}]}\qG d\G\right| \leq
 \]
+используя липшецевость функции $\qw$
 \[
 \frac{C_l}{\min_{\tetaw \in \Uteta} \qw[\mathbf{M}]}\int_{\G}  |\E_{\qw}\w - \E_{\priorw}\w|\qG d\G  \leq
 \]
+расписывая матожидание через интеграл
 \[
     \leq \frac{C_l}{\min_{\tetaw \in \Uteta} \qw[\mathbf{M}]} \iint_{\G,\w} |\w| |\qw - \priorw|\qG d\w d\G,
 \]
@@ -413,18 +424,16 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 \[
     \iint_{\G,\w} |\w| |\qw - \priorw|\qG d\w d\G \leq
 \]
-\[ 
-\leq  \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)| |\qw - \priorw|\qG d\w d\G   +
-\]
-\[
- +    \iint_{\G,\w} |\boldsymbol{\nu}(t)||\priorw-\qw|d\w \leq
-\]
+по неравенству треугольника и используя выражение $\w = \w + \boldsymbol{\nu}(t) -\boldsymbol{\nu}(t)$
 \begin{equation}
 \label{eq:tmp}
-    \leq    \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)||\priorw -\qw| d\w d\G   +
+    \leq    \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)||\priorw -\qw|\qG d\w d\G   +
 \end{equation}
 \[ +      \iint_{\G,\w} |\boldsymbol{\nu}(t)| |\qw - \priorw|\qG d\w d\G.
 \]
+
+
+
 
 Рассмотрим первое слагаемое суммы~\eqref{eq:tmp}. Т.к. вторые моменты $\E_{\qG}\E_{\qw} \w^2, \E_{\qG}\E_{\priorw} \w^2$ конечны, то случайная величина $\w$ равномерно интегрируема как при маргинальном распределении $\int_{\G}\qG\qw d\G$, так и при маргинальном распределении $\int_{\G}\qG\priorw d\G$.
 По определению равномерной интегрируемости для $\w$ для любого числа $\varepsilon$ существует число $t_0$, такое что для любого $t \geq t_0$, любого $\h \in \Uh, \teta \in \Uteta$,  справедливо выражение:
@@ -438,6 +447,7 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 \[
    \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)|\priorw  - \qw| d\w d\G   \leq  
 \]
+так как модуль разностей меньше или равен суммы модулей
 \[
   \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)|\priorw  +   \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)|\qw d\G d\w < 2 \varepsilon
 \]
@@ -451,6 +461,7 @@ $$
 $$
 \iint_{\G,\w} |\boldsymbol{\nu}(t)| |\qw - \priorw d\w d\G \leq 
 $$
+по ограниченности функции $\boldsymbol{\nu}(t)$
 $$
   \leq  t \iint_{\G,\w}  |\qw - \priorw|\qG d\w d\G.
 $$
@@ -459,9 +470,11 @@ $$
 $$
     \lim_{i \to \infty} \iint_{\G,\w} |\w| |\qw - \priorw[][][\h_i]|\qG[][(\tetaG)_i] d\w d\G  =
 $$
+добавим предел по $t$, от которого не зависит данное выражение
 $$
 = \lim_{t \to \infty}\lim_{i \to \infty}\iint_{\G,\w} |\w| |\qw[][][(\tetaw)_i] - \priorw[][][\h_i]|\qG[][(\tetaG)_i] d\w d\G \leq
 $$
+из выше написанных неравенств
 $$
     \lim_{t \to \infty}\lim_{i \to \infty} \iint_{\G,\w} |\w -\boldsymbol{\nu}(t)||\priorw[][][\h_i] -\qw[][][(\tetaw)_i]| d\w d\G   +
 $$
@@ -620,7 +633,7 @@ $$\propto
 \E_{\q}\LL - \KL{\q}{\prior} + \log\priorh$$ для всех $\teta \in \Uteta, \h \in \Uh,$
 где в качестве гиперпараметров $\h$ рассматриваются все гиперпараметры модели: $\h = [\A, \s].$ 
 
-\item Критерий перебора оптимальных структур: существует набор метапараметров $\lam$ и константа $K_3>0:$  $$K_3 < \max_{\mathbf{h}_1, \mathbf{h}_2} \min\left(\KL{\priorG[][\h_1]}{\priorG[][\h_2]},\KL{\priorG[][\h_2]}{\priorG[][\h_1]}\right),$$ такие что для локальных оптимумов задачи оптимизации $\h_1,\h_2$, полученных при метапараметрах $\lam$ и удовлетворяющих неравенствам $$\KL{\priorG[][\h_1]}{\priorG[][\h_2]} > K_3, \KL{\priorG[][\h_2]}{\priorG[][\h_1]}>K_3,$$,$$\Val[\h_1] > \Val[\h_2],$$  существует значение метапараметров $\lam' \neq \lam$, такие что
+\item Критерий перебора оптимальных структур: существует набор метапараметров $\lam$ и константа $K_3>0:$  $$K_3 < \max_{\mathbf{h}_1, \mathbf{h}_2} \min\left(\KL{\priorG[][\h_1]}{\priorG[][\h_2]},\KL{\priorG[][\h_2]}{\priorG[][\h_1]}\right),$$ такие что для локальных оптимумов задачи оптимизации $\h_1,\h_2$, полученных при метапараметрах $\lam$ и удовлетворяющих неравенствам $$\KL{\priorG[][\h_1]}{\priorG[][\h_2]} > K_3, \KL{\priorG[][\h_2]}{\priorG[][\h_1]}>K_3,$$$$\Val[\h_1] > \Val[\h_2],$$  существует значение метапараметров $\lam' \neq \lam$, такие что
 \begin{enumerate}
 \item соответствие между вариационными параметрами $\teta^{*}(\h_1),\teta^{*}(\h_2)$ сохраняется при  $\lam'$,
 \item выполняется неравенство $\Val[\h_1] < \Val[\h_2]$ при $\lam'$.
@@ -692,58 +705,69 @@ $$\propto
 = \lamLL \E_{\q[\teta^{*}]} \log\LL - 
 \]
 \[
-    - \lamCQ \KL{\q[\teta^{*}}{\prior} - 
+    - \lamCQ \KL{\q[\teta^{*}]}{\prior} - 
 \]
 \[
-    - \sum_{p',\lambda \in \mathbf{P},\lamS} \lambda\KL{\q[\teta^{*}}{p'} + \priorh, 
+    - \sum_{p',\lambda \in \mathbf{P},\lamS} \lambda\KL{\q[\teta^{*}]}{p'} + \priorh, 
 \]
 \begin{equation}
 \tag{$L^{*}$}
-{q}^{*} = \argmax_{q} L = 
-{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \lambda_{\text{temp}}, \mathbf{f})}}
+{\teta}^{*} = \argmax_{\teta} \Loss = 
 \end{equation}
-\vspace{-0.3cm}
-\[- {\lambda^\text{prior}_\text{L}\text{D}_{KL}\bigl( q^{*}(\mathbf{w}, \boldsymbol{\Gamma}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)},
+\[=
+\E_{\q} \log \LL - \lamCL \KL{\q[\teta^{*}]}{\prior},
 \]
-где $\mathbf{P}$ --- непустое множество распределений на структуре $\boldsymbol{\Gamma}$, $\lambda^\text{prior}_\text{Q}, \lambda_\text{likelihood}^\text{Q}, \boldsymbol{\lambda}^\text{struct}_\text{Q}$ --- некоторые числа. Множество распределений $\mathbf{P}$ отвечает за перебор структур $\boldsymbol{\Gamma}$ в процессе оптимизации модели. Подробное объяснение данного множества дано ниже. 
+где $\mathbf{P}$ --- непустое множество распределений на структуре $\G$, $\lamCQ, \lamCL, \lamS$  --- некоторые числа. Множество распределений $\mathbf{P}$ отвечает за перебор структур $\G$ в процессе оптимизации модели. Подробное объяснение данного множества дано ниже. 
 
-\iffalse
+
 \begin{theorem}
 Пусть:
 \begin{enumerate}[label={\arabic*)}] 
 \item задано непустое множество непрерывных по параметрам распределений на структуре $\mathbf{P}$, где хотя бы одно распределение принадлежит Gumbel-Softmax-распределению.
 
-\item вариационное распределение $q = q_{\boldsymbol{\Gamma}}(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}}) q_{\mathbf{w}}(\mathbf{w}| \boldsymbol{\Gamma},\boldsymbol{\theta}_{\boldsymbol{\Gamma}})$ является  абсолютно непрерывным, плотность которого непрерывна по метапараметрам $\boldsymbol{\lambda}$;
+\item вариационное распределение $\q$ является  абсолютно непрерывным, плотность которого непрерывна по метапараметрам $\boldsymbol{\lambda}$;
 
-\item задан компакт  $U = U_{\boldsymbol{\theta}} \times U_{\mathbf{h}} \times U_{\boldsymbol{\lambda}} \subset \amsmathbb{\Theta} \times \mathbb{H} \times \amsmathbb{\Lambda}$, где параметры распределений $\mathbf{P} \in \amsmathbb{\Lambda}$, область $U_{\boldsymbol{\theta}}$ декомпозируется на две области $U_{\boldsymbol{\theta}} = U_{\boldsymbol{\theta}_{\mathbf{w}}} \times U_{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}}$;
+\item задан компакт  $U = \Utetaw \times \UtetaG \times \Uh \times \Ulam,$ где параметры распределений $\mathbf{P} \in \Ulam$;
 
-\item область определения каждого параметра $w \in \mathbf{w}$, гиперпараметра $h \in \mathbf{h}$ и метапараметра $\lambda \in \boldsymbol{\lambda}$ не является является пустым и не является точкой;
+\item область определения каждого параметра $w \in\w$, гиперпараметра $h \in \h$ и метапараметра $\lambda \in \lam$ не является является пустым и не является точкой;
 
-\item для каждого значения гиперпараметров $\mathbf{h}$ оптимальное решение нижней задачи оптимизации $\boldsymbol{\theta}^{*}$ определено однозначно при любых значениях метапараметров $\boldsymbol{\lambda} \in U_{\lambda}$;
+\item для каждого значения гиперпараметров $\h \in \Uh$ оптимальное решение нижней задачи оптимизации $\teta^{*}$ определено однозначно на $\Uteta = \Utetaw \times \UtetaG$ при любых значениях метапараметров $\lam \in \Ulam$;
 
-\item область значений метапараметров $\lambda_\text{likelihood}^\text{Q}, \lambda^\text{prior}_\text{Q}, \boldsymbol{\lambda}^\text{struct}_\text{Q}, \lambda^\text{prior}_\text{L}$ включает отрезок от нуля до единицы;
+\item область значений метапараметров $\lamLL, \lamCQ, \lamCL, \lamS$ включает отрезок от нуля до единицы;
 
-\item существует значение метапараметров $\lambda_1, \lambda_2, \lambda_\text{likelihood}^\text{Q}$, такое что
+\item существует значение метапараметров $\lambda_1, \lambda_2, \lamLL$, такое что
 \[
-\max_{\mathbf{h}} \text{log} p (\mathbf{h}|\boldsymbol{\lambda})-\min_{\mathbf{h}} \text{log}~p(\mathbf{h}|\boldsymbol{\lambda}) < \max_{\mathbf{h}} Q(\mathbf{h}) -  \min_{\mathbf{h}} Q(\mathbf{h}).
+\max_{\h \in \Uh} \log \priorh -\min_{\h \in \Uh}\log \priorh < \max_{\h \in \Uh} \Val - \min_{\h \in \Uh} \Val
 \] 
-при $\boldsymbol{\lambda}^\text{struct}_Q = \mathbf{0}, \lambda^\text{prior}_Q = 0$.
+при $\lamS = \mathbf{0}, \lamCQ = 0$.
 
-\item существует значение метапараметров $ \lambda^\text{prior}_\text{Q}, \lambda_1, \lambda_2, \lambda_\text{temp}$, такое что 
+\item существует значение метапараметров $ \lamCQ, \lambda_1, \lambda_2, \lamT$, такое что 
 \[
-    \max_{\mathbf{h}} \text{log}~p (\mathbf{h}|\boldsymbol{\lambda}) - \min_{\mathbf{h}} \text{log}~p (\mathbf{h}|\boldsymbol{\lambda})  + \max_{\mathbf{h}} \min_{\boldsymbol{\theta}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) -
+    \max_{\h \in \Uh} \log  \priorh - \min_{\h \in \Uh} \log  \priorh + \max_{\h \in \Uh} \min_{\teta \in \Uteta} \KL{\q}{\prior} -
 \]
-\[ \min_{\mathbf{h}, \boldsymbol{\theta}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) + \max_{\boldsymbol{\theta}}\frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w})  - 
+\[ \min_{\h \in \Uh, \teta \in \Uteta}  \KL_{\q}{\prior} + \max_{\teta \in \Uteta}\frac{1}{\lamCL}\E_{\q} \log \LL - 
 \]
 \[
- - \min_{\boldsymbol{\theta}}\frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) < \max_{\boldsymbol{\theta}, \mathbf{h}} D_{\text{KL}} - \min_{\boldsymbol{\theta}, \mathbf{h}} D_{\text{KL}}.
+ - \min_{\teta \in \Uteta}\frac{1}{\lamCL}\E_{\q} \log \LL  <
+\]
+\[ 
+< \max_{\teta \in \Uteta, \h \in \Uh} \KL{\q}{\prior} -
+\]
+\[
+-\min_{\teta \in \Uteta, \h \in \Uh} \KL{\q}{\prior}.
 \]
 
-\item существуют значения метапараметров $\lambda^\text{prior}_\text{Q},\lambda^\text{likelihood}_\text{Q}, \lambda_1, \lambda_2, \lambda_\text{temp},$ такие что 
+\item существуют значения метапараметров $\lamCQ,\lamLL, \lambda_1, \lambda_2, \lamT,$ такие что 
 \[
-\max_{\mathbf{h}} D_{\text{KL}} - \min_{\mathbf{h}} D_{\text{KL}} < \frac{\max_{\mathbf{h}} Q - \min_{\mathbf{h}} Q }{\max_{\lambda_\text{struct}}} 
+\max_{\h_1,\h_2 \in \Uh} \KL{\prior[][][\h_1]}{\prior[][][\h_2]} -
 \]
-при $\boldsymbol{\lambda}^\text{struct}_\text{Q} = 0.$
+\[
+- \min_{\h_1,\h_2 \in \Uh} \KL{\prior[][][\h_1]}{\prior[][][\h_2]}< 
+\]
+\[
+<\frac{\max_{\h} \Val - \min_{\h} \Val }{\max_{\lamS}}.
+\]
+%при $\lamLL = 0.$
 
 \end{enumerate}
 Тогда задача~\eqref{eq:qopt} является обобщающей на $U$.
@@ -754,24 +778,27 @@ $$\propto
 Выполнение критериев 1 и 2 следует из условий задачи.
 
 Докажем критерий 3. 
-Пусть $\lambda^{\text{prior}}_\text{Q} = 0, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$. 
-Пусть $\lambda_1, \lambda_2, \lambda_\text{likelihood}^\text{Q}$ удовлетворяют седьмому условияю теоремы.
+Пусть $\lamCQ = 0, \lamS = \mathbf{0}$. 
+Пусть $\lambda_1, \lambda_2, \lamLL$ удовлетворяют седьмому условияю теоремы.
 Возьмем в качестве $K_1$ следующее выражение:
 \[
-    K_1= \max_{\mathbf{h}} \text{log} p (\mathbf{h}|\boldsymbol{\lambda})-\min_{\mathbf{h}} \text{log}~p(\mathbf{h}|\boldsymbol{\lambda}).
+    K_1= \max_{\h \in \Uh} \log \priorh-\min_{\h \in \Uh} \log \priorh.
 \]
-Пусть $\mathbf{h}_1, \mathbf{h}_2 \in U_\mathbf{h}, Q(\mathbf{h}_1)-Q(\mathbf{h}_2)>K_1$.
+Пусть $\h_1, \h_2 \in \Uh, \Val[\h_1] - \Val[\h_2]>K_1$.
 Тогда 
 \[
-Q(\mathbf{h}_1)-Q(\mathbf{h}_2) = \lambda^\text{likelihood}_\text{Q} \mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)} \text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})-\]
+\Val[\h_1] - \Val[\h_2] = \lamLL \E_{\q[\teta^{*}(\h_1)]} \log \LL - 
+\]
 \[
--\lambda^\text{likelihood}_\text{Q}  \mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)} \text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})
-+\text{log}~p(\mathbf{h}_2|\boldsymbol{\lambda})-\text{log}~p(\mathbf{h}_1|\boldsymbol{\lambda})>K_1.
+-\E_{\q[\teta^{*}(\h_2)]} \log \LL + \priorh[\h_1] - \priorh[\h_2]>K_1.
 \]
 Отсюда следует  выполнение критерия 3:
 \[
-\lambda^\text{likelihood}_\text{Q} \mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)} \text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}) - \lambda^\text{likelihood}_\text{Q} \mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)} \text{log}~p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}) > 0.
+\lamLL \E_{\q[\teta_1]} \log \LL - \lamLL  \E_{\q[\teta_2]} \log \LL   >0.
 \]
+
+\end{proof}%REMOVE
+\iffalse
 
 Докажем критерий 4. 
 Пусть $\boldsymbol{\lambda}$ удовлетворяют восьмому условию и $\lambda^{\text{likelihood}}_\text{Q} = 0, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$.
