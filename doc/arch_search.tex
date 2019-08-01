@@ -22,11 +22,11 @@
 
 Перечислим свойства, которыми обладает распределение Gumbel-Softmax:
 \begin{enumerate}
-\item Реализация  $l$-й компоненты случайной величины $\g^{j,k}$ порождается следующим образом:
+\item  Компонента  $l$ случайной величины $\g^{j,k}$ представима следующим образом:
 \[
-    \hat{\gamma}^{j,k}_l = \frac{\text{exp}(\log s^{j,k}_l+\hat{g}^{j,k}_l)/\lamT}{\sum_{l'=1}^{K}\text{exp}(\log s^{j,k}_{l'}+\hat{g}^{j,k}_{l'})/\lamT},
+    {\g}^{j,k}_l = \frac{\text{exp}(\log s^{j,k}_l+{g}^{j,k}_l)/\lamT}{\sum_{l'=1}^{K^{j,k}}\text{exp}(\log s^{j,k}_{l'}+{g}^{j,k}_{l'})/\lamT},
 \]
-где $\hat{\g}^{j,k} \sim -\log \bigl(-\log\mathcal{U}(0,1)^{K^{j,k}}\bigr).$ 
+где ${g}^{j,k} \sim -\log \bigl(-\log\mathcal{U}(0,1)^{K^{j,k}}\bigr).$ 
 
 \item Свойство округления: $p(\g_{l_1} > \g_{l_2}, l_1\neq l_2|\s^{j,k}, \lamT) = \frac{s^{j,k}_l}{\sum_{l'}s^{j,k}_{l'}}.$
 
@@ -77,33 +77,34 @@ p(\lim_{\lamT \to 0}\hat{\gamma}^{j,k}_{l}= 1|\s^{j,k}, \lamT)=\frac{s_l}{\sum_{
 
 
 Первое свойство Gumbel-Softmax распределения позволяет использовать репараметризацию при вычислении градиента в вариационном выводе (англ. reparametrization trick). 
-\begin{defin} Случайную величину  $\psi$ с плотностью вероятности $q$ с параметрами $\teta_\psi$ назовем подлежащей репараметризации через случайную величиу $\varepsilon$, чье распределение не зависит от параметров $\teta_\psi$, если:
+\begin{defin} Случайную величину  $\psi$ с распределеним $q$ с параметрами $\teta_\psi$ назовем репараметризованной через случайную величину $\varepsilon$, чье распределение не зависит от параметров $\teta_\psi$, если:
 \[
    \psi = g(\varepsilon, \teta_\psi)
 \]
 где  $g$ --- некоторая непрерывная функция.
 \end{defin}
 
-Идею репараметризации поясним на следующем примере\footnote{Подробный анализ репараметризации для генеративных моделей глубокого обучения представлен по адресу http://gregorygundersen.com/blog/2018/04/29/reparameterization/}.
+Идею репараметризации поясним на следующем примере.
 \begin{example} Пусть структура $\G$ зафиксирована для модели $\model$. Рассмотрим математическое ожидание логарифма правдоподобия выборки модели по некоторому непрерывному распределению $\qw$:
 \[
     \E_{\qw} \log~\LL=  \int_{\w} \log~\LL \qw d\w.
 \]
-Продифференцируем данное выражение по параметрам $\tetaw$ вариационного распределения $\qw$, полагая что $\qw$ удовлетворяет необходимым требованиям для переноса оператора дифференцирования под знак интеграла:
+Продифференцируем данное выражение по параметрам $\tetaw$ вариационного распределения $\qw$, полагая что оно удовлетворяет необходимым условиям для переноса оператора дифференцирования под знак интеграла:
 \[
     \nabla_{\tetaw} \E_{\qw} \log \LL = 
 \int_{\w}  \log \LL \nabla_{\tetaw}\qw d\w.
 \]
-Выражение общем виде не имеет аналитического решения. Пусть распределение $\qw$ для параметров $\mathbf{w}$ подлежит репараметризации через случайную величину $\boldsymbol{\varepsilon}$:
+Это выражение в общем виде не имеет аналитического решения. Пусть распределение $\qw$ для параметров $\mathbf{w}$ подлежит репараметризации через случайную величину $\boldsymbol{\varepsilon}$:
 \[
-    \w = \mathbf{g}(\boldsymbol{\varepsilon}, \teta_w).
+    \w = \mathbf{g}(\boldsymbol{\varepsilon}, \tetaw).
 \] 
 Тогда справедливо следующее выражение:
 \[
- \nabla_{\tetaw} \E_{\q} \log \LL = \nabla_{\tetaw} \E_{\boldsymbol{\varepsilon}} \log p(\y|\mathbf{g}(\boldsymbol{\varepsilon}, \tetaw), \X, \h, \lam) =
+ \nabla_{\tetaw} \E_{\q} \log \LL = \nabla_{\tetaw} \E_{\boldsymbol{\varepsilon}} \log \LL [][][\mathbf{g}(\boldsymbol{\varepsilon})] =
 \]
-\[= \int_{\boldsymbol{\varepsilon}}\nabla_{\tetaw} \log~p(\y|\mathbf{g}(\boldsymbol{\varepsilon},\teta), \X, \h,\lam) p(\boldsymbol{\varepsilon}) d\boldsymbol{\varepsilon}=\E_{\boldsymbol{\varepsilon}} \nabla_{\teta} \log p(\y|\mathbf{g}(\boldsymbol{\varepsilon}, \teta), \X, \h, \lam).\]
+\[= \int_{\boldsymbol{\varepsilon}}\nabla_{\tetaw} \log\LL [][][\mathbf{g}(\boldsymbol{\varepsilon})] p(\boldsymbol{\varepsilon}) d\boldsymbol{\varepsilon}=\E_{\boldsymbol{\varepsilon}} \nabla_{\teta} \log\LL [][][\mathbf{g}(\boldsymbol{\varepsilon})].\]
 Таким образом, распределение, позволяющее произвести репараметризацию, является более удобным для вычисления интегральных оценок вида $ \nabla_{\tetaw} \E_{\q} \log \LL$, а также позволяет повысить точность приближенного вычисления значений таких функций~\cite{reparametrization}.
+Подробный анализ репараметризации для генеративных моделей глубокого обучения представлен в~\cite{reparametrization_blog}.
 % отсюда: http://gregorygundersen.com/blog/2018/04/29/reparameterization/
 \end{example}
 
@@ -185,7 +186,7 @@ y={(0cm,1.7cm)},
 \begin{figure}
 \centering
    \includegraphics[width=0.5\textwidth]{plots/notebooks/simple_plate.pdf}
-\caption{График предлагаемой вероятностной модели в формате плоских нотаций. Переменные обозначены белыми и серыми кругами, константы обозначены обведенными черными кругами. Наблюдаемые переменные обозначены серыми кругами.}
+\caption{TODO: сделать любмду красивой (снова). График предлагаемой вероятностной модели в формате плоских нотаций. Переменные обозначены белыми и серыми кругами, константы обозначены обведенными черными кругами. Наблюдаемые переменные обозначены серыми кругами.}
 \label{fig:plate_prob}
 \end{figure}
 
@@ -198,7 +199,7 @@ y={(0cm,1.7cm)},
 \end{equation}
 Структура модели и параметры модели выбираются на основе полученных значений гиперпараметров:
 \[
-    \w^*,\G^* = \argmax_{\w in \Wb, \G \in \Gb} p(\w, \G|\y, \X, \h^*, \lam ),
+    \w^*,\G^* = \argmax_{\w \in \Wb, \G \in \Gb} p(\w, \G|\y, \X, \h^*, \lam ),
 \]
 где $\h^*$ --- решение задачи оптимизации~\eqref{eq:optimal_hyper}.
 
@@ -681,20 +682,20 @@ $$\propto
 Метапараметры $\lambda_1, \lambda_2$ не влияют на значение функции $\Val$ при гиперпараметрах, отличающихся только параметрами распределения структуры, поэтому значение функции $Q$ для них будет неизменно при любых значениях $\lambda_1, \lambda_2$. Приходим к противоречию: значение $\Val$ не меняется при изменении метапараметров $\boldsymbol{\lambda}$.
 
 \end{proof}
-\iffalse
+
 В качестве обобщающей задачи оптимизации предлагается оптимизационную задачу следующего вида:
 \begin{equation}
 \label{eq:qopt}
-\mathbf{h}^{*} = \argmax_{\mathbf{h}} Q = 
+\h^{*} = \argmax_{\h} \Val = 
 \end{equation}
 \[
-= {\lambda_\text{likelihood}^\text{Q}\mathsf{E}_{{q}^{*}} \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})}}
- -\]
-\vspace{-0.3cm}
-\[- {\lambda^\text{prior}_\text{Q}\text{D}_{KL}\bigl( q^{*}(\mathbf{w}, \boldsymbol{\Gamma}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)}  -\]
-\vspace{-0.3cm}
+= \lamLL \E_{\q[\teta^{*}]} \log\LL - 
+\]
 \[
--{\sum_{p' \in \mathbf{P}, \lambda \in \boldsymbol{\lambda}^\text{struct}_\text{Q}} \lambda\text{D}_{KL}(\boldsymbol{\Gamma} | p')+\text{log}p(\mathbf{h}|\mathbf{f})}, 
+    - \lamCQ \KL{\q[\teta^{*}}{\prior} - 
+\]
+\[
+    - \sum_{p',\lambda \in \mathbf{P},\lamS} \lambda\KL{\q[\teta^{*}}{p'} + \priorh, 
 \]
 \begin{equation}
 \tag{$L^{*}$}
@@ -706,7 +707,7 @@ $$\propto
 \]
 где $\mathbf{P}$ --- непустое множество распределений на структуре $\boldsymbol{\Gamma}$, $\lambda^\text{prior}_\text{Q}, \lambda_\text{likelihood}^\text{Q}, \boldsymbol{\lambda}^\text{struct}_\text{Q}$ --- некоторые числа. Множество распределений $\mathbf{P}$ отвечает за перебор структур $\boldsymbol{\Gamma}$ в процессе оптимизации модели. Подробное объяснение данного множества дано ниже. 
 
-
+\iffalse
 \begin{theorem}
 Пусть:
 \begin{enumerate}[label={\arabic*)}] 
@@ -747,6 +748,7 @@ $$\propto
 \end{enumerate}
 Тогда задача~\eqref{eq:qopt} является обобщающей на $U$.
 \end{theorem}
+
 \begin{proof}
 Для доказательста теоремы требуется доказать критерии 1-7 из определения обобщающей задачи.
 Выполнение критериев 1 и 2 следует из условий задачи.
