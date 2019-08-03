@@ -186,7 +186,7 @@ y={(0cm,1.7cm)},
 \begin{figure}
 \centering
    \includegraphics[width=0.5\textwidth]{plots/notebooks/simple_plate.pdf}
-\caption{TODO: сделать любмду красивой (снова). График предлагаемой вероятностной модели в формате плоских нотаций. Переменные обозначены белыми и серыми кругами, константы обозначены обведенными черными кругами. Наблюдаемые переменные обозначены серыми кругами.}
+\caption{TODO: сделать лябмду красивой (снова). График предлагаемой вероятностной модели в формате плоских нотаций. Переменные обозначены белыми и серыми кругами, константы обозначены обведенными черными кругами. Наблюдаемые переменные обозначены серыми кругами.}
 \label{fig:plate_prob}
 \end{figure}
 
@@ -321,10 +321,18 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 \text{ для любых }$~\h_1,\h_2 \in \Uh, \G_1,\G_2 \in \UG$.
 
 \item Вариационное распределение $\qw$ и априорное распределение $\priorw$  являются абсолютно непрерывными и унимодальными на  $U_\mathbf{h}, U_{\boldsymbol{\theta}}$.
+Их мода и матожидание совпадают:
+\[
+    \text{mode}~\priorw= \E_{\priorw} \w;
+\]
+\[
+  \text{mode}~\qw = \E_{\qw} \w.
+\]
+
 
 \item Вариационное распределение $\qw$ является липшецевым по $\w$.
 
-\item Значение $\qw[\mathbf{M}]$ не равно нулю при $\teta \in \Uteta$.
+\item Значение $\qw[\mathbf{m}]$ не равно нулю при $\teta \in \Uteta$.
 
 \item Решение задачи 
 \begin{equation}
@@ -336,20 +344,13 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
    \int_{\G}\qG\qw d\G, \quad \int_{\G}\qG\priorw d\G.
 \]
 
-\item Мода и матожидание вариационного распределения $\qw$ и априорного распределения $\priorw$  совпадают:
-\[
-    \text{mode}~\priorw= \E_{\priorw} \w;
-\]
-\[
-  \text{mode}~\qw = \E_{\qw} \w.
-\]
 
 \item Задана  бесконечная последовательность векторов вариационных параметров $\teta_1,\teta_2,\dots,\teta_i,\dots \in \Uteta$, такая что $\lim_{i \to \infty}C_p(\teta_i|\Uh,\lam) = 0.$
 
 \end{enumerate}
 Тогда следующее выражение стремится к единице:
 \[
-   \E_{\qG} {\rho}(\w|\G, \tetaw, \h, \lam) \to 1.
+   \lim_{i \to \infty} \E_{\qG[(\tetaG)_i]} {\rho}(\w|\G, (\tetaw)_i, (\h)_i, \lam) = 1.
 \]
 
 
@@ -360,7 +361,7 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 
 Воспользуемся неравенством Пинскера:
 \[
-    ||F_q((\tetaw)_i)-F_p(\h_i)||_\text{TV},\leq\sqrt{2\log{\qw[][][(\tetaw)_i]} - \log{\priorw[][][\h_i]}d\w},
+    ||F_q((\tetaw)_i)-F_p(\h_i)||_\text{TV},\leq\sqrt{2\log{\qw[][][(\tetaw)_i]} - \log{\priorw[][][\h_i]}d\w} = 0,
 \]
 где $||\cdot||_\text{TV}$ --- расстояние по вариации, $F_q, F_p$ --- функции распределения   $\qw,\priorw.$
 Правая часть неравенства под корнем соответствует дивергенции Кульбака-Лейблера между распределениями $\qw[][][(\tetaw)_i],\priorw[][][\h_i]$ при фиксированном значении структуры $\G$.
@@ -390,6 +391,9 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 
 Для произвольного $\teta=[\tetaw, \tetaG]$ рассмотрим выражение:
 \[
+   \left|\E_{\qG} {\rho}(\w|\G, \tetaw, \h, \lam) - 1\right| =
+\]
+\[
    \left|\int_{\G} \left(\frac{\qw[\text{mode}~\qw]}{\qw[\text{mode}~\priorw]} \right)\qG d\G  - 1 \right| =
 \]
 представляя единицу как $\frac{\qw[\text{mode}~\priorw]}{\qw[\text{mode}~\priorw]]}$
@@ -397,20 +401,20 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
  =  \left|\int_{\G} \left(\frac{\qw[\text{mode}~\qw]}{\qw[\text{mode}~\priorw]} -  \frac{\qw[\text{mode}~\priorw]}{\qw[\text{mode}~\priorw]]} \right)\qG d\G \right| =
 \]
 заменяя моду на матожидание (по условию теоремы)
-\[  = \left|\int_{\G} \left( \frac{\qw[\E_{\qw}\w]}{\qw[\mathbf{M}]} -  \frac{\qw[\E_{\priorw} \w]}{\qw[\mathbf{M}]} \right) \qG d\G\right| \leq 
+\[  = \left|\int_{\G} \left( \frac{\qw[\E_{\qw}\w]}{\qw[\mathbf{m}]} -  \frac{\qw[\E_{\priorw} \w]}{\qw[\mathbf{m}]} \right) \qG d\G\right| \leq 
 \]
 занося модуль под знак интеграла
 \[
 \leq 
-\int_{\G} \left|\frac{\qw[\E_{\qw} \w)]}{{\qw[\mathbf{M}]}} -   \frac{\qw[\E_{\priorw} \w]}{\qw[\mathbf{M}]}\qG d\G\right| \leq
+\int_{\G} \left|\frac{\qw[\E_{\qw} \w)]}{{\qw[\mathbf{m}]}} -   \frac{\qw[\E_{\priorw} \w]}{\qw[\mathbf{m}]}\qG d\G\right| \leq
 \]
 используя липшецевость функции $\qw$
 \[
-\frac{C_l}{\min_{\tetaw \in \Uteta} \qw[\mathbf{M}]}\int_{\G}  |\E_{\qw}\w - \E_{\priorw}\w|\qG d\G  \leq
+\frac{C_l}{\min_{\tetaw \in \Uteta} \qw[\mathbf{m}]}\int_{\G}  |\E_{\qw}\w - \E_{\priorw}\w|\qG d\G  \leq
 \]
 расписывая матожидание через интеграл
 \[
-    \leq \frac{C_l}{\min_{\tetaw \in \Uteta} \qw[\mathbf{M}]} \iint_{\G,\w} |\w| |\qw - \priorw|\qG d\w d\G,
+    \leq \frac{C_l}{\min_{\tetaw \in \Uteta} \qw[\mathbf{m}]} \iint_{\G,\w} |\w| |\qw - \priorw|\qG d\w d\G,
 \]
 где $C_l$ --- максимальная константа Липшица для $\qw$ на $\Uteta$. 
 %https://math.stackexchange.com/questions/112786/convergence-in-law-and-uniformly-integrability
@@ -615,7 +619,7 @@ $$
 Формализуем рассмотренные критерии. Оптимизационную задачу, которая удовлетворяет всем перечисленным свойствам при некоторых значинях метапараметров, будет называть \textit{обобщающей}.
 
 \begin{defin}
-Двухуровневую задачу оптимизации будем называть \textit{обобщающей} на компакте $$U = \Utetaw \times \UtetaG \times \Uh \times \Ulam \subset \Tetawb \times \TetaGb \times \Hb \times \Lamb$$, если она удовлетворяет следующим критериям.
+Двухуровневую задачу оптимизации будем называть \textit{обобщающей} на компакте $$U = \Utetaw \times \UtetaG \times \Uh \times \Ulam \subset \Tetawb \times \TetaGb \times \Hb \times \Lamb,$$ если она удовлетворяет следующим критериям.
 \begin{enumerate}
 \item Область определения каждого параметра $w \in \w$, гиперпараметра $h \in \h$ и метапараметра $\lambda \in \lam$ не  является пустым множеством и не является точкой.
 \item Для каждого значения гиперпараметров $\h$ оптимальное решение нижней~\eqref{TODO} задачи оптимизации 
@@ -624,16 +628,16 @@ $$
 \]
 определено однозначно при любых значениях метапараметров $\lam \in \Ulam$.
 
-\item Критерий максимизации правдоподобия выборки: существует $\lam \in \Ulam$ и  $$K_1>0, \quad K_1 < \max_{\h_1,\h_2 \in \Uh} \Val[\h_1][][][\teta^{*}(\h_1)] - \Val[\h_2][][][\teta^{*}(\h_2)],$$ такие что для любых векторов гиперпараметров, удовлетворяющих неравенству $$\h_1, \h_2 \in \Uh, \Val[\h_1][][][\teta^{*}(\h_1)] - \Val[\h_2][][][\teta^{*}(\h_2)] > K_1,$$ выполняется неравенство $$\E_{\q[\teta^{*}(\h_1)]}\LL > \E_{\q[\teta^{*}(\h_2)]}\LL.$$
+\item Критерий максимизации правдоподобия выборки: существует $\lam \in \Ulam$ и  $K_1>0$,$$K_1 < \max_{\h_1,\h_2 \in \Uh} \Val[\h_1][][][\teta^{*}(\h_1)] - \Val[\h_2][][][\teta^{*}(\h_2)],$$ такие что для любых векторов гиперпараметров $\h_1, \h_2 \in \Uh,$ удовлетворяющих неравенству $$\Val[\h_1][][][\teta^{*}(\h_1)] - \Val[\h_2][][][\teta^{*}(\h_2)] > K_1,$$ выполняется неравенство $$\E_{\q[\teta^{*}(\h_1)]}\log\LL > \E_{\q[\teta^{*}(\h_2)]}\log\LL.$$
 
-\item Критерий минимизации параметрической сложности:  существует  $\lam \in \Ulam$ и $$K_2>0, \quad K_2 < \max_{\h_1, \h_2 \in \Uh} \Val[\h_1][][][\teta^{*}(\h_1)] - \Val[\h_2][][][\teta^{*}(\h_2)],$$ такие что для любых векторов гиперпараметров $\h_1,\h_2 \in \Uh$, удовлетворяющих неравенству $$\Val[\h_1][][][\teta^{*}(\h_1)] - \Val[\h_2][][][\teta^{*}(\h_2)]>K_2,$$ параметрическая сложность первой модели меньше, чем второй: $$C_p(\teta^{*}(\h_1)|\Uh,\lam)<C_p(\teta^{*}(h_2)|\Uh,\lam).$$
+\item Критерий минимизации параметрической сложности:  существует  $\lam \in \Ulam$ и $K_2>0,$ $$K_2 < \max_{\h_1, \h_2 \in \Uh} \Val[\h_1][][][\teta^{*}(\h_1)] - \Val[\h_2][][][\teta^{*}(\h_2)],$$ такие что для любых векторов гиперпараметров $\h_1,\h_2 \in \Uh$, удовлетворяющих неравенству $$\Val[\h_1][][][\teta^{*}(\h_1)] - \Val[\h_2][][][\teta^{*}(\h_2)]>K_2,$$ параметрическая сложность первой модели меньше, чем второй: $$C_p(\teta^{*}(\h_1)|\Uh,\lam)<C_p(\teta^{*}(h_2)|\Uh,\lam).$$
 
 \item Критерий приближения оценки обоснованности: существует значение гиперпараметров $\lam$, такое что значение функций потерь $\Loss$ и валидации $\Val$ пропорционален вариационной оценки обоснованности модели: $$\Loss \propto  \Val \propto $$
 $$\propto
-\E_{\q}\LL - \KL{\q}{\prior} + \log\priorh$$ для всех $\teta \in \Uteta, \h \in \Uh,$
+\E_{\q}\log\LL - \KL{\q}{\prior} + \log\priorh$$ для всех $\teta \in \Uteta, \h \in \Uh,$
 где в качестве гиперпараметров $\h$ рассматриваются все гиперпараметры модели: $\h = [\A, \s].$ 
 
-\item Критерий перебора оптимальных структур: существует набор метапараметров $\lam$ и константа $K_3>0:$  $$K_3 < \max_{\mathbf{h}_1, \mathbf{h}_2} \min\left(\KL{\priorG[][\h_1]}{\priorG[][\h_2]},\KL{\priorG[][\h_2]}{\priorG[][\h_1]}\right),$$ такие что для локальных оптимумов задачи оптимизации $\h_1,\h_2$, полученных при метапараметрах $\lam$ и удовлетворяющих неравенствам $$\KL{\priorG[][\h_1]}{\priorG[][\h_2]} > K_3, \KL{\priorG[][\h_2]}{\priorG[][\h_1]}>K_3,$$$$\Val[\h_1] > \Val[\h_2],$$  существует значение метапараметров $\lam' \neq \lam$, такие что
+\item Критерий перебора оптимальных структур: существует набор метапараметров $\lam$ и константа TODO $K_3>0:$  $$K_3 < \max_{\mathbf{h}_1, \mathbf{h}_2} \min\left(\KL{\priorG[][\h_1]}{\priorG[][\h_2]},\KL{\priorG[][\h_2]}{\priorG[][\h_1]}\right),$$ такие что для локальных оптимумов  $\h_1,\h_2$ задачи оптимизации $\Val$, полученных при метапараметрах $\lam$ и удовлетворяющих неравенствам $$\KL{\priorG[][\h_1]}{\priorG[][\h_2]} > K_3, \KL{\priorG[][\h_2]}{\priorG[][\h_1]}>K_3,$$$$\Val[\h_1] > \Val[\h_2],$$  существует значение метапараметров $\lam' \neq \lam$, такие что
 \begin{enumerate}
 \item соответствие между вариационными параметрами $\teta^{*}(\h_1),\teta^{*}(\h_2)$ сохраняется при  $\lam'$,
 \item выполняется неравенство $\Val[\h_1] < \Val[\h_2]$ при $\lam'$.
@@ -708,7 +712,7 @@ $$\propto
     - \lamCQ \KL{\q[\teta^{*}]}{\prior} - 
 \]
 \[
-    - \sum_{p',\lambda \in \mathbf{P},\lamS} \lambda\KL{\q[\teta^{*}]}{p'} + \priorh, 
+    - \sum_{p',\lambda \in \mathbf{P},\lamS} \lambda\KL{\q[\teta^{*}]}{p'} + \log\priorh, 
 \]
 \begin{equation}
 \tag{$L^{*}$}
@@ -717,7 +721,7 @@ $$\propto
 \[=
 \E_{\q} \log \LL - \lamCL \KL{\q[\teta^{*}]}{\prior},
 \]
-где $\mathbf{P}$ --- непустое множество распределений на структуре $\G$, $\lamCQ, \lamCL, \lamS$  --- некоторые числа. Множество распределений $\mathbf{P}$ отвечает за перебор структур $\G$ в процессе оптимизации модели. Подробное объяснение данного множества дано ниже. 
+где $\mathbf{P}$ --- непустое множество распределений на структуре $\G$, $\lamCQ, \lamCL, \lamS$  --- некоторые числа. Множество распределений $\mathbf{P}$ отвечает за перебор структур $\G$ в процессе оптимизации модели. Более подробное объяснение данного множества дано ниже. 
 
 
 \begin{theorem}
@@ -725,23 +729,23 @@ $$\propto
 \begin{enumerate}[label={\arabic*)}] 
 \item задано непустое множество непрерывных по параметрам распределений на структуре $\mathbf{P}$, где хотя бы одно распределение принадлежит Gumbel-Softmax-распределению.
 
-\item вариационное распределение $\q$ является  абсолютно непрерывным, плотность которого непрерывна по метапараметрам $\boldsymbol{\lambda}$;
+\item Вариационное распределение $\q$ является  абсолютно непрерывным, плотность которого непрерывна по метапараметрам $\boldsymbol{\lambda}$.
 
-\item задан компакт  $U = \Utetaw \times \UtetaG \times \Uh \times \Ulam,$ где параметры распределений $\mathbf{P} \in \Ulam$;
+\item Задан компакт  $U = \Utetaw \times \UtetaG \times \Uh \times \Ulam,$ где параметры распределений $\mathbf{P} \in \Ulam$.
 
-\item область определения каждого параметра $w \in\w$, гиперпараметра $h \in \h$ и метапараметра $\lambda \in \lam$ не является является пустым и не является точкой;
+\item Область определения каждого параметра $w \in\w$, гиперпараметра $h \in \h$ и метапараметра $\lambda \in \lam$ не является является пустым и не является точкой.
 
-\item для каждого значения гиперпараметров $\h \in \Uh$ оптимальное решение нижней задачи оптимизации $\teta^{*}$ определено однозначно на $\Uteta = \Utetaw \times \UtetaG$ при любых значениях метапараметров $\lam \in \Ulam$;
+\item Для каждого значения гиперпараметров $\h \in \Uh$ оптимальное решение нижней задачи оптимизации $\teta^{*}$ определено однозначно на $\Uteta = \Utetaw \times \UtetaG$ при любых значениях метапараметров $\lam \in \Ulam$.
 
-\item область значений метапараметров $\lamLL, \lamCQ, \lamCL, \lamS$ включает отрезок от нуля до единицы;
+\item Область значений метапараметров $\lamLL, \lamCQ, \lamCL, \lamS$ включает отрезок от нуля до единицы.
 
-\item существует значение метапараметров $\lambda_1, \lambda_2, \lamLL$, такое что
+\item Существует значение метапараметров $\lambda_1, \lambda_2, \lamLL$, такое что
 \[
 \max_{\h \in \Uh} \log \priorh -\min_{\h \in \Uh}\log \priorh < \max_{\h \in \Uh} \Val - \min_{\h \in \Uh} \Val
 \] 
 при $\lamS = \mathbf{0}, \lamCQ = 0$.
 
-\item существует значение метапараметров $ \lamCQ, \lambda_1, \lambda_2, \lamT$, такое что 
+\item Существует значение метапараметров $ \lamCQ, \lambda_1, \lambda_2, \lamT$, такое что 
 \[
     \max_{\h \in \Uh} \log  \priorh - \min_{\h \in \Uh} \log  \priorh + \max_{\h \in \Uh} \min_{\teta \in \Uteta} \KL{\q}{\prior} -
 \]
@@ -757,7 +761,7 @@ $$\propto
 -\min_{\teta \in \Uteta, \h \in \Uh} \KL{\q}{\prior}.
 \]
 
-\item существуют значения метапараметров $\lamCQ,\lamLL, \lambda_1, \lambda_2, \lamT,$ такие что 
+\item Существуют значения метапараметров $\lamCQ,\lamLL, \lambda_1, \lambda_2, \lamT,$ такие что 
 \[
 \max_{\h_1,\h_2 \in \Uh} \KL{\prior[][][\h_1]}{\prior[][][\h_2]} -
 \]
@@ -790,128 +794,113 @@ $$\propto
 \Val[\h_1] - \Val[\h_2] = \lamLL \E_{\q[\teta^{*}(\h_1)]} \log \LL - 
 \]
 \[
--\E_{\q[\teta^{*}(\h_2)]} \log \LL + \priorh[\h_1] - \priorh[\h_2]>K_1.
+- \lamLL \E_{\q[\teta^{*}(\h_2)]} \log \LL + \log\priorh[\h_1] - \log\priorh[\h_2]>K_1.
 \]
 Отсюда следует  выполнение критерия 3:
 \[
 \lamLL \E_{\q[\teta_1]} \log \LL - \lamLL  \E_{\q[\teta_2]} \log \LL   >0.
 \]
 
-\end{proof}%REMOVE
-\iffalse
+
 
 Докажем критерий 4. 
-Пусть $\boldsymbol{\lambda}$ удовлетворяют восьмому условию и $\lambda^{\text{likelihood}}_\text{Q} = 0, \boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$.
+Пусть $\lam$ удовлетворяют восьмому условию и $\lamLL = 0, \lamS = \mathbf{0}$.
 Пусть 
 \[
-K_2 =  \max_{\mathbf{h}} \text{log}~p (\mathbf{h}|\boldsymbol{\lambda}) - \min_{\mathbf{h}} \text{log}~p (\mathbf{h}|\boldsymbol{\lambda})  + \max_{\mathbf{h}} \min_{\boldsymbol{\theta}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) -
-\]
-\[ \min_{\mathbf{h}, \boldsymbol{\theta}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) + \max_{\boldsymbol{\theta}}\frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w})  - 
+K_2 =  \max_{\h \in \Uh} \log \priorh  - \min{\h \in \Uh} \log \priorh + \max_{\h \in \Uh} \min_{\teta \in \Uteta} \KL{\q}{\prior} - 
 \]
 \[
- - \min_{\boldsymbol{\theta}}\frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}).
+\min_{\h \in \Uh, \teta \in \Uteta} \KL{\q}{\prior} + \max_{\teta \in \Uteta} \frac{1}{\lamCL} \E_{\q}\log \LL - 
 \]
-Пусть $\mathbf{h}_1, \mathbf{h}_2 \in U_\mathbf{h}, Q(\mathbf{h}_1)-Q(\mathbf{h}_2)>K_1$.
+\[
+\min_{\h \in \Uh} \frac{1}{\lamCL} \E_{\q} \log \LL.
+\]
+Пусть $\h_1, \h_2 \in \Uh, \Val[\h_1] - \Val[\h_2]>K_2$.
 Рассмотрим разность параметрических сложностей двух векторов:
 \[
-C_p(\boldsymbol{\theta}_2)-C_p(\boldsymbol{\theta}_1) = \min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) - 
+C_p(\teta_2) - C_p(\teta_1) = \min_{\h \in \Uh} \KL{\q[][][\teta_2]}{\prior} - 
 \]
 \[
--\min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) \geq
+ - \min_{\h \in \Uh}\KL{\q[][][\teta_1]}{\prior} \geq
 \]
 % добавляем D_kl вместо D_KL^*
 \[
-\geq
-\min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))- D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})) +
+\geq    \min_{\h \in \Uh} \KL{\q[][][\teta_2]}{\prior} - \min_{\h \in \Uh}\KL{\q[][][\teta_1]}{\prior} + \KL{\q[][][\teta_2]}{\prior[][][\h_2]} - \KL{\q[][][\teta_2]}{\prior[][][\h_2]} = 
 \]
 \[
-+D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})) - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_2, \boldsymbol{\lambda})) =
-\]
-% Доводим до Q
-\[
-= Q(\mathbf{h}_1)-Q(\mathbf{h}_2)-\text{log}~p (\mathbf{h}_1|\boldsymbol{\lambda})+\text{log}~p (\mathbf{h}_2|\boldsymbol{\lambda})+
-\]
-\[+\min_{\mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_2)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) -  D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})) >
-\]
-% Доводим до K_2
-\[
->K_2 -\text{log}~p (\mathbf{h}_1|\boldsymbol{\lambda})+\text{log}~p (\mathbf{h}_2|\boldsymbol{\lambda}) + \min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) 
+= \Val[\h_1] - \Val[\h_2] - \priorh[\h_1] + \priorh[\h_2]  +
 \]
 \[
--  D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})).
++ \min_{\h}  \min_{\h}\KL{\q[][][\teta_2]}{\prior}  -  \KL{\q[][][\teta_2]}{\prior[][][\h_2]} >
+\]
+\[
+> K_2 - \log\priorh[\h_1] + \log \priorh[\h_2] + \min_{\h}  \min_{\h}\KL{\q[][][\teta_1]}{\prior}  -  \KL{\q[][][\teta_1]}{\prior[][][\h_2]}.
 \]
 Рассмотрим разность:
-\[\min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))  - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1)|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})) =
+\[
+\min_{\h}\KL{\q[][][\teta_1]}{\prior}  -  \KL{\q[][][\teta_1]}{\prior[][][\h_2]}  =
+\]  
+\[
+\min_{\h}\KL{\q[][][\teta_1]}{\prior}  - \frac{1}{\lamCL}\E_{\q[\teta_1]}\log \LL + 
 \]
 \[
-= \min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))  - \frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}_1) \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) +
-\]
-\[
-+ \max_{\boldsymbol{\theta}}  (\frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})} \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda}))) \geq
+\max_{\teta} (\frac{1}{\lamCL} \E_{\q}\log \LL - \KL{\q}{\priorh[\h_1]}) \geq
 \]
 % взяли максимум от правдоподобия
 \[
-    \geq \min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) - \max_{\boldsymbol{\theta}}\frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) +
-\]
-\[ + \max_{\boldsymbol{\theta}}  (\min_{\boldsymbol{\theta}'} \frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta'})} \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) - D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda})))  \geq
-\]
-% добавили минимум под максимум
-\[
- \geq
-\min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) - \max_{\boldsymbol{\theta}}\frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) +
+\geq \min_{\h}\KL{\q[][][\teta_1]}{\prior} - \max_{\teta}\frac{1}{\lamCL}\E_{q} \log \LL + 
 \]
 \[
-+ \min_{\boldsymbol{\theta}} \frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})} \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) 
-- \min_{\boldsymbol{\theta}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda}))) 
- \geq
+    \max_{\teta} \min_{\teta'} \frac{1}{\lamLL} \E_{\q[\teta']} \log \LL - \KL{\q}{\priorh[\h_1]} \geq
+\]
+\[
+\geq \min_{\teta,\h} \KL{\q}{\prior} - \max_{\teta}\frac{1}{\lamCL}\E_{\q} \log \LL +
+\]
+\[
+\min_{\teta} \frac{1}{\lamCL} \E_{\q} \log \LL - \min{\teta}\KL{\q}{\prior[\h_1]} \geq
 \]
 % Взяли оценку от всех выражений
 \[
- \geq
-\min_{\boldsymbol{\theta}, \mathbf{h}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) - \max_{\boldsymbol{\theta}}\frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) +
+\geq \min_{\teta, \h} \KL{\q}{\prior} - \max_{\teta}\frac{1}{\lamCL} \E_{\q} \log \LL 
 \]
-\[ + \min_{\boldsymbol{\theta}} \frac{1}{\lambda^\text{prior}_\text{L}}\mathsf{E}_{q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})} \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w}) 
-- \max_{\mathbf{h}}\min_{\boldsymbol{\theta}} D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))). 
+\[
++ \min_{\teta} \frac{1}{\lamCL}\E_{q} \log \LL - \max_{\h}\min{\teta}\KL{\q}{\prior}.
 \]
-Складывая полученную оценку с $K_2 -\text{log}~p (\mathbf{h}_2|\boldsymbol{\lambda})+\text{log}~p (\mathbf{h}_1|\boldsymbol{\lambda})$ получаем разность параметрических сложностей больше нуля.
+Складывая полученную оценку с $K_2 -\log \priorh[\h_2] + \log \priorh[\h_1]$ получаем разность параметрических сложностей больше нуля.
 
-Докажем критерий 5. Пусть $\lambda^\text{likelihood}_\text{Q} = \lambda^\text{prior}_\text{L} = \lambda^\text{prior}_\text{Q} > 0$, $\boldsymbol{\lambda}^\text{struct}_\text{Q} = \mathbf{0}$. Тогда функции $L$ и $Q$  можно записать как: $$L = Q \propto \left(\mathsf{E}_q p(\mathbf{y}|\mathbf{w}, \mathbf{X})-{D}_{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda}))\right),$$ что и требовалось доказать.
+Докажем критерий 5. Пусть $\lamCQ = \lamCL = \lamLL > 0,$ $\lamS = \mathbf{0}.$ Тогда функции $\Loss$ и $\Val$  можно записать как: 
+$$\Loss = \Val \propto $$ $$\E_{\q} \log \LL - \KL{\q}{\prior},$$ что и требовалось доказать.
 
 Докажем критерий 6. 
-Пусть задан вектор метапараметров~$\boldsymbol{\lambda}$, удовлетворяющий девятому условию теоремы и $\boldsymbol{\lambda} = \mathbf{0}$. 
+Пусть задан вектор метапараметров~$\lam$, удовлетворяющий девятому условию теоремы и $\lamS = \mathbf{0}$. 
 Возьмем в качестве $K_4$ следующее выражение:
 \[
-K_4 = \frac{\max_{\mathbf{h}} Q - \min_{\mathbf{h}} Q }{\max_{\lambda_\text{struct}}}.
+K_4 = \frac{\max_{\h} \Val - \min_{\h }}{\Val{\max_{\lamS}}}.
 \]
 
+Пусть вектор метапараметров $\lam'$ отличается от $\lam$ лишь метапараметром $\lamS$. Для  обоих векторов метапараметров нижняя задача  оптимизации $\Loss$ совпадает, поэтому выполняется первое условие критерия.
 
-
-Пусть вектор метапараметров $\boldsymbol{\lambda}'$ отличается от $\boldsymbol{\lambda}$ лишь метапараметром $\boldsymbol{\lambda}_\text{struct}$. Для  обоих векторов метапараметров нижняя задача  оптимизации $L$ совпадает, поэтому выполняется первое условие критерия.
-
-Без ограничения общности предположим, что $Q(\mathbf{h}_1)-Q(\mathbf{h}_2) > 0$ при $\boldsymbol{\lambda}.$ Также без ограничения общности будем полгаать, что множестве $\mathbf{P}$ состоит только из одного распределения на структуре $\boldsymbol{\Gamma}$, равного распределению на структуре $p(\boldsymbol{\Gamma}|\mathbf{h}_1, \boldsymbol{\lambda}).$
+Без ограничения общности предположим, что $\Val[\h_1] - \Val[\h_2]>0$ при $\lam.$ Также без ограничения общности будем полгаать, что множестве $\mathbf{P}$ состоит только из одного распределения на структуре $\G$, равного распределению на структуре $\priorG[][\h_1].$
 %Положим распределение из $\mathbf{P}$ имеющим то же распределение, что и априорное $\mathbf{P} = \{p'(\boldsymbol{\Gamma})\}, p(\boldsymbol{\Gamma}) \sim \text{GS}(\mathbf{s}', \lambda_\text{temp}')\}$. 
 
-Положим для $\boldsymbol{\lambda}'$ параметр $\lambda_\text{struct}$ равным максимальному значению: $\lambda_\text{struct} = \max \lambda_\text{struct}'$.
-Тогда при $\boldsymbol{\lambda}'$ неравенство 
-\[\
-Q(\mathbf{h}_1|\boldsymbol{\lambda}')-Q(\mathbf{h}_2|\boldsymbol{\lambda}')  = Q(\mathbf{h}_1|\boldsymbol{\lambda})-Q(\mathbf{h}_2|\boldsymbol{\lambda})  + \lambda'_\text{struct} D_\text{KL}(p(\boldsymbol{\Gamma}|\mathbf{h}_2,\boldsymbol{\lambda}')|p(\boldsymbol{\Gamma}|\mathbf{h}_1,\boldsymbol{\lambda}')) >
-\]
+Положим для $\lam'$ параметр $\lamS$ равным максимальному значению: $\lamS = \max {\lamS}'$.
+Тогда при $\lam'$ неравенство 
 \[
-  > Q(\mathbf{h}_1|\boldsymbol{\lambda})-Q(\mathbf{h}_2|\boldsymbol{\lambda})  +  \lambda'_\text{struct}K_4   = Q(\mathbf{h}_1|\boldsymbol{\lambda})-Q(\mathbf{h}_2 + |\boldsymbol{\lambda})  + \max_{\mathbf{h}} Q - \min_{\mathbf{h}} Q   =0,
+\Val[\h_1] = \Val[\h_2] + {\lamS}' K_4 = \Val[\h_1]-\Val[\h_2] + \max_{\h} \Val - \min_{\h} \Val = 0,
 \]
 что и требовалось доказать.
 
-Докажем критерий 7. Достаточным условием непрерывности функций $L$, $Q$ является непрерывность входящих в нее слагаемых. 
-Т.к. априорные распределения задаются нерперывными функциями плотности $p(\mathbf{w}|\boldsymbol{\Gamma},\mathbf{h}), p(\boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})$, и функция плотности $p(\boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})$ распределения структуры $\boldsymbol{\Gamma}$ ограничена на компакте, то дивергенция $D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h},\boldsymbol{\lambda})$ непрерывна по метапараметрам.
-Т.к. остальные слагаемые функций оптимизаций $L,Q$ также непрерывны по метапараметрам, то непрерывна и сами функции оптимизации.
+Докажем критерий 7. Достаточным условием непрерывности функций $\Loss$, $\Val$ является непрерывность входящих в нее слагаемых. 
+Т.к. априорные распределения задаются нерперывными функциями плотности $\priorw, \priorG$, и функция плотности $\priorG$ распределения структуры $\G$ ограничена на компакте, то дивергенция $\KL{\q}{\prior}$ непрерывна по метапараметрам.
+Т.к. остальные слагаемые функций оптимизаций $\Loss,\Val$ также непрерывны по метапараметрам, то непрерывна и сами функции оптимизации.
 \end{proof}
 
-Метапараметрами данной задачи~\eqref{eq:qopt} являются коэффициенты $\lambda^\text{prior}_\text{Q}, \lambda^\text{prior}_\text{L}$, отвечающие за регуляризацию верхней и нижней задачи оптимизации, коэффициент $\lambda_\text{likelihood}^\text{Q}$ отвечает за максимизацию правдоподобия, а также параметры распрделений $\mathbf{P}$ и вектор коэффициентов перед ними $\boldsymbol{\lambda}^\text{struct}_\text{Q}$. 
+Метапараметрами данной задачи~\eqref{eq:qopt} являются коэффициенты $\lamCL, \lamCQ$, отвечающие за регуляризацию верхней и нижней задачи оптимизации, коэффициент $\lamLL$ отвечает за максимизацию правдоподобия, а также параметры распрделений $\mathbf{P}$ и вектор коэффициентов перед ними $\lamS$. 
 
-В предельном случае, когда температура $\lambda_\text{temp}$ близка к нулю, а множество $\mathbf{P}$ состоит из распределений, близких к дискретным,а соответствующим всем возможным структурам, калибровка $\boldsymbol{\lambda}^\text{struct}_\text{Q}$ порождает последовательность задач оптимизаций, схожую с перебором структур. Рассмотрим следующий пример. 
+В предельном случае, когда температура $\lamT$ близка к нулю, а множество $\mathbf{P}$ состоит из распределений, близких к дискретным,а соответствующим всем возможным структурам, калибровка $\lamS$ порождает последовательность задач оптимизаций, схожую с перебором структур. Рассмотрим следующий пример. 
 
 \begin{example} 
-Рассмотрим вырожденный случай поведения функции $Q$, когда $\lambda_\text{likelihood}^\text{Q} = \lambda^\text{prior}_\text{Q} = 0$. Пусть модель использует один структурный параметр, в качестве априорного распределения на структуре задано распределение Gumbel-Softmax с $\lambda_\text{temp}=1.0$. Пусть в качестве множества распределений $\mathbf{P}$ используется два распределения Gumbel-Softmax, сконцентрированных близко к вершинам симплекса:
+Рассмотрим вырожденный случай поведения функции $\Val$, когда $\lamLL = \lamCQ = 0$. Пусть модель использует один структурный параметр, в качестве априорного распределения на структуре задано распределение Gumbel-Softmax с $\lamT$. Пусть в качестве множества распределений $\mathbf{P}$ используется два распределения Gumbel-Softmax, сконцентрированных близко к вершинам симплекса:
 \[
     \mathbf{P} = [\mathcal{GS}([0.95, 0.05, 0.05]^\text{T}, 1.0) ,\mathcal{GS}([0.95, 0.05, 0.05]^{\text{T}}, 1.0)].
 \]
@@ -936,7 +925,7 @@ Q(\mathbf{h}_1|\boldsymbol{\lambda}')-Q(\mathbf{h}_2|\boldsymbol{\lambda}')  = Q
 \subcaption{}
 \end{minipage}
 
-\caption{Пример зависимости функции $Q$ от гиперпараметра $\mathbf{s}$ при различных значениях метапараметров $\boldsymbol{\lambda}^\text{struct}_Q$. Темные точки на графике соответсвуют наименее предпочтительным значениям гиперпараметра. а)~$\boldsymbol{\lambda}^\text{struct}_Q = [0,0],$ б)~$~\boldsymbol{\lambda}^\text{struct}_Q = [1,0],$ в)~$~\boldsymbol{\lambda}^\text{struct}_Q = [1,1].$}
+\caption{Пример зависимости функции $\Val$ от гиперпараметра $\s$ при различных значениях метапараметров $\lamS$. Темные точки на графике соответсвуют наименее предпочтительным значениям гиперпараметра. а)~$\lamS = [0,0],$ б)~$~\lamS = [1,0],$ в)~$~\lamS = [1,1].$}
 \label{fig:gs_comb}
 
 \end{figure}
@@ -946,91 +935,83 @@ Q(\mathbf{h}_1|\boldsymbol{\lambda}')-Q(\mathbf{h}_2|\boldsymbol{\lambda}')  = Q
 
 
 \begin{theorem}
-Пусть $m \gg 0$, ${\lambda_\text{prior}^L} > 0, \frac{m}{\lambda_\text{prior}^L}   \in \mathbb{N}, \frac{m}{\lambda_\text{prior}^L}  \gg 0.$ Тогда оптимизация функции
+Пусть $m \gg 0$, $\lamCL > 0, \frac{m}{\lamCL}   \in \mathbb{N}, \frac{m}{\lamCL}  \gg 0.$ Тогда оптимизация функции
 \[
-L = 
-{\mathsf{E}_q \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma})}}-{\lambda_\text{prior}^L \text{D}_{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})||p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}})}
-\] эквивалентна оптимизации вариационной оценки обоснованности  $\mathsf{E}_q \text{log}~{p(\hat{\mathbf{y}} | \hat{\mathbf{X}}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \lambda_{\text{temp}},\mathbf{f})} - \text{D}_{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})||p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}})$
-для произвольной случайной подвыборки $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ мощности $\frac{m}{{\lambda_\text{prior}^L}}$ из генеральной совопкупности.
+\Loss = \E_{\q} \log \LL - \lamCL\KL{\q}{\prior}
+\]
+ эквивалентна оптимизации вариационной оценки обоснованности  $$\E_{\q} \log \LL[\hat{\y}][\hat{\X}] - \KL{\q}{\prior}$$
+для произвольной случайной подвыборки $\hat{\y}, \hat{\X}$ мощности $\frac{m}{{\lamCL}}$ из генеральной совопкупности.
 \end{theorem}
 \begin{proof}
-Рассмотрим величину  $\frac{1}{m}L$: \\
+Рассмотрим величину  $\frac{1}{m}\Loss$: \\
 \begin{equation}
 \label{eq:l_m}
-    \frac{1}{m}L = \frac{1}{m}\mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X},  \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})-\frac{\lambda_\text{prior}^L}{m}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})).
+    \frac{1}{m}\Loss = \frac{1}{m}\E_{\q} \log \LL - \frac{\lamCL}{m}\KL{\q}{\prior}.
 \end{equation}
 
 При $m \gg 0$ по усиленному закону больших чисел данная функция эквивалентна:
 \[
-    \frac{1}{m}L \approx  \mathsf{E}_{y, \mathbf{x}} \mathsf{E}_{q} \text{log}p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}) -\frac{\lambda_\text{prior}^L}{m}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})).
+    \frac{1}{m}\Loss \approx  \E_{y,\x} \E_{\q} \log \LL -\frac{\lamCL}{m}\KL{\q}{\prior}.
 \]
 
-Аналогично рассмотрим вариационную оценку обоснованности для произвольной выборки мощностью $m_0 = \frac{m}{\lambda_\text{prior}^L}$, усредненную на мощность выборки:
+Аналогично рассмотрим вариационную оценку обоснованности для произвольной выборки мощностью $m_0 = \frac{m}{\lamCL}$, усредненную на мощность выборки:
 \begin{equation}
 \label{eq:l_m0}
-    \frac{1}{m_0}\mathsf{E}_q \text{log}p(\mathbf{y}|\mathbf{X},  \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})-\frac{1}{m_0}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) \approx
+    \frac{1}{m_0}\E_{\q} \log \LL - \frac{1}{m_0} \KL{\q}{\prior} \approx
 \end{equation}
 \[
-\approx  \mathsf{E}_{y, \mathbf{x}} \mathsf{E}_{q} \text{log}p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}) -\frac{1}{m_0}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) = 
+\approx  \E_{y,\x} \E_{\q} \log \LL  -\frac{1}{m_0}\KL{\prior}{\q}= 
 \]
 \[
-= \mathsf{E}_{y, \mathbf{x}} \mathsf{E}_{q} \text{log}p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}) -\frac{\lambda_\text{prior}^L}{m}D_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w},\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})).
+= \E_{y,\x} \E_{\q} \log \LL  -\frac{\lamCL}{m}\KL_{\q}{\prior}.
 \]
 Таким образом, задачи оптимизации функций~\eqref{eq:l_m},\eqref{eq:l_m0} совпадают, что и требовалось доказать.
 \end{proof}
-Таким образом, для достаточно большого $m$ и $\lambda^{\text{prior}}_L>0, \lambda^{\text{prior}}_L \neq 1$ оптимизация параметров и гиперпараметров эквивалентна нахождению оценки обоснованности для выборки другой мощности: чем выше значение $ \lambda^{\text{prior}}_L$, тем выше мощность выборки, для которой проводится оптимизация.
+Теорема показывает, что для достаточно большого $m$ и $\lamCL>0, \lamCL \neq 1$ оптимизация параметров и гиперпараметров эквивалентна нахождению оценки обоснованности для выборки другой мощности: чем выше значение $ \lamCL$, тем выше мощность выборки, для которой проводится оптимизация.
 
 
 Следующие теоремы говорят о соответствии предлагаемой обобщающей задачи вероятностной модели. В частности, задача оптимизации параметров и гиперпараметров соответствует двухуровневому байесовскому выводу.
 \begin{theorem}
-Пусть ${\lambda^Q_\text{likelihood}} = {\lambda^L_\text{prior}=\lambda^Q_\text{prior}}=1, {\boldsymbol{\lambda}^Q_{\text{struct}}}=\mathbf{0}$. Тогда:
+Пусть ${\lamCQ} = \lamCL=\lamLL, \lamS=\mathbf{0}$. Тогда:
 \begin{enumerate}
 \item Задача оптимизации~\eqref{eq:qopt} доставляет максимум апостериорной вероятности гиперпараметров с использованием вариационной оценки обоснованности:
 \vspace{-0.3cm}
 \[
-    \text{log}\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})+{\text{log}p(\mathbf{h}|\mathbf{f})} \to \max_{\mathbf{h}}.
+    \E_{\q}\log \LL - \KL{\q}{\prior} + \log \prior \to \max_{\h}.
 \]
-\item Вариационное распределение $q$ приближает апостериорное распределение $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}, \mathbf{f})$ наилучшим образом:
+\item Вариационное распределение $\q$ приближает апостериорное распределение $\post$ наилучшим образом:
 \vspace{-0.3cm}
 \[
-    {D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})) \to \min_{\boldsymbol{\theta}}.
+    \KL{\q}{\post} \to \min_{\teta}.
 \]
 
 
-\item Если существуют такие значения параметров $\boldsymbol{\theta}_\mathbf{w}, \boldsymbol{\theta}_{\boldsymbol{\Gamma}},$ что $p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})$, $p(\mathbf{w}| \mathbf{y}, \mathbf{X}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda}) = q(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_{\mathbf{w}})$,
-то решение задачи оптимизации $L$ доставляет эти значения вариационных параметров.  
+\item Если существуют такие значения параметров $\tetaw, \tetaG,$ что $\postw = \qw, \postG = \qG,$
+то решение задачи оптимизации $\Loss$ доставляет эти значения вариационных параметров.  
 \end{enumerate}
 \end{theorem}
 \begin{proof}
-При $\lambda^Q_\text{likelihood} = \lambda^L_\text{prior} = 1$ как верхняя, так и нижняя задачи оптимизации~\eqref{eq:qopt} эквивалентны оптимизации вариационной оценки обоснованности, поэтому первое утверждение выполняется.
+Так как параметры $\teta$ не зависят от слагаемых при коэффициентах $\lamS$, а также от $\log \priorh$, то 
+при $\lamLL = \lamCL = 1$ как верхняя, так и нижняя задачи оптимизации~\eqref{eq:qopt} эквивалентны оптимизации вариационной оценки обоснованности, поэтому первое утверждение выполняется.
 
 Докажем второе утвреждение. Рассмотрим логарифм обоснованности модели: 
 \[
-\text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) = \mathsf{E}_q \text{log}\frac{p(\mathbf{y}|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma})p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})}{q(\mathbf{w}, \boldsymbol{\Gamma}| \boldsymbol{\theta})} +
-\]
+\log \EV  = \E_{\q} \log\frac{\LL}{\prior} + \KL{\q}{\prior} = 
+ \]
 \[
-+ {D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})) = 
-\]
-\[
- \mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}) -{D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})) + {D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})).
+=\E_{\q} \log \LL - \KL{\q}{\prior} + \KL{\q}{\post}.
 \]
 Из данного равенства следует:
 \[
-\text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}) - {D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})) =
+\log \LL - \KL{\q}{\post} = 
 \]
 \[
-    \mathsf{E}_q \text{log} p(\mathbf{y}|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}) -{D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})),
+\E_{\q}\log \LL - \KL{\q}{\prior},
 \]
-где правая часть равенства соответствует вариационной оценки обоснованности. Выражение $\text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})$ не зависит от вариационного распределения  $q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})$, поэтому максимизации вариационной оценки эквивалентна минимизации дивергенции ${D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}))$.
+где правая часть равенства соответствует вариационной оценки обоснованности. Выражение $\log \EV$ не зависит от вариационного распределения  $\q$, поэтому максимизации вариационной оценки эквивалентна минимизации дивергенции $\KL{\q}{\post}$.
 
-Докажем третье утверждение. Т.к. вариационное распределение $q$ декомпозируется на $q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}}),  q(\mathbf{w}|\boldsymbol{\Gamma}, \boldsymbol{\theta}_{\mathbf{w}})$, апостериорное распределение $p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}))$ декомпозируется на $p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}),$ $p(\mathbf{w}| \mathbf{y}, \mathbf{X}, \boldsymbol{\Gamma}, \mathbf{h}, \boldsymbol{\lambda})$, поэтому достижимо значение нулевое значение
-дивергенции: ${D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})) = 0.$ Она представима в следующем виде:
-\[
-{D}_\text{KL}(q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta})|p(\mathbf{w}, \boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})) = 
-{D}_\text{KL}(q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})) +
-\]
-\[+ {D}_\text{KL}(q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})|p(\boldsymbol{\Gamma}|\mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda})).
-\]
+Докажем третье утверждение. Т.к. вариационное распределение $\q$ декомпозируется на $\qw, \qG$, апостериорное распределение $\post$ декомпозируется на $\postw, \postG$, поэтому достижимо значение нулевое значение
+дивергенции: $\KL{\q}{\post} = 0.$ Она представима в следующем виде~\eqref{eq:kl_full}.
 Отсюда следует что соотстветсвующие вариационные и апостериорные распределения совпадают.
 \end{proof}
 
@@ -1057,64 +1038,61 @@ L =
 
 
 \begin{theorem}
-Пусть $\frac{{\lambda_{\text{prior}}^Q}}{{\lambda_{\text{likelihood}}^Q}} = {\lambda_{\text{prior}}^L}$. 
+Пусть $\frac{\lamCQ}{\lamLL} = \lamCL$. 
 Тогда задачи оптимизации~\eqref{eq:qopt} представима в виде одноуровневой задачи оптимизации:
 \[
-= {\lambda_\text{likelihood}^\text{Q}\mathsf{E}_{{q(\mathbf{w}, \boldsymbol{\Gamma}| \boldsymbol{\theta})}} \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})}}
- -\]
-\vspace{-0.3cm}
-\[- {\lambda^\text{prior}_\text{Q}\text{D}_{KL}\bigl( q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)}  -\]
-\vspace{-0.3cm}
-\[
--{\sum_{p' \in \mathbf{P}, \lambda \in \boldsymbol{\lambda}^\text{struct}_\text{Q}} \lambda\text{D}_{KL}(\boldsymbol{\Gamma} | p')+\text{log}p(\mathbf{h}|\mathbf{f})} \to \max_{\mathbf{h}, \boldsymbol{\theta}}. 
-\]  
-\end{theorem}
-\begin{proof}
-Параметры вариационного распределения $q$ не зависят от слагаемых вида $\text{log}p(\mathbf{h}|\mathbf{f})$ и $\text{D}_{KL}(\boldsymbol{\Gamma} | p'), p' \in \mathbf{P},$ поэтому нижняя задача оптимизации:
-\[
-    \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})} -
+\lamLL \E_{\q}\LL - \lamCQ \KL{\q}{\prior} -
 \]
 \[
-    - {\lambda^\text{prior}_\text{L}\text{D}_{KL}\bigl( q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)} \to \max_{\boldsymbol{\theta}}
+-\sum_{p', \lambda \in \mathbf{P}, \lamS} \KL{\priorG}{p'} - \log \priorh \to \max_{\h, \teta}. 
+\]
+\end{theorem}
+\begin{proof}
+Параметры вариационного распределения $\q$ не зависят от слагаемых вида $\log \priorh$ и $\KL{\prior}{p'}, p' \in \mathbf{P},$ поэтому нижняя задача оптимизации:
+\[
+    \E_{\q} \log \LL  -
+\]
+\[
+    \lamCL \KL{\q}{\prior}  \to \max_{\teta}
 \]
 эквивалентна следующей задаче:
 \[
-    \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})} -
+        \E_{\q} \log \LL  -
 \]
 \[
-    - {\lambda^\text{prior}_\text{L}\text{D}_{KL}\bigl( q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)} \to \max_{\boldsymbol{\theta}}
+ -\lamCL \KL{\q}{\prior} -
 \]
 \[
--{\sum_{p' \in \mathbf{P}, \lambda \in \boldsymbol{\lambda}^\text{struct}_\text{Q}} \lambda\text{D}_{KL}(\boldsymbol{\Gamma} | p')+\text{log}p(\mathbf{h}|\mathbf{f})} \to \max_{\boldsymbol{\theta}}
-\] 
-для любого вектора $\boldsymbol{\lambda}^\text{struct}_\text{Q}$. 
-Т.к. выполнено равенство  $\frac{{\lambda_{\text{prior}}^Q}}{{\lambda_{\text{likelihood}}^Q}} = {\lambda_{\text{prior}}^L}$, то нижняя задача оптимизации экивалентна следующей задаче:
+-\sum_{p', \lambda \in \mathbf{P}, \lamS} \KL{\priorG}{p'} - \log \priorh \to \max_{\h, \teta}
+\]
+для любого вектора $\lamS$. 
+Т.к. выполнено равенство  $\frac{\lamCQ}{\lamLL} = \lamCL$, то нижняя задача оптимизации экивалентна следующей задаче:
 \[
-= {\lambda_\text{likelihood}^\text{Q}\mathsf{E}_{{q(\mathbf{w}, \boldsymbol{\Gamma}| \boldsymbol{\theta})}} \text{log}~{p(\mathbf{y} | \mathbf{X}, \mathbf{w},\boldsymbol{\Gamma}, \mathbf{h}, \lambda_\text{temp}, \mathbf{f})}}
- -\]
-\vspace{-0.3cm}
-\[- {\lambda^\text{prior}_\text{Q}\text{D}_{KL}\bigl( q(\mathbf{w}, \boldsymbol{\Gamma}|\boldsymbol{\theta}) || p(\mathbf{w}, \boldsymbol{\Gamma} |\mathbf{h}, \lambda_{\text{temp}},\mathbf{f}) \bigr)}  -\]
-\vspace{-0.3cm}
+\lamLL \E_{\q} \log \LL -  
+\]
 \[
--{\sum_{p' \in \mathbf{P}, \lambda \in \boldsymbol{\lambda}^\text{struct}_\text{Q}} \lambda\text{D}_{KL}(\boldsymbol{\Gamma} | p')+\text{log}p(\mathbf{h}|\mathbf{f})} \to \max_{\boldsymbol{\theta}},
-\]  
+    -\lamCQ \KL{\q}{\prior}  - 
+\]
+\[
+-\sum_{p', \lambda \in \mathbf{P}, \lamS} \KL{\priorG}{p'} - \log \priorh \to \max_{\h, \teta},
+\]
 а значит верхняя и нижняя задачи совпадают:
 \[
-    \mathbf{h} = \argmax_{\mathbf{h}'} Q(\mathbf{h}, \boldsymbol{\theta}^{*}(\mathbf{h}')),
+    \h = \argmax_{\h'} \Val,
 \]
 где 
 \[
-     \boldsymbol{\theta}^{*}(\mathbf{h}') = \argmax_{\boldsymbol{\theta}'} Q(\mathbf{h}', \boldsymbol{\theta}')).
+    \teta^{*}(\h') = \argmax_{\teta} \Val{\h'}.
 \]
 Из свойства 
 \[
-    \max_{\mathbf{h}}\max_{\boldsymbol{\theta}} Q(\boldsymbol{\theta}, \mathbf{h}) = \max_{\boldsymbol{\theta}, \mathbf{h}} Q(\boldsymbol{\theta}, \mathbf{h})
+    \max_{h}\max_{\teta} \Val = \max_{\teta, \h} \Val
 \]
 следует доказательство теоремы.
 \end{proof}
 
 
-
+\iffalse
 Для вычисления приближенного значения функций $Q$ и $L$ предлагается использовать приближение методом Монте-Карло с порождением $R$ реализаций величин $\mathbf{w}, \boldsymbol{\Gamma}$:
 
 \[
@@ -1134,6 +1112,7 @@ D_\text{KL}\left(q_{\mathbf{w}}(\mathbf{w}|\boldsymbol{\theta}_\mathbf{w},\bolds
 \]
 где $R$ --- количество реализаций случайных величин, по котором вычисляется значения вариационной оценки обоснованности, $\hat{\epsilon}_r \sim \mathcal{N}(0,1),$
  $\hat{\boldsymbol{\Gamma}}_r = [\hat{\boldsymbol{\gamma}}^{j,k}_r, (j,k) \in E]$ --- реализация случайной величины, соответствующей структуре $\boldsymbol{\Gamma}$.
+
 
 Для решения двухуровневой задачи предлагается использовать градиентные методы. 
 \begin{theorem}
