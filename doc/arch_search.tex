@@ -749,7 +749,7 @@ $$\propto
 \[
     \max_{\h \in \Uh} \log  \priorh - \min_{\h \in \Uh} \log  \priorh + \max_{\h \in \Uh} \min_{\teta \in \Uteta} \KL{\q}{\prior} -
 \]
-\[ \min_{\h \in \Uh, \teta \in \Uteta}  \KL_{\q}{\prior} + \max_{\teta \in \Uteta}\frac{1}{\lamCL}\E_{\q} \log \LL - 
+\[ \min_{\h \in \Uh, \teta \in \Uteta}  \KL{\q}{\prior} + \max_{\teta \in \Uteta}\frac{1}{\lamCL}\E_{\q} \log \LL - 
 \]
 \[
  - \min_{\teta \in \Uteta}\frac{1}{\lamCL}\E_{\q} \log \LL  <
@@ -760,19 +760,20 @@ $$\propto
 \[
 -\min_{\teta \in \Uteta, \h \in \Uh} \KL{\q}{\prior}.
 \]
-
-\item Существуют значения метапараметров $\lamCQ,\lamLL, \lambda_1, \lambda_2, \lamT,$ такие что 
+\item Существуют значения метапараметров $\lamCQ,\lamLL, \lambda_1, \lambda_2, \lamT,$ такие что существуют гиперпараметры $\h_1, \h_2 \in \Uh$:
 \[
-\max_{\h_1,\h_2 \in \Uh} \KL{\prior[][][\h_1]}{\prior[][][\h_2]} -
+\KL{\prior[][][\h_1]}{\prior[][][\h_2]} < 
 \]
 \[
-- \min_{\h_1,\h_2 \in \Uh} \KL{\prior[][][\h_1]}{\prior[][][\h_2]}< 
+<\frac{\max_{\h} \Val - \min_{\h} \Val }{\max_{\lamS}},
 \]
 \[
-<\frac{\max_{\h} \Val - \min_{\h} \Val }{\max_{\lamS}}.
+\KL{\prior[][][\h_2]}{\prior[][][\h_1]} <
 \]
-%при $\lamLL = 0.$
-
+\[
+< \frac{\max_{\h} \Val - \min_{\h} \Val }{\max_{\lamS}}.
+\]
+при $\lamS = \mathbf{0}.$
 \end{enumerate}
 Тогда задача~\eqref{eq:qopt} является обобщающей на $U$.
 \end{theorem}
@@ -804,10 +805,10 @@ $$\propto
 
 
 Докажем критерий 4. 
-Пусть $\lam$ удовлетворяют восьмому условию и $\lamLL = 0, \lamS = \mathbf{0}$.
+Пусть $\lam$ удовлетворяют восьмому условию теоремы и $\lamLL = 0, \lamS = \mathbf{0}$.
 Пусть 
 \[
-K_2 =  \max_{\h \in \Uh} \log \priorh  - \min{\h \in \Uh} \log \priorh + \max_{\h \in \Uh} \min_{\teta \in \Uteta} \KL{\q}{\prior} - 
+K_2 =  \max_{\h \in \Uh} \log \priorh  - \min_{\h \in \Uh} \log \priorh + \max_{\h \in \Uh} \min_{\teta \in \Uteta} \KL{\q}{\prior} - 
 \]
 \[
 \min_{\h \in \Uh, \teta \in \Uteta} \KL{\q}{\prior} + \max_{\teta \in \Uteta} \frac{1}{\lamCL} \E_{\q}\log \LL - 
@@ -818,79 +819,105 @@ K_2 =  \max_{\h \in \Uh} \log \priorh  - \min{\h \in \Uh} \log \priorh + \max_{
 Пусть $\h_1, \h_2 \in \Uh, \Val[\h_1] - \Val[\h_2]>K_2$.
 Рассмотрим разность параметрических сложностей двух векторов:
 \[
-C_p(\teta_2) - C_p(\teta_1) = \min_{\h \in \Uh} \KL{\q[][][\teta_2]}{\prior} - 
+C_p(\teta_2) - C_p(\teta_1) = \min_{\h \in \Uh} \KL{\q[\teta_2]}{\prior} - 
 \]
 \[
- - \min_{\h \in \Uh}\KL{\q[][][\teta_1]}{\prior} \geq
+ - \min_{\h \in \Uh}\KL{\q[\teta_1]}{\prior} \geq
 \]
+оценим снизу, а также добавим и вычтем $\KL{\q[\teta_2]}{\prior[][][\h_2]}$
 % добавляем D_kl вместо D_KL^*
 \[
-\geq    \min_{\h \in \Uh} \KL{\q[][][\teta_2]}{\prior} - \min_{\h \in \Uh}\KL{\q[][][\teta_1]}{\prior} + \KL{\q[][][\teta_2]}{\prior[][][\h_2]} - \KL{\q[][][\teta_2]}{\prior[][][\h_2]} = 
+\geq   \min_{\h \in \Uh} \KL{\q[\teta_2]}{\prior} - KL{\q[\teta_1]}{\prior[][][\h_1]} +
 \]
 \[
-= \Val[\h_1] - \Val[\h_2] - \priorh[\h_1] + \priorh[\h_2]  +
++ \KL{\q[\teta_2]}{\prior[][][\h_2]} - \KL{\q[\teta_2]}{\prior[][][\h_2]} = 
+\]
+сведем выражение до $\Val$
+\[
+= \Val[\h_1] - \Val[\h_2] - \log\priorh[\h_1] + \log\priorh[\h_2]  +
 \]
 \[
-+ \min_{\h}  \min_{\h}\KL{\q[][][\teta_2]}{\prior}  -  \KL{\q[][][\teta_2]}{\prior[][][\h_2]} >
++  \min_{\h}\KL{\q[\teta_2]}{\prior}  -  \KL{\q[\teta_2]}{\prior[][][\h_2]} >
+\]
+воспользуемся неравенством $\Val[\h_1] - \Val[\h_2]>K_2$
+\[
+> K_2 - \log\priorh[\h_1] + \log \priorh[\h_2] + \min_{\h}\KL{\q[\teta_1]}{\prior} 
 \]
 \[
-> K_2 - \log\priorh[\h_1] + \log \priorh[\h_2] + \min_{\h}  \min_{\h}\KL{\q[][][\teta_1]}{\prior}  -  \KL{\q[][][\teta_1]}{\prior[][][\h_2]}.
+ -  \KL{\q[\teta_2]}{\prior[][][\h_2]}.
 \]
 Рассмотрим разность:
 \[
-\min_{\h}\KL{\q[][][\teta_1]}{\prior}  -  \KL{\q[][][\teta_1]}{\prior[][][\h_2]}  =
+\min_{\h}\KL{\q[\teta_2]}{\prior}  -  \KL{\q[\teta_1]}{\prior[][][\h_2]}  =
 \]  
+т.к. $\teta_1$ --- решение нижней задачи оптимизации:
 \[
-\min_{\h}\KL{\q[][][\teta_1]}{\prior}  - \frac{1}{\lamCL}\E_{\q[\teta_1]}\log \LL + 
+\min_{\h}\KL{\q[\teta_2]}{\prior}  - \frac{1}{\lamCL}\E_{\q[\teta_1]}\log \LL + 
 \]
 \[
 \max_{\teta} (\frac{1}{\lamCL} \E_{\q}\log \LL - \KL{\q}{\priorh[\h_1]}) \geq
 \]
-% взяли максимум от правдоподобия
+получим оценку снизу:
 \[
-\geq \min_{\h}\KL{\q[][][\teta_1]}{\prior} - \max_{\teta}\frac{1}{\lamCL}\E_{q} \log \LL + 
+\geq \min_{\h}\KL{\q[\teta_2]}{\prior} - \max_{\teta}\frac{1}{\lamCL}\E_{q} \log \LL + 
 \]
 \[
-    \max_{\teta} \min_{\teta'} \frac{1}{\lamLL} \E_{\q[\teta']} \log \LL - \KL{\q}{\priorh[\h_1]} \geq
+    \max_{\teta}\left(\min_{\teta'} \frac{1}{\lamCL} \E_{\q[\teta']} \log \LL - \KL{\q}{\priorh[\h_1]} \right) \geq
 \]
+оценим первое слагаемое
 \[
 \geq \min_{\teta,\h} \KL{\q}{\prior} - \max_{\teta}\frac{1}{\lamCL}\E_{\q} \log \LL +
 \]
 \[
-\min_{\teta} \frac{1}{\lamCL} \E_{\q} \log \LL - \min{\teta}\KL{\q}{\prior[\h_1]} \geq
+\min_{\teta} \frac{1}{\lamCL} \E_{\q} \log \LL - \min_{\teta}\KL{\q}{\prior[\h_1]} \geq
 \]
+оценим последнее слагаемое
 % Взяли оценку от всех выражений
 \[
 \geq \min_{\teta, \h} \KL{\q}{\prior} - \max_{\teta}\frac{1}{\lamCL} \E_{\q} \log \LL 
 \]
 \[
-+ \min_{\teta} \frac{1}{\lamCL}\E_{q} \log \LL - \max_{\h}\min{\teta}\KL{\q}{\prior}.
++ \min_{\teta}\frac{1}{\lamCL}\E_{q} \log \LL - \max_{\h}\min_{\teta}\KL{\q}{\prior}.
 \]
 Складывая полученную оценку с $K_2 -\log \priorh[\h_2] + \log \priorh[\h_1]$ получаем разность параметрических сложностей больше нуля.
 
-Докажем критерий 5. Пусть $\lamCQ = \lamCL = \lamLL > 0,$ $\lamS = \mathbf{0}.$ Тогда функции $\Loss$ и $\Val$  можно записать как: 
-$$\Loss = \Val \propto $$ $$\E_{\q} \log \LL - \KL{\q}{\prior},$$ что и требовалось доказать.
+Докажем критерий 5. Пусть $\lamCQ = \lamCL = \lamLL = 1,$ $\lamS = \mathbf{0}.$ Тогда функции $\Loss$ и $\Val$  можно записать как: 
+$$\Loss = \Val \propto $$ $$\E_{\q} \log \LL - \KL{\q}{\prior} + \log\priorh,$$ что и требовалось доказать.
+TODO 
 
 Докажем критерий 6. 
-Пусть задан вектор метапараметров~$\lam$, удовлетворяющий девятому условию теоремы и $\lamS = \mathbf{0}$. 
+Пусть задан вектор метапараметров~$\lam$, удовлетворяющий девятому условию теоремы и $\lamS = \mathbf{0}$. Пусть заданы векторы гиперпараметров $\h_1, \h_2$, такие что $\Val[\h_1] - \Val[\h_2]>0.$
 Возьмем в качестве $K_4$ следующее выражение:
 \[
-K_4 = \frac{\max_{\h} \Val - \min_{\h }}{\Val{\max_{\lamS}}}.
+K_4 = \frac{\max_{\h} \Val - \min_{\h }\Val}{\max_{\lamS}}.
 \]
 
 Пусть вектор метапараметров $\lam'$ отличается от $\lam$ лишь метапараметром $\lamS$. Для  обоих векторов метапараметров нижняя задача  оптимизации $\Loss$ совпадает, поэтому выполняется первое условие критерия.
 
-Без ограничения общности предположим, что $\Val[\h_1] - \Val[\h_2]>0$ при $\lam.$ Также без ограничения общности будем полгаать, что множестве $\mathbf{P}$ состоит только из одного распределения на структуре $\G$, равного распределению на структуре $\priorG[][\h_1].$
-%Положим распределение из $\mathbf{P}$ имеющим то же распределение, что и априорное $\mathbf{P} = \{p'(\boldsymbol{\Gamma})\}, p(\boldsymbol{\Gamma}) \sim \text{GS}(\mathbf{s}', \lambda_\text{temp}')\}$. 
-
-Положим для $\lam'$ параметр $\lamS$ равным максимальному значению: $\lamS = \max {\lamS}'$.
-Тогда при $\lam'$ неравенство 
+По условию теоремы во множество $\mathbf{P}$ входит хотя бы одно распределение Gumbel-Softmax:
 \[
-\Val[\h_1] = \Val[\h_2] + {\lamS}' K_4 = \Val[\h_1]-\Val[\h_2] + \max_{\h} \Val - \min_{\h} \Val = 0,
+    p_1 \sim \mathcal{GS}, p \in \mathbf{P}.
+\]
+Положим для $\lam'$ метапараметр перед данным распределением $\lambda^{Q}_\text{struct} \in \lamS$ равным максимальному значению. Положим также значение параметров данного распределения равным параметрам распределения $\prior[\h_1]:$
+\[
+    p_1 = \prior[\h_1].
+\]
+Для остальных распределений $p' \in \mathbf{P}$ положим коэффициент $\lambda^{Q}_\text{struct} \in \lamS$ равным нулю.  
+Тогда справедливо следующее неравенство:
+\[
+\Val[\h_2][][][][\lam'] - \Val[\h_1][][][][\lam'] = 
+\]
+\[
+=\Val[\h_2]-\Val[\h_1] + \max_{\lambda^{Q}_\text{struct}}\lambda^{Q}_\text{struct} \KL{\prior[\h_2]}{\prior[\h_1]} =
+\]
+\[
+   = \Val[\h_2]-\Val[\h_1] + \max_{\lambda^{Q}_\text{struct}}\lambda^{Q}_\text{struct} K_4 > 0.
 \]
 что и требовалось доказать.
 
-Докажем критерий 7. Достаточным условием непрерывности функций $\Loss$, $\Val$ является непрерывность входящих в нее слагаемых. 
+Докажем критерий 7.
+Достаточным условием непрерывности функций $\Loss$, $\Val$ является непрерывность входящих в нее слагаемых. 
+Достаточным условием непрерывности функций вида $\KL{p_1}{p_2}$ является непрерывность по метапараметрам функций $p_1 (\log{p_1} - \log{p_2})$  почти всюду. TODO  
 Т.к. априорные распределения задаются нерперывными функциями плотности $\priorw, \priorG$, и функция плотности $\priorG$ распределения структуры $\G$ ограничена на компакте, то дивергенция $\KL{\q}{\prior}$ непрерывна по метапараметрам.
 Т.к. остальные слагаемые функций оптимизаций $\Loss,\Val$ также непрерывны по метапараметрам, то непрерывна и сами функции оптимизации.
 \end{proof}
@@ -963,7 +990,7 @@ K_4 = \frac{\max_{\h} \Val - \min_{\h }}{\Val{\max_{\lamS}}}.
 \approx  \E_{y,\x} \E_{\q} \log \LL  -\frac{1}{m_0}\KL{\prior}{\q}= 
 \]
 \[
-= \E_{y,\x} \E_{\q} \log \LL  -\frac{\lamCL}{m}\KL_{\q}{\prior}.
+= \E_{y,\x} \E_{\q} \log \LL  -\frac{\lamCL}{m}\KL{\q}{\prior}.
 \]
 Таким образом, задачи оптимизации функций~\eqref{eq:l_m},\eqref{eq:l_m0} совпадают, что и требовалось доказать.
 \end{proof}
