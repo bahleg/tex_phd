@@ -409,9 +409,12 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 \begin{proof}
 Воспользуемся неравенством Пинскера:
 \[
-    ||F_q((\tetaw)_i)-F_p(\h_i)||_\text{TV}\leq\sqrt{\frac{1}{2}\KL{\priorw}{\qw}},
+    ||F_q((\tetaw)_i)-F_p(\h_i)||_\text{TV}\leq\sqrt{\frac{1}{2}\widehat{\text{KL}}\left(\priorw||\qw\right)},
 \]
-где $||\cdot||_\text{TV}$ --- расстояние по вариации, $F_q, F_p$ --- функции распределения  $\qw,\priorw,$ дивергенция $\KL{\priorw}{\qw}$ берется при фиксированной структуре $\G$.
+где $||\cdot||_\text{TV}$ --- расстояние по вариации, $F_q, F_p$ --- функции распределения  $\qw,\priorw,$  $\widehat{\text{KL}}\left(\priorw||\qw\right)$ --- дивергенция при фиксированной структуре $\G$:
+\[
+   \int_{\w} \qw \log \left(\frac{\qw}{\priorw}\right) d\w.
+\]
 
 По условию дивергенция~\eqref{eq:kl_full} стремится к нулю при $i \to \infty$. Она декомпозируется на два  неотрицательных слагаемых, поэтому оба они стремятся к нулю.
 Рассмотрим второе слагаемое:
@@ -422,7 +425,7 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 \textit{расписывая матожидание как интеграл}
 %\end{center}
 \[
- \lim_{i \to \infty} \left|\int_{\G} \int_{\w} \log \left(\frac{\qw[][][{\tetaw[i]}]}{\priorw[][][{\h[i]}]}\right)\qG[][{\tetaG[i]}]\qw[][][{\tetaw[i]}] d\w d\w \right| \geq  
+ \lim_{i \to \infty} \left|\int_{\G} \int_{\w} \log \left(\frac{\qw[][][{\tetaw[i]}]}{\priorw[][][{\h[i]}]}\right)\qG[][{\tetaG[i]}]\qw[][][{\tetaw[i]}] d\w d\G \right| \geq  
 \]
 %\begin{center}
 \textit{по неравенству Пинскера}
@@ -430,14 +433,20 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 \[
 \geq \lim_{i \to \infty}  \int_{\G} ||F_q({\tetaw[i]})-F_p(\h_i)||^2_\text{TV}\qG[][{\tetaG[i]}] d\G \geq 0.  
 \]
-Т.к. по неравенству Йенсена 
+
+Отсюда
 \[
-    \int_{\G} ||F_q({\tetaw[i]})-F_p(\h_i)||^2_\text{TV}\qG[][{\tetaG[i]}] d\G \geq  
+\lim_{i \to \infty}  \int_{\G} ||F_q({\tetaw[i]})-F_p(\h_i)||^2_\text{TV}\qG[][{\tetaG[i]}] d\G = 0.
+\]
+
+По неравенству Йенсена 
+\[
+0 \leq  \left(\int_{\G} ||F_q({\tetaw[i]})-F_p(\h_i)||_\text{TV}\qG[][{\tetaG[i]}] d\G\right)^2 \leq
 \]
 \[
-\geq \left(\int_{\G} ||F_q({\tetaw[i]})-F_p(\h_i)||_\text{TV}\qG[][{\tetaG[i]}] d\G\right)^2,
+    \int_{\G} ||F_q({\tetaw[i]})-F_p(\h_i)||^2_\text{TV}\qG[][{\tetaG[i]}] d\G.
 \]
-то $$\lim_{i \to \infty} \int_{\G}||F_q({\tetaw[i]})-F_p(\h_i)||_\text{TV} \qG[][{\tetaG[i]}] d\G = 0.$$
+Тогда по свойству степени предела $$\lim_{i \to \infty} \int_{\G}||F_q({\tetaw[i]})-F_p(\h_i)||_\text{TV} \qG[][{\tetaG[i]}] d\G = 0.$$
 По теореме Шеффе данное выражение можно переписать как:
 \begin{equation}
 \label{eq:sheffe}
