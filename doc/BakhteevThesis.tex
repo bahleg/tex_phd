@@ -240,7 +240,7 @@
 
 \begin{document}
 \input{defs}
-\iffalse
+
 \input{dis_title}
 \tableofcontents{}%это оглавление
 \input{dis_intro}
@@ -255,14 +255,13 @@
 
 \clearpage
 
-
+\iffalse
 \chapter{Оптимизация гиперпараметров в задаче выбора модели}
 \input{hyperparams}
 \clearpage
-\fi
+
 \chapter{Выбор субоптимальной структуры модели}
 \input{arch_search}
-\iffalse
 \clearpage
 \chapter{Анализ прикладных задач порождения и выбора моделей глубокого обучения}
 \input{applied}
@@ -271,15 +270,15 @@
 \addcontentsline{toc}{section}{Заключение}
 \input{dis_conclusion}
 
-\fi
+
 \clearpage
 
-
+\fi
 \addcontentsline{toc}{chapter}{Список оcновных обозначений}
 \chapter*{Список оcновных обозначений}
 \input{notations}
 \clearpage 
-\iffalse    
+ 
 \addcontentsline{toc}{section}{Список иллюстраций}
 \listoffigures
 
@@ -295,5 +294,5 @@
 \bibliographystyle{gost71u}
 \bibliography{dis_literature}
 
-\fi
+
 \end{document}
