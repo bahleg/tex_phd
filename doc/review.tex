@@ -23,13 +23,16 @@
 \begin{defin}
 Пусть задан ациклический граф $(V,E)$, такой что 
 \begin{enumerate}
-\item для каждого ребра $(j,k) \in E$: вектор базовых дифференцируемых функций  $\mathbf{g}^{j,k} = [\mathbf{g}^{j,k}_0, \dots, \mathbf{g}^{j,k}_{K^{j,k}}]$  мощности $K^{j,k}$;
+\item для каждого ребра $(j,k) \in E$: вектор базовых дифференцируемых функций  $\mathbf{g}^{j,k} = [\mathbf{g}^{j,k}_0, \dots, \mathbf{g}^{j,k}_{K^{j,k}-1}]$  мощности $K^{j,k}$;
 \item для каждой вершины $v \in V$: дифференцируемая функция агрегации $\textbf{agg}_v$.
 \item Функция $\mathbf{f} = \mathbf{f}_{|V|-1}$, задаваемая по правилу 
 \begin{equation}
 \label{eq:modelfam}
-    \mathbf{f}_{v}(\mathbf{w}, \mathbf{x}) = \textbf{agg}_{v}\left(\{ \langle \boldsymbol{\gamma}^{j,k}, \mathbf{g}^{j,k} \rangle \circ  \mathbf{f}_j(\mathbf{x})| j \in \text{Adj}(v_k)\}\right), v \in \{1,\dots,|V|-1\}, \quad \mathbf{f}_0(\mathbf{x}) = \mathbf{x}
+    \mathbf{f}_{v}(\mathbf{w}, \mathbf{x}) = \textbf{agg}_{v}\left(\{ \langle \boldsymbol{\gamma}^{j,k}, \mathbf{g}^{j,k} \rangle \circ  \mathbf{f}_j(\mathbf{x})| j \in \text{Adj}(v_k)\}\right), 
 \end{equation}
+\[
+v \in \{1,\dots,|V|-1\}, \quad \mathbf{f}_0(\mathbf{x}) = \mathbf{x}
+\]
 и являющаяся функцией из признакового пространства $\mathbb{X}$ в пространство меток $\yb$ при значениях векторов, $\boldsymbol{\gamma}^{j,k} \in [0,1]^{K^{j,k}}$.
 \end{enumerate}
 
@@ -39,7 +42,7 @@
 Примером функций агрегации выступают функции суммы и конкатенации векторов.
 
 \begin{defin}
-Функции $\mathbf{f}_1, \dots, \mathbf{f}_{|V|}$ из~\eqref{eq:modelfam} назовем называть \textit{слоями или подмоделями} модели $\mathbf{f}$.
+Функции $\mathbf{f}_0, \dots, \mathbf{f}_{|V|-1}$ из~\eqref{eq:modelfam} назовем \textit{слоями или подмоделями} модели $\mathbf{f}$.
 \end{defin}
 
 \begin{utv}
@@ -53,12 +56,12 @@
 
 Пример параметрического семейства моделей, которое описывает сверточную нейронную сеть, представлена на Рис.~\ref{fig:scheme_cnn}. Семейство задает множество моделей с двумя операциями свертки с одинаковым размером фильтра $c_0$ и различным числом каналов $c_1$ и $c_2$. Единичная свертка с $c_1$ каналами $\textbf{Conv}(\mathbf{x}, c_1, 1)$ требуется для выравнивания размерностей скрытых слоев. Каждая модель параметрического семейства задается формулой: 
 \[
-    \mathbf{f} = \textbf{agg}_2\left(\left\{\boldsymbol{\gamma}^{1,2}_0 \mathbf{g}^{1,2}_0 \left(\textbf{agg}_1 \left(\{\boldsymbol{\gamma}^{0,1}_0 \mathbf{g}^{0,1}_0(\mathbf{x}), \boldsymbol{\gamma}^{0,1}_1 \mathbf{g}^{0,1}_1(\mathbf{x})  \} \right)\right)\right\}\right).
+    \mathbf{f} = \textbf{agg}_2\left(\left\{{\gamma}^{1,2}_0 \mathbf{g}^{1,2}_0 \left(\textbf{agg}_1 \left(\{{\gamma}^{0,1}_0 \mathbf{g}^{0,1}_0(\mathbf{x}), {\gamma}^{0,1}_1 \mathbf{g}^{0,1}_1(\mathbf{x})  \} \right)\right)\right\}\right).
 \]
 Положим, что функции агрегации $ \textbf{agg}_1,  \textbf{agg}_2$ являются операциями суммы. Заметим, что к вершине ``2'' ведет только одно ребро, поэтому операцию суммы можно опустить. 
 Итоговая формула модели задается следующим образом:
 \[
-    \mathbf{f} = \boldsymbol{\gamma}^{1,2}_0 \textbf{softmax} \left(\boldsymbol{\gamma}^{0,1}_0 \textbf{Conv}(\mathbf{x}, c_0, c_1)(\mathbf{x}) + \boldsymbol{\gamma}^{0,1}_1 \textbf{Conv}(\mathbf{x}, 1, c_1) \circ \textbf{Conv}(\mathbf{x}, c_0, c_2)(\mathbf{x}) \right).
+    \mathbf{f} = {\gamma}^{1,2}_0 \textbf{softmax} \left({\gamma}^{0,1}_0 \textbf{Conv}(\mathbf{x}, c_0, c_1)(\mathbf{x}) + {\gamma}^{0,1}_1 \textbf{Conv}(\mathbf{x}, 1, c_1) \circ \textbf{Conv}(\mathbf{x}, c_0, c_2)(\mathbf{x}) \w^{1,2}_0\right).
 \]
 
 
@@ -75,7 +78,7 @@
   \node (f2)  at (15,6)                   {$\mathbf{f}_2(\mathbf{x})$};% = \gamma^{2,1}\mathbf{g}^{2,1}(\mathbf{x})$};
   \path[->]  (f0) edge [bend left=50] node {$\mathbf{g}^{0,1}_0(\mathbf{x}) = \textbf{Conv}(\mathbf{x}, c_0, c_1)$}(f1);
   \path[->] (f0)  edge[bend right=50] node[below] {$\mathbf{g}^{0,1}_1(\mathbf{x}) = \textbf{Conv}(\mathbf{x}, 1, c_1) \circ \textbf{Conv}(\mathbf{x}, c_0, c_2)$}(f1);
-  \path[->] (f1)  edge node {$\mathbf{g}^{1,2}_0(\mathbf{x}) = \textbf{softmax}(\mathbf{w}^{2,1}\mathbf{x})$}(f2);            
+  \path[->] (f1)  edge node {$\mathbf{g}^{1,2}_0(\mathbf{x}) = \textbf{softmax}(\mathbf{x}\mathbf{w}^{2,1})$}(f2);            
   \draw[->] (f1) to (f2);
  
 \end{tikzpicture}
@@ -317,9 +320,9 @@ z={({0.5*cos(45)},{0.5*sin(45)})},
   \node (f1)  at (9,6)                 {$\mathbf{f}_1(\mathbf{x})$};% = \gamma^{1,1}\mathbf{g}^{1,1}(\mathbf{x}) +  \gamma^{1,2}\mathbf{g}^{1,2}(\mathbf{x})$};
   %\node (g21) at (12,6)                   {$\mathbf{g}^{2,1}(\mathbf{x})$};% = \boldsymbol{\sigma}(\mathbf{w}^{2,1}\mathbf{x})$};
   \node (f2)  at (15,6)                   {$\mathbf{f}_2(\mathbf{x})$};% = \gamma^{2,1}\mathbf{g}^{2,1}(\mathbf{x})$};
-  \path[->]  (f0) edge [bend left=50] node {$\mathbf{g}^{0,1}_0(\mathbf{x}) = \boldsymbol{\sigma}(\mathbf{w}^{0,1}_0\mathbf{x})$}(f1);
-  \path[->] (f0)  edge[bend right=50] node[below] {$\mathbf{g}^{0,1}_1(\mathbf{x}) = \boldsymbol{\sigma}(\mathbf{w}^{0,1}_1\mathbf{x})$}(f1);
-  \path[->] (f1)  edge node {$\mathbf{g}^{1,2}_0(\mathbf{x}) = \textbf{softmax}(\mathbf{w}^{1,2}_0\mathbf{x})$}(f2);       
+  \path[->]  (f0) edge [bend left=50] node {$\mathbf{g}^{0,1}_0(\mathbf{x}) = \boldsymbol{\sigma}(\mathbf{x}\mathbf{w}^{0,1}_0)$}(f1);
+  \path[->] (f0)  edge[bend right=50] node[below] {$\mathbf{g}^{0,1}_1(\mathbf{x}) = \boldsymbol{\sigma}(\mathbf{x}\mathbf{w}^{0,1}_1)$}(f1);
+  \path[->] (f1)  edge node {$\mathbf{g}^{1,2}_0(\mathbf{x}) = \textbf{softmax}(\mathbf{x}\mathbf{w}^{1,2}_0)$}(f2);       
   \draw[->] (f1) to (f2);
  
 \end{tikzpicture}
@@ -346,41 +349,41 @@ z={({0.5*cos(45)},{0.5*sin(45)})},
 \end{defin}
 
 
-Одной из возможных частных постановок задачи выбора структуры модели является \textit{двусвязный байесовский вывод.} 
+Одной из постановок задачи выбора структуры модели является \textit{двусвязный байесовский вывод.} 
 На \textit{первом уровне} байесовского вывода  находится апостериорное распределение параметров.
 
 \begin{defin}
 \textit{Апостериорным распределением} назовем распределение вида
 \begin{equation}
 \label{eq:posterior}
-    \post = \frac{\LL \prior}{p(\mathbf{y}|\mathbf{X}, \lam)} \propto \LL \prior.% \mathbb{W} \times \Delta{\boldsymbol{\Gamma}} \times \mathbb{X}  \times \mathbb{H}. 
+    \post = \frac{\LL \prior}{\EV} \propto \LL \prior.% \mathbb{W} \times \Delta{\boldsymbol{\Gamma}} \times \mathbb{X}  \times \mathbb{H}. 
 \end{equation}
 \end{defin}
 
 \begin{defin}
 \textit{Вероятностной моделью глубокого обучения} назовем совместное распределение вида
 \[
-    p({y}, \mathbf{w},  \boldsymbol{\Gamma}|\mathbf{x}, \mathbf{h}, \lam) = p({y}|\mathbf{x}, \mathbf{w},  \boldsymbol{\Gamma}, \lam)\prior: \yb \times \mathbb{W}  \times \Gb  \times \mathbb{R}^{+}.
+    p({y}, \mathbf{w},  \boldsymbol{\Gamma}|\mathbf{x}, \mathbf{h}, \lam) = p({y}|\mathbf{x}, \mathbf{w},  \boldsymbol{\Gamma}, \lam)\prior: \yb \times \mathbb{W}  \times \Gb  \to \mathbb{R}^{+}.
 \]
 \end{defin}
 
 \begin{defin}
-\textit{Функцией правдоподбия выборки } назовем величину
+\textit{Функцией правдоподбия выборки TODO} назовем величину
 \[
-    p(y|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \lam): \yb \times \mathbb{X} \times \mathbb{W} \times \Gb \times \Lamb \to \mathbb{R}^{+}.
+    p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}, \lam): \yb \to \mathbb{R}^{+}.
 \]
 \end{defin}
-Для каждой модели определена функция обоснованности  $p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \Lamb)$.
+Для каждой модели определена функция обоснованности  $\EV$.
  
 На \textit{втором уровне} байесовского вывода осуществляется выбор модели на основе обоснованности модели.
 \begin{defin}
 \textit{Обоснованностью модели }назовем величину
 \begin{equation}
 \label{eq:evidence}
-p(y|\mathbf{X}, \mathbf{h}, \lam) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\mathbf{y}|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}) \LL d\mathbf{w}d\boldsymbol{\Gamma}.
+\EV = \int_{\mathbf{w}, \boldsymbol{\Gamma}} \LL \prior  d\mathbf{w}d\boldsymbol{\Gamma}.
 \end{equation}
 \end{defin}
-Получение значений апостериорного распределения и правдоподобия модели сетей глубокого обучения является вычислительно сложной процедурой. Для получения оценок на данные величины используют методы, такие как аппроксимация Лапласа~\cite{tokmakova} и вариационная нижняя оценка~\cite{nips}.  В данной работе в качестве метода получения оценок правдоподобия модели выступает вариационное распределение.
+Получение значений апостериорного распределения и обоснованности модели сетей глубокого обучения является вычислительно сложной процедурой. Для получения оценок на данные величины используют методы, такие как аппроксимация Лапласа~\cite{tokmakova} и вариационная нижняя оценка~\cite{nips}.  В данной работе в качестве метода получения оценок обоснованности модели выступает вариационное распределение.
 
 \begin{defin}
 \textit{Вариационным распределением} назовем параметрическое распределение $\q$, являющееся приближением  апостериорного распределения параметров и структуры $\post.$ 
@@ -396,7 +399,7 @@ p(y|\mathbf{X}, \mathbf{h}, \lam) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\ma
 \textit{Функцией потерь} $\Loss$ для модели $\model$ назовем дифференцируемую функцию, принимаемую за качество модели на обучающей выборки при параметрах модели, получаемых из  распределения $q$.
 \end{defin}
 
-В качестве функции $\Loss$ может выступать минус логарифм правдоподобия выборки $\text{log}~p(y|\mathbf{X}, \mathbf{w}, \boldsymbol{\Gamma}, \lam)$  и логарифм апостериорной вероятности $\log \post$ параметров и структуры модели на обучающей выборке.
+В качестве функции $\Loss$ может выступать минус логарифм правдоподобия выборки $\log\LL$  и логарифм апостериорной вероятности $\log\post$ параметров и структуры модели на обучающей выборке.
 
 \begin{defin}
 \label{def:q}
@@ -418,12 +421,12 @@ p(y|\mathbf{X}, \mathbf{h}, \lam) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\ma
 \end{equation}
 
 \begin{defin}
-\textit{Задачей выбора модели} $\model$ назовем   двухуровневую задачу оптимизации~\eqref{eq:optim_problem}.
+\textit{Задачей выбора модели} $\model$ назовем   двухуровневую задачу оптимизации~\eqref{eq:optim_problem},\eqref{eq:optim_problem_in}.
 \end{defin}
 
 Рассмотрим для примера базовый вариант выбора модели с применением функций $q, L, Q$.
 \begin{example}
-Будем полагать, что задано разбиение выборки на обучающую $\mathfrak{D}_\text{train}$ и валидационную $\mathfrak{D}_\text{valid}$ части.
+Положим, что задано разбиение выборки на обучающую $\mathfrak{D}_\text{train}$ и валидационную $\mathfrak{D}_\text{valid}$ части.
 Положим в качестве вариационных параметров $\boldsymbol{\theta}$ параметры $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$ модели:
 \[
     \boldsymbol{\theta} = [\mathbf{w}, \boldsymbol{\Gamma}].
@@ -433,7 +436,7 @@ p(y|\mathbf{X}, \mathbf{h}, \lam) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\ma
 \[
     \Loss = -\sum_{\mathbf{x},y \in \mathfrak{D}_\text{train}} \log p(y, \mathbf{w}, \boldsymbol{\Gamma}|\mathbf{x}, \lam).
 \]
-Положим в качестве функции $\Val$  минус правдоподобие выборки при условии параметров $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$:
+Положим в качестве функции $\Val$  минус логарифм правдоподобия выборки при условии параметров $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$:
 \[
     \Val = -\sum_{\mathbf{x},y \in \mathfrak{D}_\text{valid}} \log~p(y|\x, \mathbf{w}, \boldsymbol{\Gamma}, \lam).
 \]
@@ -449,7 +452,7 @@ p(y|\mathbf{X}, \mathbf{h}, \lam) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\ma
 
 \section{Критерии выбора модели глубокого обучения}
 В данном разделе рассматриваются различные критерии выбора моделей глубокого обучения, соответствующие функции валидации $Q$.
-В данной работе в качестве критерия выбора модели предлагается субоптимальная сложность модели. Под сложностью модели понимается \emph{правдоподобие модели}~\eqref{eq:evidence}, являющееся байесовской интерпретацией \emph{минимальной длины описания}~\cite{mdl}, т.е. минимальное количество информации, которое требуется передать о модели и о выборке:
+В данной работе в качестве критерия выбора модели предлагается субоптимальная сложность модели. Под сложностью модели понимается \emph{обоснованность модели}~\eqref{eq:evidence}, являющееся байесовской интерпретацией \emph{минимальной длины описания}~\cite{mdl}, т.е. минимальное количество информации, которое требуется передать о модели и о выборке:
 \begin{equation}
 \label{eq:mdl}
 	\textnormal{MDL}(\mathbf{y},\mathbf{f}) = \textnormal{Len}(\mathbf{y}|\mathbf{w}^{*}, \mathbf{f}) + \textnormal{COMP}(\mathbf{f}),
@@ -481,7 +484,7 @@ p(y|\mathbf{X}, \mathbf{h}, \lam) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\ma
 Для этого находится точка оптимума $\boldsymbol{\theta}^{*}$ функции $L$, и производится разложение функции $L$ в ряд Тейлора в окрестности $\boldsymbol{\theta}^{*}$:
 \begin{equation}
 \label{eq:obd}
-    L(\boldsymbol{\theta}^{*} + \Delta\boldsymbol{\theta})  - L(\boldsymbol{\theta}^{*}) = \frac{1}{2} \Delta\boldsymbol{\theta}^{\mathsf{T}}\mathbf{H}\Delta\boldsymbol{\theta} + o(||\Delta\boldsymbol{\theta}||^{3}),
+    \Loss[\boldsymbol{\theta}^{*} + \Delta\boldsymbol{\theta}]  - \Loss[\boldsymbol{\theta}^{*}] = \frac{1}{2} \Delta\boldsymbol{\theta}^{\mathsf{T}}\mathbf{H}\Delta\boldsymbol{\theta} + o(||\Delta\boldsymbol{\theta}||^{3}),
 \end{equation}
 где $\mathbf{H}$ --- гессиан функции $L$. Связь между параметрами не учитывается, поэтому гессиан матрицы $L$ является диагональным.
 Положим в качестве операции удаления параметра замену его значения на ноль. Выбор наиболее неинформативного параметра сводится к задаче условной минимизации~\eqref{eq:obd} при условиях вида
@@ -491,7 +494,7 @@ p(y|\mathbf{X}, \mathbf{h}, \lam) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\ma
 
 В результате решения данной задачи минимизации каждому параметру определяется функция выпуклости
 \[
-    \text{saliency}({\theta}_i) = \frac{{\theta}^2_i}{2H_{i,i}}.
+    \text{saliency}({\theta}_i) = \frac{{\theta}^2_i}{2H^{-1}_{i,i}}.
 \]
 Данная функция характеризует информативность параметра.
 
@@ -511,22 +514,23 @@ p(y|\mathbf{X}, \mathbf{h}, \lam) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\ma
 Идея автоматического определения релевантности заключается в выборе оптимальных начений гиперпараметров $\mathbf{h}$ с дальнейшим удалением неинформативных параметров. Неинформативными параметрами являются те параметры, которые с высокой вероятностью равны нулю относительно априорного или апостериорного распределения.
 
 В работе~\cite{nips} был предложен метод, основанный на получении вариационной нижней оценки правдоподобия модели. В качестве критерия информативности параметра выступает отношение вероятности нахождения параметра в пределах апостериорного распределения к вероятности равенства параметра нулю:
-\[
-    \left|\frac{\mu_j}{\sigma_j}\right|,  
-\]
+\begin{equation}
+\label{eq:rho_graves}
+   \rho =  \left|\frac{\mu_j}{\sigma_j}\right|,  
+\end{equation}
 где $\mu_j, \sigma_j$ --- среднее и дисперсия аппроксимирующего распределения $q$ для параметра $w_j$.
 
 Идея данного метода была развита в~\cite{bayes_compr}, где также используются вариационные методы.  В отличие от~\cite{nips}, в~\cite{bayes_compr} рассматривается ряд априорных распределений параметров, позволяющих прореживать модели более эффективно:
 \begin{enumerate}
 \item Нормальное распределение с лог-равномерным распределением дисперсии. Для каждого параметра $w \in \mathbf{w}$ задается группа параметров $\boldsymbol{\omega} \in \boldsymbol{\Omega}$, где $\boldsymbol{\Omega}$ --- множество всех групп параметров:
 \[
-    p(\mathbf{w}, \mathbf{s}) \propto \prod_{\boldsymbol{\omega} \in \boldsymbol{\Omega}} \frac{1}{|\boldsymbol{\omega}|}\prod_{w \in \boldsymbol{\omega}}\mathcal{N}(w|\mathbf{0}, \boldsymbol{\omega}).
+    p(\mathbf{w}, \mathbf{s}) \propto \prod_{\boldsymbol{\omega} \in \boldsymbol{\Omega}} \frac{1}{|\boldsymbol{\omega}|}\prod_{w \in \boldsymbol{\omega}}\mathcal{N}(w|\mathbf{0}, \boldsymbol{\omega}^2).
 \]
 \item Априорное распределение задается произведением двух случайных величин ${s}_{\text{general}}, {s}_{jk}$ с половинным распределением Коши $\mathcal{C}^{+}$: одно ответственно за отдельный параметр, другое --- за общее распределение параметров:
 \[
-    {s}_{\text{general}} \sim \mathcal{C}^{+}(0, \lambda), \quad  {s}_{jk} \sim \mathcal{C}^{+}(0,1), \quad \hat{w}_{jk} \sim \mathcal{N}(0,1), \quad w_{jk} \sim \hat{w}_{jk}s_j  {s}_{\text{general}},
+    {s}_{\text{general}} \sim \mathcal{C}^{+}(0, h), \quad  {s}_{jk} \sim \mathcal{C}^{+}(0,1), \quad \hat{w}_{jk} \sim \mathcal{N}(0,1), \quad w_{jk} \sim \hat{w}_{jk}s_{jk}  {s}_{\text{general}},
 \]
-где $\lambda \in \mathbf{h}$ --- параметр распределения.
+где $h \in \mathbf{h}$ --- параметр распределения.
 
 \end{enumerate}
 
@@ -538,7 +542,7 @@ p(y|\mathbf{X}, \mathbf{h}, \lam) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\ma
 \begin{defin} Назовем \textit{оператором оптимизации} алгоритм $T$ выбора вектора параметров $\boldsymbol{\theta}'$  по параметрам предыдущего шага $\boldsymbol{\theta}$:
 \begin{equation}
 \label{eq:optim_operator}
-	\boldsymbol{\theta}' = T(\boldsymbol{\theta} |L(\boldsymbol{\theta} |\mathbf{y},\mathbf{X},\mathbf{h},\boldsymbol{\lambda})),
+	\teta' = \TLoss[][\Loss],
 \end{equation}
 где $\boldsymbol{\lambda}$ --- параметры оператора оптимизации или \textit{метапараметры}.
 \end{defin}
@@ -548,28 +552,29 @@ p(y|\mathbf{X}, \mathbf{h}, \lam) = \int_{\mathbf{w}, \boldsymbol{\Gamma}} p(\ma
 Частным случаем оператора оптимизации является оператор стохастического спуска:
 \begin{equation}
 \label{eq:sgd_operator}
-    T(\boldsymbol{\theta} |L(\boldsymbol{\theta} |\mathbf{y},\mathbf{X},\mathbf{h},\boldsymbol{\lambda})) = \boldsymbol{\theta} - \lambda_{\text{lr}} \nabla \Loss,
+    \TLoss[][\Loss]  = \boldsymbol{\theta} - \lambda_{\text{lr}} \nabla \Loss,
 \end{equation}
 где $\lambda_{\text{lr}}$ --- шаг градиентного спуска, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$.
 
 В случае оптимизации гиперпараметров оператор оптимизации применяется не к вариационным параметрам $\boldsymbol{\theta}$, а к гиперпараметрам $\mathbf{h}$:
 \begin{equation}
 \label{eq:hyperoptim_operator}
-    \mathbf{h} = T(\mathbf{h} | \Val).
+    \h = \TVal[][\Val].
 \end{equation}
 
 В случае, если для решения задачи~\eqref{eq:optim_problem_in} применяется несколько шагов оператора оптимизации~\eqref{eq:optim_operator},
 $\boldsymbol{\theta}^{*}$ рассматривается как рекурсивная функция от начального приближения вариационных параметров $\boldsymbol{\theta}^{0}$ и вектора гиперпараметров $\mathbf{h}$:
 \begin{equation}
 \label{eq:param_trace}
-    \boldsymbol{\theta}^{*} = T \circ \dots \circ T(\boldsymbol{\theta}^0 | L, \mathbf{X}, \mathbf{y},  \mathbf{h}, \boldsymbol{\lambda}) = \boldsymbol{\theta}^{*}(\boldsymbol{\theta}^{0}, \mathbf{h}).
+    \boldsymbol{\theta}^{*} = T \circ \dots \circ \TLoss[\teta^{0}][\Loss] = \boldsymbol{\theta}^{*}(\boldsymbol{\theta}^{0}, \mathbf{h}).
 \end{equation}
 
 Решение задачи оптимизации~\eqref{eq:hyperoptim_operator} при~\eqref{eq:param_trace} является вычислительно сложным, поэтому применяются методы, аппроксимирующие применение градиентных методов при~\eqref{eq:param_trace}.
 
 В~\cite{hyper_bengio} рассматривается оптимизация гиперпараметров градиентными методами для квадратичной функции потерь. В~\cite{hyper} в качестве оператора оптимизации гиперпараметров выступает метод градиентного спуска с моментом. Показано, что использование момента значительно снижает количество вычислительных ресурсов, требуемых для проведения оптимизации. В~\cite{hyper_mad} предлагается аппроксимация градиентного метода, использующая предположение о линейности функции~\eqref{eq:param_trace} от начального приближения $\boldsymbol{\theta}^0$. В~\cite{hyper_hoag} предлагается использовать численные методы для приближенного вычисления оператора оптимизации гиперпараметров. В~\cite{greed_hyper} в качестве аппроксимации~\eqref{eq:param_trace} предлагается рассматривать только последний шаг оптимизации:
+TODO --- discuss.
 \[
-    \boldsymbol{\theta}^{*} \approx T(\boldsymbol{\theta}^{\eta-1} | L, \mathbf{y}, \mathbf{X}, \mathbf{h}, \boldsymbol{\lambda}),
+    \boldsymbol{\theta}^{*} \approx \TLoss[\teta^{\eta-1}][\Loss],
 \]
 где $\eta$ --- число шагов оптимизации.
 
@@ -597,7 +602,7 @@ $\boldsymbol{\theta}^{*}$ рассматривается как рекурсив
     \lambda_1 \text{ иначе,}
     \end{cases}
 \]
-где $\lambda_1, \lambda_2$ --- параметры функции $d_v$.
+где $\lambda_1, \lambda_2$ --- параметры функции $d_v$ TODO.
 
 \section{Порождениие и выбор структуры модели глубокого обучения}
 В данном разделе рассматриваются работы, посвященные порождению и модификации структуры моделей. В отличие от работ, описанных в предыдущих разделах, в следующих работах рассматриваемым объектом является не отдельный параметр, а подмодель или группа параметров, входящая в эту подмодель.
@@ -638,17 +643,17 @@ $\boldsymbol{\theta}^{*}$ рассматривается как рекурсив
 
 В работе~\cite{cib} рассматривается порождение моделей, оптимизируемых без учителя. Модель представляется многослойным перцептроном вида:
 \[
-    \mathbf{f} = \mathbf{f}_\text{|V|} \circ \dots \circ \mathbf{f}_1 (\mathbf{x}), \quad \mathbf{f}_i(\mathbf{x}) = \boldsymbol{\sigma}(\mathbf{w}^i \odot \mathbf{H}^i \mathbf{x}),
+    \mathbf{f} = \mathbf{f}_\text{|V|} \circ \dots \circ \mathbf{f}_1 (\mathbf{x}), \quad \mathbf{f}_i(\mathbf{x}) = \boldsymbol{\sigma}(\mathbf{x} \bigl(\mathbf{w}^i \odot \mathbf{H}^i\bigr)),
 \]
 где $\mathbf{H}^i$ --- бинарные матрицы, определяющие вклад каждого параметра из $\mathbf{w}^i$ в итоговую модель, знаком $\odot$  обозначается покомпонентное перемножение. 
 
 Порождение моделей производится с использованием композиции процессов индийских буфетов. Процесс индийского буфета заключается в итеративном построении матрицы $\mathbf{H}^i$ с ограниченным, но не заданным наперед количеством столбцов. Интепретируя количество столбцов  матрицы как размер $i$-го слоя предлагается метод, позволяющий выбирать стохастически порождать модели с разилчной размерностью скрытых слоев. 
 
-В работе~\cite{cib_simple} предлагается метод выбора модели сверточной нейронной сети. Используется функция потерь, основанная на аппроксимации априорного распределения процесса индийского буфета для каждой базовой функции $\mathbf{g}_i$, являющейся $i$-м отображением объектов:
+В работе~\cite{cib_simple} предлагается метод выбора модели сверточной нейронной сети. Используется функция потерь, основанная на аппроксимации априорного распределения процесса индийского буфета для каждой базовой функции $\mathbf{g}_j$, являющейся $i$-м отображением объектов:
 \[
-    L = \sum_{\mathbf{x}}||\mathbf{x} - \sum_{j=1}^K ||\mathbf{x} - \sum_{j=1}^K \mathbf{w}^j * \mathbf{g}_i(\mathbf{x})||_2^2 + \lambda^2K,
+    L = \sum_{\mathbf{x}}\sum_{j=1}^K ||\mathbf{x} - \sum_{j=1}^K \mathbf{w}^j * \mathbf{g}_j(\mathbf{x})||_2^2 + \lambda^2K,
 \]
-где $K$ --- параметр, отвечающий за количество сверток, $\lambda$ --- параметр алгоритма, знаком $*$ обозначается операция свертки.
+где $K$ --- параметр, отвечающий за количество фильтров, $\lambda$ --- метапараметр алгоритма, знаком $*$ обозначается операция свертки.
 
 В работе~\cite{shirakawa2018dynamic} предлагается ввести априорное распределение Бернулли на структурные параметры $\boldsymbol{\gamma}^i$.
 
@@ -668,7 +673,7 @@ $\boldsymbol{\theta}^{*}$ рассматривается как рекурсив
 Построение модели заканчивается при условии снижении радемахеровской сложности:
 \begin{equation}
 \label{eq:rad}
-    \mathfrak{R} = \frac{1}{m}\mathsf{E}_{{b}_1,\dots, {b}_{|V|}} \text{sup}_{\mathbf{w}} \sum_{i=1}^m {b}_i \argmax_{c = \{0,1\}}f[c](\mathbf{x}_i, \mathbf{w}),
+    \mathfrak{R} = \frac{1}{m}\mathsf{E}_{{b}_1,\dots, {b}_{|V|}} \text{sup}_{\mathbf{w}} \sum_{i=1}^m   {b}_i \left(1 - y_i\argmax_{c = \{0,1\}}f[c](\mathbf{x}_i, \mathbf{w})\right),
 \end{equation}
 где ${b}_i$ --- реализация случайной дискретной величины, равновероятно принимающей значений $-1$ и $1$, $f[c]$ --- $c$-я компонента модели $\mathbf{f}$.
 
@@ -682,12 +687,15 @@ $\boldsymbol{\theta}^{*}$ рассматривается как рекурсив
  \node (f3)  at (10,3)                  {$\mathbf{f}_3$};
  \node (f4)  at (15,3)                  {$\mathbf{f}_4$};
 
-\path[->]  (f0) edge [bend left=50] node   {$\mathbf{g}^{0,1}_0 =  \boldsymbol{\sigma}(\mathbf{w}^{0,1}_{0}\mathbf{x})$} (f1);
+\path[->]  (f0) edge [bend left=50] node   {$\mathbf{g}^{0,1}_0 =  \boldsymbol{\sigma}(\mathbf{x}\mathbf{w}^{0,1}_{0})$} (f1);
 
 
-\path[->]  (f0) edge [bend right=50] node[below]   {$\mathbf{g}^{0,2}_0 =  \boldsymbol{\sigma}(\mathbf{w}^{0,2}_{0}\mathbf{x})$} (f2);
-\path[->]  (f1) edge [bend left=50] node   {$\mathbf{g}^{1,2}_0 =  \boldsymbol{\sigma}(\mathbf{w}^{1,3}_{0}\mathbf{x})$} (f3);
-\path[->]  (f2) edge [bend right=50] node[below]   {$\mathbf{g}^{2,3}_0 =  \boldsymbol{\sigma}(\mathbf{w}^{2,3}_{0}\mathbf{x})$} (f3);
+\path[->]  (f2) edge [bend left=50] node   {} (f1);
+
+
+\path[->]  (f0) edge [bend right=50] node[below]   {$\mathbf{g}^{0,2}_0 =  \boldsymbol{\sigma}(\mathbf{x}\mathbf{w}^{0,2}_{0})$} (f2);
+\path[->]  (f1) edge [bend left=50] node   {$\mathbf{g}^{1,2}_0 =  \boldsymbol{\sigma}(\mathbf{x}\mathbf{w}^{1,3}_{0})$} (f3);
+\path[->]  (f2) edge [bend right=50] node[below]   {$\mathbf{g}^{2,3}_0 =  \boldsymbol{\sigma}(\mathbf{x}\mathbf{w}^{2,3}_{0})$} (f3);
 \path[->]  (f2) edge [bend left=25] node[below]   {$\mathbf{g}^{2,3}_1 =  \mathbf{0}$} (f3);
 
 \path[->]  (f3) edge node   {$\mathbf{g}^{0,2}_0 =  \textbf{softmax}$} (f4);
