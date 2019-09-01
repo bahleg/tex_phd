@@ -368,9 +368,9 @@ z={({0.5*cos(45)},{0.5*sin(45)})},
 \end{defin}
 
 \begin{defin}
-\textit{Функцией правдоподбия выборки TODO} назовем величину
+\textit{Функцией правдоподбия выборки } назовем величину
 \[
-    p(y|\mathbf{x}, \mathbf{w}, \boldsymbol{\Gamma}, \lam): \yb \to \mathbb{R}^{+}.
+    \LL : {\yb}^m \to \mathbb{R}^{+}.
 \]
 \end{defin}
 Для каждой модели определена функция обоснованности  $\EV$.
@@ -552,29 +552,28 @@ z={({0.5*cos(45)},{0.5*sin(45)})},
 Частным случаем оператора оптимизации является оператор стохастического спуска:
 \begin{equation}
 \label{eq:sgd_operator}
-    \TLoss[][\Loss]  = \boldsymbol{\theta} - \lambda_{\text{lr}} \nabla \Loss,
+    \TLoss  = \boldsymbol{\theta} - \lambda_{\text{lr}} \nabla \Loss,
 \end{equation}
 где $\lambda_{\text{lr}}$ --- шаг градиентного спуска, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$.
 
 В случае оптимизации гиперпараметров оператор оптимизации применяется не к вариационным параметрам $\boldsymbol{\theta}$, а к гиперпараметрам $\mathbf{h}$:
 \begin{equation}
 \label{eq:hyperoptim_operator}
-    \h = \TVal[][\Val].
+    \h = \TVal.
 \end{equation}
 
 В случае, если для решения задачи~\eqref{eq:optim_problem_in} применяется несколько шагов оператора оптимизации~\eqref{eq:optim_operator},
 $\boldsymbol{\theta}^{*}$ рассматривается как рекурсивная функция от начального приближения вариационных параметров $\boldsymbol{\theta}^{0}$ и вектора гиперпараметров $\mathbf{h}$:
 \begin{equation}
 \label{eq:param_trace}
-    \boldsymbol{\theta}^{*} = T \circ \dots \circ \TLoss[\teta^{0}][\Loss] = \boldsymbol{\theta}^{*}(\boldsymbol{\theta}^{0}, \mathbf{h}).
+    \boldsymbol{\theta}^{*} = T \circ \dots \circ \TLoss = \boldsymbol{\theta}^{*}(\boldsymbol{\theta}^{0}, \mathbf{h}).
 \end{equation}
 
 Решение задачи оптимизации~\eqref{eq:hyperoptim_operator} при~\eqref{eq:param_trace} является вычислительно сложным, поэтому применяются методы, аппроксимирующие применение градиентных методов при~\eqref{eq:param_trace}.
 
 В~\cite{hyper_bengio} рассматривается оптимизация гиперпараметров градиентными методами для квадратичной функции потерь. В~\cite{hyper} в качестве оператора оптимизации гиперпараметров выступает метод градиентного спуска с моментом. Показано, что использование момента значительно снижает количество вычислительных ресурсов, требуемых для проведения оптимизации. В~\cite{hyper_mad} предлагается аппроксимация градиентного метода, использующая предположение о линейности функции~\eqref{eq:param_trace} от начального приближения $\boldsymbol{\theta}^0$. В~\cite{hyper_hoag} предлагается использовать численные методы для приближенного вычисления оператора оптимизации гиперпараметров. В~\cite{greed_hyper} в качестве аппроксимации~\eqref{eq:param_trace} предлагается рассматривать только последний шаг оптимизации:
-TODO --- discuss.
 \[
-    \boldsymbol{\theta}^{*} \approx \TLoss[\teta^{\eta-1}][\Loss],
+    \boldsymbol{\theta}^{*} \approx \TLoss[\teta^{\eta-1}],
 \]
 где $\eta$ --- число шагов оптимизации.
 
@@ -793,21 +792,21 @@ TODO --- discuss.
 
 В работе~\cite{self_rnn} предлагается подход к адаптивному изменению параметров сети. В качестве оператора оптимизации параметров рассматривается величина:
 \[
-    \TLoss[][\Loss] = \boldsymbol{\theta} + \mathbf{f}_\text{optim}(\mathbf{f}_\text{mod}( \boldsymbol{\theta})),
+    \TLoss = \boldsymbol{\theta} + \mathbf{f}_\text{optim}(\mathbf{f}_\text{mod}( \boldsymbol{\theta})),
 \]
 где $\mathbf{f}_\text{mod}$ --- функция, определяющая номер параметра из $\boldsymbol{\theta}$, подлежащего оптимизации, а $ \mathbf{f}_\text{optim}$ --- величина изменения параметра. 
 В~\cite{self_rnn} также предлагается подмодель $\mathbf{f}_\text{ana}$, определяющая номер параметра, подлежащего дальнейшему анализу. Подход, описанный в данной работе, предполагает оптимизацию и анализ не только самой модели $\mathbf{f}$, но и дополнительных моделей $\mathbf{f}_\text{mod}, \mathbf{f}_\text{ana}, \mathbf{f}_\text{optim}$.
 
 В работе~\cite{meta_sgd} рассматривается оптимизация метапараметров (шага градиентного спуска $\lambda_{\text{lr}}$ и начального распределения параметров $\boldsymbol{\theta}^0$). Рассматривается задача оптимизации параметров модели в случае, когда количество примеров невелико. Для этого проводится оптимизация оператора оптимизации, который выглядит следующим образом:
 \[
-    \TLoss[][\Loss] =  \boldsymbol{\theta}^0 - \boldsymbol{\lambda}\nabla  \TLoss[\teta^{0}][\Loss],
+    \TLoss =  \boldsymbol{\theta}^0 - \boldsymbol{\lambda}\nabla  \TLoss[\teta^{0}],
 \]
 где векторы $\boldsymbol{\theta}^0$ и $\boldsymbol{\lambda}$ являются метапараметрами оператора $T$. Задача оптимизации параметров оператора $T$ рассматривается как задача многзадачного обучения (англ. multitask learning), когда оператор оптимизируется с учетом нескольких различных выборок и различных функций $L$, определенных отдельно для каждой выборки.
 
 
 В работе~\cite{l2l} рассматирвается задача восстановления параметров модели по параметрам  другой модели, чьи параметры были получены оптимизацией функции потерь на выборке меньшей мощности. Задачу можно рассматривать как задачу нахождения параметров некоторого оператора оптимизации $T$, действующего на параметры $\teta^0$, где $\boldsymbol{\theta}^0$ --- параметры модели, оптимизированной на небольшой выборке.  Предлагается функция оптимизации:
 \[
-   \TLoss[][\Loss] = \argmin ||\hat{\boldsymbol{\theta}} -  \boldsymbol{\theta}^0||_2^2 + \lambda \Loss[][\hat{\y}][\hat{\X}],
+   \TLoss  = \argmin ||\hat{\boldsymbol{\theta}} -  \boldsymbol{\theta}^0||_2^2 + \lambda \Loss[][\hat{\y}][\hat{\X}],
 \]
 где $\boldsymbol{\theta}$ --- параметры модели, обученной по полной выборке $\mathfrak{D}$, $\hat{\mathfrak{D}}$ --- выборка меньшей мощности, ${\lambda}$ --- настраиваемый метапараметр.
 
