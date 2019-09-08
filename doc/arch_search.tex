@@ -1446,4 +1446,177 @@ $$
 \approx \frac{1}{2R}\sum_{r=1}^R \sum_{(j,k) \in E} \sum_{l=1}^{K_{j,k}} \bigl( (\gamma^{j,k}_l)^{-1}\text{tr}\A_q^{-1}\A + (\gamma^{j,k}_l)^{-1} \boldsymbol{\mu}_q^{\mathsf{T}}\A^{-1}\boldsymbol{\mu}_q + \log \frac{\gamma^{j,k}_l\text{det}\A}{\text{det}\A_q}  \bigr) - \frac{1}{2}|\Wb|.
 \]
 \subsection{Вычислительный эксперимент}
+Для анализа предлагаемого метода выбора структуры модели было проведено два эксперимента.
+Первый эксперимент проводился на синтетических данных. Цель эксперимента --- подтверждение рассмотренных в данном разделе свойств обобщающей задачи оптимизации.
 
+\textbf{Эксперимент на синтетической выборке}
+
+Выборка мощностью 50 объектов была порождена по следующему правилу:
+\[
+    \x \in \mathbb{R}^11, x[j] \sim \mathcal{N}(\mathbf{0},1), \x \in \X.
+\]
+\[
+    y = \text{tanh}(x[0]) + 0.5\varepsilon, \varepsilon \sim \mathcal{N}(0,1).
+\]
+
+Рассматривалось параметрическое семейство моделей вида:
+\[
+    \model  = \gamma_0^{0,1}\model_0 + \gamma_1^{0,1}\model_1 + \gamma_2^{0,1}\model_2,
+\]
+где
+\[
+    \model_0 = w_0,
+\]
+\[
+    \model_1 = \text{tanh}(w_1 x[0]),
+\]
+\[
+    \model_2 = \text{tanh}(\x\w_2),
+\]
+где $x[j]$ --- $j$-я компонента объекта $\x$.
+Из определения данного параметрического семейства следует, что любая модель представляется в виде линейной комбинации трех подмодели: константной модели $\model_0$, модели $\model_1$ и переусложненной модели $\model_2$, которая использует признаки объекта, не использовашвшиеся при порождении меток объектов.
+
+Были проведены эксперименты с различными значениями метапараметров:
+\begin{enumerate}
+\item $\lamLL = 0.01, \lamCQ = 1, \lamCL = 100, \lamS = \mathbf{0};$
+\item $\lamLL = \lamCL = \lamCQ = 1, \lamS = \mathbf{0}$;
+\item $\lamLL = 100.0, \lamCQ = 1, \lamCL = 0.01, \lamS = \mathbf{0};$
+%\item $\lamLL = \lamCL = \lamCQ = 1, \lamS = [\mathbf{1}, \mathbf{1}],$.
+\end{enumerate}
+Рассматриваемые значения метапараметров удовлетворяют Теореме 9, поэтому задача сводится к одноуровневой задаче оптимизации.
+Распределение на гиперпараметрах $\priorh$ рассматривалось как равномерное и не учитывалось в оптимизации. Эксперимент был запущен с различными метапараметрами температуры: $\lamT = 0.2, 1.0, 10.0$. Оптимизация проводилось с использованием оператора оптимизации Adam~\cite{adam}. Для каждого набора метапараметров проводилось 5 оптимизаций, для каждой оптимизации проводилось 1000 итераций. На каждой итерации использовалось $r=3$ реализации каждой случайной величины.  Для улучшения сходимости задачи первые 500 итераций оптимизации проводились с использованием упрощенного априорного распределения $\w \sim \mathcal{N}(0, \A),$ после чего значения диагонали матрицы $\A$ устанавливались равными $\text{exp}(10.0)$, после чего оптимизация проводилась с указанным в данном разделе априорным распределением. 
+
+График распределения полученных структур при различных значениях метапараметров приведен на Рис.~\ref{fig:fig_triangle_hist}. На графике видно, что чем больше влияние априорного распределения (т.е. чем больше значение метапараметров $\lamCL$, $\lamCQ$), тем меньше распределение структур сконцентрировано на моделе $\model_2$, как на моделе, имеющий наибольшее количество параметров. Чем меньше влияние априорного распределения и больше влияние значения правдоподобия выборки, тем меньше распределение структур сконцентрировано на моделе $\model_0$, как на моделе, описывающей выборку наихудшим образом. При увеличении температуры концентрация структур смещается ближе к центру.
+
+График зависимости полученных моделей от первой компоненты объекто выборки представлен на Рис.~\ref{fig:fig_plot_synthetic_results}. На данном графике видно, уменьшение значения метапараметров $\lamCL$, $\lamCQ$ ведет к переобучению модели. Увеличение температуры $\lamT$ ведет к разбросу значений структуры $\G$ и увеличению дисперсии предсказаний модели.
+
+График относительной плотности параметров моделей представлен на Рис.~\ref{fig:bar_rho}. Относительная плотность параметров соответствует наиболее вероятным по вариационному распределению структурам.
+
+
+
+\begin{figure}
+ \begin{minipage}[]{.3\textwidth}
+    \includegraphics[width=\textwidth]{triangle_0_2kld.png}
+\subcaption{}
+\end{minipage}
+ \begin{minipage}{.3\textwidth}
+    \includegraphics[width=\textwidth]{triangle_0_2elbo.png}
+\subcaption{}
+\end{minipage}
+ \begin{minipage}{.3\textwidth}
+    \includegraphics[width=\textwidth]{triangle_0_2overfit.png}
+\subcaption{}
+\end{minipage}
+
+ \begin{minipage}[]{.3\textwidth}
+    \includegraphics[width=\textwidth]{triangle_1kld.png}
+\subcaption{}
+\end{minipage}
+ \begin{minipage}{.3\textwidth}
+    \includegraphics[width=\textwidth]{triangle_1elbo.png}
+\subcaption{}
+\end{minipage}
+ \begin{minipage}{.3\textwidth}
+    \includegraphics[width=\textwidth]{triangle_1overfit.png}
+\subcaption{}
+\end{minipage}
+
+
+ \begin{minipage}[]{.3\textwidth}
+    \includegraphics[width=\textwidth]{triangle_10kld.png}
+\subcaption{}
+\end{minipage}
+ \begin{minipage}{.3\textwidth}
+    \includegraphics[width=\textwidth]{triangle_10elbo.png}
+\subcaption{}
+\end{minipage}
+ \begin{minipage}{.3\textwidth}
+    \includegraphics[width=\textwidth]{triangle_10overfit.png}
+\subcaption{}
+\end{minipage}
+\caption{Гистограмма итогового вариационного распределения $\qG$ структур при различных значениях метапараметров. Левый нижний угол соответствует модели $\model_0$, правый нижний угол соответствет модели $\model_1$, верхний угол соответствует модели $\model_2$.
+Первый столбец:  $\lamLL = 0.01, \lamCQ = 1, \lamCL = 100, \lamS = \mathbf{0},$  второй столбец: $\lamLL = \lamCL = \lamCQ = 1, \lamS = \mathbf{0},$ 
+третий столбец: $\lamLL = 100.0, \lamCQ = 1, \lamCL = 0.01, \lamS = \mathbf{0}.$ 
+Первая строка: $\lamT = 0.2$, вторая строка: $\lamT = 1.0$, третья строка: $\lamT = 10.0$.}
+\label{fig:fig_triangle_hist}
+\end{figure}
+
+
+\begin{figure}
+ \begin{minipage}[]{.3\textwidth}
+    \includegraphics[width=\textwidth]{plot_0_2kld.png}
+\subcaption{}
+\end{minipage}
+ \begin{minipage}{.3\textwidth}
+    \includegraphics[width=\textwidth]{plot_0_2elbo.png}
+\subcaption{}
+\end{minipage}
+ \begin{minipage}{.3\textwidth}
+    \includegraphics[width=\textwidth]{plot_0_2overfit.png}
+\subcaption{}
+\end{minipage}
+
+ \begin{minipage}[]{.3\textwidth}
+    \includegraphics[width=\textwidth]{plot_1kld.png}
+\subcaption{}
+\end{minipage}
+ \begin{minipage}{.3\textwidth}
+    \includegraphics[width=\textwidth]{plot_1elbo.png}
+\subcaption{}
+\end{minipage}
+ \begin{minipage}{.3\textwidth}
+    \includegraphics[width=\textwidth]{plot_1overfit.png}
+\subcaption{}
+\end{minipage}
+
+
+ \begin{minipage}[]{.3\textwidth}
+    \includegraphics[width=\textwidth]{plot_10kld.png}
+\subcaption{}
+\end{minipage}
+ \begin{minipage}{.3\textwidth}
+    \includegraphics[width=\textwidth]{plot_10elbo.png}
+\subcaption{}
+\end{minipage}
+ \begin{minipage}{.3\textwidth}
+    \includegraphics[width=\textwidth]{plot_10overfit.png}
+\subcaption{}
+\end{minipage}
+
+\caption{График итоговых моделей.
+Первый столбец: $\lamLL = 0.01, \lamCQ = 1, \lamCL = 100, \lamS = \mathbf{0},$  второй столбец: $\lamLL = \lamCL = \lamCQ = 1, \lamS = \mathbf{0},$ 
+третий столбец: $\lamLL = 100.0, \lamCQ = 1, \lamCL = 0.01, \lamS = \mathbf{0}.$ 
+Первая строка: $\lamT = 0.2$, вторая строка: $\lamT = 1.0$, третья строка: $\lamT = 10.0$.}
+\label{fig:fig_plot_synthetic_results}
+\end{figure}
+
+
+
+\begin{figure}
+ \begin{minipage}[]{.3\textwidth}
+    \includegraphics[width=\textwidth]{bar_0_2kld.png}
+\subcaption{}
+\end{minipage}
+ \begin{minipage}{.3\textwidth}
+    \includegraphics[width=\textwidth]{bar_0_2elbo.png}
+\subcaption{}
+\end{minipage}
+ \begin{minipage}{.3\textwidth}
+    \includegraphics[width=\textwidth]{bar_0_2overfit.png}
+\subcaption{}
+\end{minipage}
+
+
+\caption{Относительная плотность параметров итоговых моделей при $\lamT = 0.2$.
+Первый столбец: $\lamLL = 0.01, \lamCQ = 1, \lamCL = 100, \lamS = \mathbf{0},$  второй столбец: $\lamLL = \lamCL = \lamCQ = 1, \lamS = \mathbf{0},$ 
+третий столбец: $\lamLL = 100.0, \lamCQ = 1, \lamCL = 0.01, \lamS = \mathbf{0}.$ Первые 12 параметров соответствуют модели $\model_2$, параметры 13-15 соответствуют модели $\model_1$, параметр 16 соответствует константной моделе $\model_0$.}
+\label{fig:bar_rho}
+\end{figure}
+
+
+%В качестве распределений структур $\mathfrak{P}$  
+%рассматривались распределения вида:
+%\[
+%    p = \mathcal{GS}(\s, 0.2), \s = [0.99, 0.005, 0.005],
+%\]
+где $\s$ скоцентрирован 

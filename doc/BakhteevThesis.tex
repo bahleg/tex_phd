@@ -240,7 +240,7 @@
 
 \begin{document}
 \input{defs}
-
+\iffalse
 \input{dis_title}
 \tableofcontents{}%это оглавление
 \input{dis_intro}
@@ -259,7 +259,7 @@
 \chapter{Оптимизация гиперпараметров в задаче выбора модели}
 \input{hyperparams}
 \clearpage
-
+\fi
 \chapter{Выбор субоптимальной структуры модели}
 \input{arch_search}
 \iffalse
@@ -274,7 +274,7 @@
 
 \clearpage
 
-\fi
+
 \addcontentsline{toc}{chapter}{Список оcновных обозначений}
 \chapter*{Список оcновных обозначений}
 \input{notations}
@@ -288,7 +288,7 @@
 \listoftables
 
 \clearpage
-
+\fi
 \addcontentsline{toc}{section}{Список литературы}
 \renewcommand{\bibname}{Список использованных источников}
 \addcontentsline{toc}{chapter}{Список использованных источников}
