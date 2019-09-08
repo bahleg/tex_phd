@@ -2,19 +2,32 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class AbstractVarModel(nn.Module):
+class VarModel(nn.Module):
     def __init__(self):
-        super().__init__()
+        super(VarModel, self).__init__()
         self.theta = {'qw':[]} # variational params
         self.h = {} # hyperparams
 
-    def forward(x, theta_values):
-        # params are sampled.        
-        pass 
 
-
-class AbstractStructureVarModel(AbstractVarModel):
+class StructureVarModel(VarModel):
     def __init__(self):
-        super().__init__()
-        self.theta['qG'] = {}
+        super(StructureVarModel, self).__init__()
+        self.theta['qG'] = []
     
+    
+    
+    
+
+
+class MultiStartElboModel(VarModel):
+    def __init__(self, multistart_models):
+        super(MultiStartElboModel, self).__init__()
+        self.multistart_models =multistart_models
+        
+    def forward(self, x):
+        return [m(x) for m in self.multistart_models]
+        
+
+
+
+
