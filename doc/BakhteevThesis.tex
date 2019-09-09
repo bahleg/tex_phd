@@ -124,6 +124,7 @@
 \newtheorem{utv}{Утверждение}
 \newtheorem{example}{Пример}
 
+
 \def\bbljan{Январь}
 \def\bblfeb{Февраль}
 \def\bblmar{Март}
@@ -141,6 +142,45 @@
 \renewcommand{\thesubfigure}{\asbuk{subfigure}}
 
 \graphicspath{{pic/}}
+ 
+%smerdov
+
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\PP}{p}
+\newcommand{\DD}{{\mathfrak{D}}}
+\newcommand{\FF}{{\mathcal{F}}}
+%\newcommand{\AAA}{{\mathcal{A}}}
+\newcommand{\FFF}{{\mathfrak{F}}}
+\newcommand{\NNN}{{\mathcal{N}}}
+\newcommand{\WW}{{\mathbb{W}}}
+\newcommand{\bw}{{\textbf{w}}}
+\newcommand{\ba}{{\textbf{a}}}
+\newcommand{\bb}{{\textbf{b}}}
+\newcommand{\bx}{{\textbf{x}}}
+\newcommand{\II}{{\textbf{I}}}
+%\newcommand{\bmu}{{\boldsymbol{\mu}}}
+\newcommand{\bbf}{{\textbf{f}}}
+\newcommand{\by}{{\textbf{y}}}
+\newcommand{\bm}{{\textbf{m}}}
+\newcommand{\bW}{{\textbf{W}}}
+\newcommand{\bWs}{{\textbf{W}_{\textbf{s}}}}
+\newcommand{\bU}{{\textbf{U}}}
+\newcommand{\bV}{{\textbf{V}}}
+\newcommand{\bh}{{\textbf{h}}}
+\newcommand{\bu}{{\textbf{u}}}
+\newcommand{\bbW}{{\textbf{b}_{\textbf{W}}}}
+\newcommand{\bbU}{{\textbf{b}_{\textbf{U}}}}
+\newcommand{\bbV}{{\textbf{b}_{\textbf{V}}}}
+\newcommand{\bs}{{\boldsymbol{\sigma}}}
+\newcommand{\al}{{\alpha}}
+\newcommand{\bal}{\boldsymbol{\alpha}}
+\newcommand{\bbt}{\boldsymbol{\beta}}
+%\newcommand{\bA}{\mathbf{A^\text{-1}}}
+\newcommand{\bApr}{\mathbf{A^\text{-1}_{\text{pr}}}}
+\newcommand{\bAps}{\mathbf{A^\text{-1}_{\text{ps}}}}
+\newcommand{\bmupr}{\boldsymbol{\mu}}
+\newcommand{\bmups}{\textbf{m}}
+\newcommand{\DKL}{\mathit{D}_{\text{KL}}}
 
 
 % opers
@@ -167,6 +207,43 @@
 \DeclareMathOperator*{\diag}{diag}
 \newcommand{\dd}[1]{\mathrm{d}{#1}}
 
+% BOLD
+\newcommand{\bmatr}{{\mathbf{B}}}
+\newcommand{\cmatr}{{\mathbf{C}}}
+\newcommand{\hmatr}{{\mathbf{H}}}
+\newcommand{\fmatr}{{\mathbf{F}}}
+\newcommand{\mmatr}{{\mathbf{M}}}
+\newcommand{\xmatr}{{\mathbf{X}}}
+\newcommand{\pmatr}{{\mathbf{P}}}
+\newcommand{\xmatrt}{{\tilde{\mathbf{X}}}}
+\newcommand{\imatr}{{\mathbf{I}}}
+\newcommand{\vmatr}{{\mathbf{V}}}
+\newcommand{\wmatr}{{\mathbf{W}}}
+\newcommand{\umatr}{{\mathbf{U}}}
+\newcommand{\zmatr}{{\mathbf{Z}}}
+\newcommand{\zmatrt}{{\tilde{\mathbf{Z}}}}
+\newcommand{\Tmatr}{\mathbf{T}}
+\newcommand{\lambdamatr}{{\mathbf{\Lambda}}}
+\newcommand{\phimatr}{\mathbf{\Phi}}
+\newcommand{\sigmamatr}{\mathbf{\Sigma}}
+\newcommand{\thetamatr}{\boldsymbol{\Theta}}
+
+\newcommand{\zbt}{{\tilde{\mathbf{z}}}}
+\newcommand{\mub}{{\boldsymbol{\mu}}}
+\newcommand{\alphab}{{\boldsymbol{\alpha}}}
+\newcommand{\thetab}{\boldsymbol{\theta}}
+\newcommand{\iotab}{\boldsymbol{\iota}}
+\newcommand{\zetab}{\boldsymbol{\zeta}}
+\newcommand{\xib}{\boldsymbol{\xi}}
+\newcommand{\xibt}{\tilde{\boldsymbol{\xi}}}
+\newcommand{\xit}{\tilde{\xi}}
+\newcommand{\betab}{{\boldsymbol{\beta}}}
+\newcommand{\phib}{{\boldsymbol{\phi}}}
+\newcommand{\psib}{{\boldsymbol{\psi}}}
+\newcommand{\gammab}{{\boldsymbol{\gamma}}}
+\newcommand{\lambdab}{{\boldsymbol{\lambda}}}
+\newcommand{\varepsilonb}{{\boldsymbol{\varepsilon}}}
+\newcommand{\pib}{{\boldsymbol{\pi}}}
 
 
 \newcommand{\scl}{s_{\mathsf{c}}}
@@ -210,6 +287,38 @@
 \newcommand{\deist}{\mathbb{R}}
 \newcommand{\ebb}{\mathbb{E}}
 
+%ALEX
+\newcommand{\Amatr}{\mathbf{A}}
+
+\newcommand{\Umatr}{\mathbf{U}}
+\newcommand{\zetavec}{\boldsymbol{\zeta}}
+
+
+%\renewcommand{\thesubfigure}{\asbuk{subfigure}}
+
+
+
+%different caption style: ``Fig.~N.~Caption text''
+\makeatletter
+\long\def\@makecaption#1#2{%
+  \vskip\abovecaptionskip
+  \sbox\@tempboxa{#1.~#2}%
+  \ifdim \wd\@tempboxa >\hsize
+    #1.~#2\par
+  \else
+    \global \@minipagefalse
+    \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
+  \fi
+  \vskip\belowcaptionskip}
+\makeatother
+
+\reversemarginpar
+
+%\captionsetup[figure]{labelformat=gostfigure, justification=centering}
+%\captionsetup[subfigure]{labelformat=gostfigure, justification=centering}
+%\captionsetup[table]{labelformat=gostfigure, justification=centering}
+
+
 
 %\renewcommand{\thesubfigure}{\asbuk{subfigure}}
 
@@ -240,7 +349,7 @@
 
 \begin{document}
 \input{defs}
-\iffalse
+
 \input{dis_title}
 \tableofcontents{}%это оглавление
 \input{dis_intro}
@@ -259,10 +368,10 @@
 \chapter{Оптимизация гиперпараметров в задаче выбора модели}
 \input{hyperparams}
 \clearpage
-\fi
+
 \chapter{Выбор субоптимальной структуры модели}
 \input{arch_search}
-\iffalse
+
 \clearpage
 \chapter{Анализ прикладных задач порождения и выбора моделей глубокого обучения}
 \input{applied}
@@ -288,7 +397,7 @@
 \listoftables
 
 \clearpage
-\fi
+
 \addcontentsline{toc}{section}{Список литературы}
 \renewcommand{\bibname}{Список использованных источников}
 \addcontentsline{toc}{chapter}{Список использованных источников}
