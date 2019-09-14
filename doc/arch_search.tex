@@ -5,19 +5,20 @@
 Определим априорные распределения параметров и структуры модели следующим образом.
 Пусть для каждого ребра $(j,k) \in E$ и каждой базовой функции $\mathbf{g}^{j,k}_l$ параметры модели $\w^{j,k}_l$ распределены нормально с нулевым средним:
 \[
-    \w^{j,k}_l \sim \mathcal{N}\bigl(\mathbf{0}, \gamma^{j,k}_l(\A^{j,k}_l)^{-1}\bigr),
+    \w^{j,k}_l \sim \mathcal{N}\bigl(\mathbf{0}, (\gamma^{j,k}_l)^2(\A^{j,k}_l)^{-1}\bigr),
 \]
 где $ (\A^{j,k}_l)^{-1}$ --- диагональная матрица, $l \in \{1,\dots,K^{j,k}\}$, где $K^{j,k}$ --- количество базовых функций для ребра $K^{j,k}$. Априорное распределение $p(\w|\G, \h)$ параметров $\w^{j,k}_l$ зависит не только от гиперпараметров $\A_k^{j,k}$, но и от структурного параметра $\gamma^{j,k}_l \in (0,1)$.
 
 
-В качестве априорного распределения для структуры $\G$ предлагается использовать произведение распределений Gumbel-Softmax ($\mathcal{GS}$)~\cite{gs}:
+В качестве априорного распределения для структуры $\G$ предлагается использовать произведение распределений Gumbel-Softmax ($\mathcal{GS}$)~\cite{gumbel}:
 \[
     \priorG = \prod_{(j,k) \in E} p(\g^{j,k}|\s^{j,k}, \lamT), \quad 
 \]
 где для каждого структурного параметра $\g^{j,k}$ с количеством базовых функций $K^{j,k}$ вероятность $p(\g^{j,k}|\s^{j,k}, \lamT)$ определена следующим образом:
-\[
-    p(\g^{j,k}|\s^{j,k}, \lamT) = (K-1)!(\lamT)^{K-1}\prod_{l=1}^{K^{j,k}} s^{j,k}_l(\g^{j,k}_l)^{-\lamT -1} \left(\sum_{l=1}^{K^{j,k}} s^{j,k}_l(\g^{j,k}_l)^{-\lamT}\right)^{-K^{j,k}},
-\]
+\begin{multline}
+\label{eq:gs_pdf}
+    p(\g^{j,k}|\s^{j,k}, \lamT) = (K^{j,k}-1)!(\lamT)^{K^{h,j}-1}\prod_{l=1}^{K^{j,k}} s^{j,k}_l(\g^{j,k}_l)^{-\lamT -1} \times \\ \times \left(\sum_{l=1}^{K^{j,k}} s^{j,k}_l(\g^{j,k}_l)^{-\lamT}\right)^{-K^{j,k}},
+\end{multline}
 где $\s^{j,k} \in (0,\infty)^K{^{j,k}}$ --- гиперпараметр, отвечающий за смещенность плотности распределения относительно точек симплекса на $K^{j,k}$ вершинах, $\lamT > 0$ --- метапараметр температуры, отвечающий за концентрацию плотности вблизи вершин симплекса или в центре симплекса.
 
 Перечислим свойства, которыми обладает распределение Gumbel-Softmax:
@@ -25,15 +26,15 @@
 \item  Компонента  $l$ случайной величины $\g^{j,k}$ представима следующим образом:
 \begin{equation}
 \label{eq:gs_sample}
-    {\g}^{j,k}_l = \frac{\text{exp}(\log s^{j,k}_l+{g}^{j,k}_l)/\lamT}{\sum_{l'=1}^{K^{j,k}}\text{exp}(\log s^{j,k}_{l'}+{g}^{j,k}_{l'})/\lamT},
+    {\g}^{j,k}_l = \frac{\text{exp}(\log s^{j,k}_l+{G}^{j,k}_l)/\lamT}{\sum_{l'=1}^{K^{j,k}}\text{exp}(\log s^{j,k}_{l'}+{G}^{j,k}_{l'})/\lamT},
 \end{equation}
-где ${g}^{j,k} \sim -\log \bigl(-\log\mathcal{U}(0,1)^{K^{j,k}}\bigr).$ 
+где $\mathbf{G}^{j,k} \sim -\log \bigl(-\log\mathcal{U}(0,1)^{K^{j,k}}\bigr).$ 
 
-\item Свойство округления: $p(\g_{l_1} > \g_{l_2}, l_1\neq l_2|\s^{j,k}, \lamT) = \frac{s^{j,k}_l}{\sum_{l'}s^{j,k}_{l'}}.$
+\item Свойство округления: $p(\g_{l_1} > \g_{l_2}, l_1\neq l_2|\s^{j,k}, \lamT) = \frac{s^{j,k}_{l_1}}{\sum_{l'}s^{j,k}_{l'}}.$
 
 \item При устремлении температуры к нулю  плотность случайной величины концентрируется на вершинах симплекса:
 \[
-p(\lim_{\lamT \to 0} {\gamma}^{j,k}_{l}= 1|\s^{j,k}, \lamT)=\frac{s_l}{\sum_{l'}s^{j,k}_{l'}}.
+p(\lim_{\lamT \to 0} {\gamma}^{j,k}_{l}= 1|\s^{j,k}, \lamT)=\frac{s^{j,k}_l}{\sum_{l'}s^{j,k}_{l'}}.
 \]
 
 
@@ -57,7 +58,7 @@ p(\lim_{\lamT \to 0} {\gamma}^{j,k}_{l}= 1|\s^{j,k}, \lamT)=\frac{s_l}{\sum_{l'}
     p(\g^{j,k}|\s^{j,k}, \lamT) \propto    \frac{(\lamT)^{K^{j,k}-1}}{\left(\sum_{l=1}^{K^{j,k}} s^{j,k}_l(\g^{j,k}_l)^{-\frac{K^{j,k}-1}{K^{j,k}}\lamT}\prod_{l'=1}^{K^{j,k}} [l \neq l'](\g_l^{j,k})^{\frac{1}{K^{j,k}}\lamT}\right)^{K^{j,k}}}.
 \end{equation}
 
-Заметим, что числитель $(\lamT)^{K^{j,k}-1}$ имеет меньшую скорость сходимости, чем знаменатель, поэтому для вычисления предела достаточно проанализировать только знаменатель. Знаменатель под степенью $(-K^{j,k})$ представляется суммой слагаемых следующего вида: 
+Заметим, что числитель $(\lamT)^{K^{j,k}-1}$ имеет меньшую скорость сходимости, чем знаменатель, поэтому для вычисления предела достаточно проанализировать только знаменатель. Знаменатель под степенью $(K^{j,k})$ представляется суммой слагаемых следующего вида: 
 \begin{equation}
 \label{eq:gs}
     \left(\frac{\prod_{l' \neq l} \gamma_{l'}^{\frac{1}{K^{j,k}}}}{\gamma_l^{\frac{K^{j,k}-1}{K^{j,k}}}}\right)^{\lamT}.
@@ -71,7 +72,7 @@ p(\lim_{\lamT \to 0} {\gamma}^{j,k}_{l}= 1|\s^{j,k}, \lamT)=\frac{s_l}{\sum_{l'}
 Для $l=l'$ предел выражения~\eqref{eq:gs} при $\lamT \to \infty$ стремится к бесконечности. Для $l\neq l'$ предел выражения~\eqref{eq:gs} при $\lamT \to \infty$ стремится к нулю. Возводя сумму пределов в степень $(-K^{j,k})$ получаем предел плотности, равный нулю.
 
 Рассмотрим второй случай. Пусть ${\gamma}^{j,k}_l = \frac{1}{K^{j,k}}$ для всех компонент вектора $\g^{j,k}$.
-Тогда выражение~\eqref{eq:pdf_proof} с точностью до множителя упрощается до $(\lamT)^{K^{j,k}-1}$. Предел данного выражения стремится к бесконечности.
+Тогда выражение~\eqref{eq:gs_pdf} с точностью до множителя упрощается до $(\lamT)^{K^{j,k}-1}$. Предел данного выражения стремится к бесконечности.
 Таким образом, предел плотности Gumbel-Softmax равен выражению~\eqref{eq:theorem_gs}, что и требовалось доказать.
 
 \end{proof}
@@ -229,7 +230,7 @@ y={(0cm,1.7cm)},
 \[
  - \KL{\qw}{\priorw},
 \]
-где $\KL{\qw}{\priorw}$ вычисляется по формуле условной дивергенции~\cite{TODO}:
+где $\KL{\qw}{\priorw}$ вычисляется по формуле условной дивергенции:
 \[
 \KL{\qw}{\priorw} = \E_{\G \sim \qG} \E_{\w \sim \qw} \log \left(\frac{\qw}{\priorw}\right).
 \]
@@ -244,11 +245,11 @@ y={(0cm,1.7cm)},
    = \log\iint_{\G,\w} \LL \prior  \frac{\q}{\q}d\G d\w =
 \]
 \[
-  =  \log \E_{\q} \frac{\EV}{\q}.
+  =  \log \E_{\q} \frac{\LL \prior}{\q}.
 \]
 Используя неравенство Йенсена получим 
 \[
- \log \E_{\q} \frac{\EV}{\q} \geq  \E_{\q}\log \frac{\EV}{\q} = 
+ \log \E_{\q} \frac{\LL \prior}{\q} \geq  \E_{\q}\log \frac{\LL \prior}{\q} = 
 \]
 \[
  =  \E_{\q} \log \LL - \KL{\q}{\prior}.
@@ -264,9 +265,9 @@ y={(0cm,1.7cm)},
 \end{proof}
 В качестве вариационного распределения $\qw$ предлагается использовать нормальное распределение, не зависящее от структуры модели $\G$:
 \[
-    \qw  \sim \mathcal{N}(\boldsymbol{\mu}_q, \A_q), 
+    \qw  \sim \mathcal{N}(\boldsymbol{\mu}_q, \A_q^{-1}), 
 \]
-где $\A_q$ --- диагональная матрица с диагональю $\boldsymbol{\alpha}_q$.
+где $\A_q^{-1}$ --- диагональная матрица с диагональю $\boldsymbol{\alpha}_q$.
 
 В качестве вариационного распределения $\qG$ предлагается использовать произведение распределений Gumbel-Softmax. Конкатенацию параметров концентрации распределений обозначим $\s_q$. Его температуру, общую для всех структурных параметров $\g \in \G$, обозначим $\theta_\text{temp}$.
 Вариационными параметрами распределения $\q$ являются параметры распределений $\qw, \qG$:
@@ -286,10 +287,10 @@ y={(0cm,1.7cm)},
 C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 \]
 \end{defin}
-Параметрическая сложность модели соответствует минимальной по $\h \in \Uh$ ожидаемой длине описания параметров модели при условии заданного параметрического априорного распределения~\cite{hinton_mdl}.
+Параметрическая сложность модели соответствует минимальной по $\h \in \Uh$ минимальной ожидаемой длине описания параметров модели при условии заданного параметрического априорного распределения~\cite{hinton_mdl}.
 
-Одним из критериев удаления неинформативных параметров в вероятностных моделях является отношение вариационной плотности параметров в моде распределения к вариационной плотности параметра в нуле~\cite{nips}:
-\[\frac{\qw[w=\mu_q]}{\qw[w=0]}= \text{exp}\left(-\frac{2\alpha_q^2}{\mu_q^2}\right),
+Одним из критериев удаления неинформативных параметров в вероятностных моделях является отношение вариационной плотности параметров в моде распределения к вариационной плотности параметра в нуле~\eqref{eq:rho_graves}:
+\[\frac{\qw[w=\mu_q]}{\qw[w=0]}= \text{exp}\left(-\frac{\alpha_q^2}{2\mu_q^2}\right),
 \]
 где параметру модели $w$ соответствуют вариационные параметры $\mu_q, \alpha_q$: $\qw[w] \sim \mathcal{N}(\mu_q, \alpha_q).$
 
@@ -297,7 +298,7 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
 \begin{defin}
 Относительной вариационной   плотностью параметра $w \in \w$  при условии структуры $\G$ и гиперпараметров $\h$ назовем отношение вариационной плотности в моде вариационного распределения параметра к вариационной плотности в моде априорного распределения параметра:
 \[
-\rho(w|\G,\tetaw, \h,\Lamb)=\frac{\qw[\text{mode}~\qw[w]]}{\qw[\text{mode}~{\priorw[w]}]}.
+\rho(w|\G,\tetaw, \h,\lam)=\frac{\qw[\text{mode}~\qw[w]]}{\qw[\text{mode}~{\priorw[w]}]}.
 \]
 Относительной вариационной плотностью вектора параметров $\mathbf{w}$ назовем следующее выражение:
 \[
@@ -347,7 +348,7 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
    \left|\E_{\qG} {\rho}(\w|\G, \tetaw, \h, \lam) - 1\right| \leq
 \]
 \[
-\leq \frac{C_l}{\min_{\tetaw \in \Uteta} \qw[\mathbf{m}]} \iint_{\G,\w} |\w| |\qw - \priorw|\qG d\w d\G,
+\leq \frac{C_l}{\min_{\Gamma \in \Gb, \tetaw \in \Uteta} \qw[\mathbf{m}]} \iint_{\G,\w} |\w| \cdot |\qw - \priorw|\qG d\w d\G,
 \]
 где $C_l$ --- максимальная константа Липшица для $\qw$ на $\Uteta$.
 
@@ -361,25 +362,27 @@ C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
    \left|\int_{\G} \left(\frac{\qw[\text{mode}~\qw]}{\qw[\text{mode}~\priorw]} \right)\qG d\G  - 1 \right| =
 \]
 \textit{представляя единицу как дробь с равными знаменателем и числителем}
-\[
- =  \left|\int_{\G} \left(\frac{\qw[\text{mode}~\qw]}{\qw[\text{mode}~\priorw]} -  \frac{\qw[\text{mode}~\priorw]}{\qw[\text{mode}~\priorw]} \right)\qG d\G \right| =
-\]
+\begin{multline*}
+\hspace{-1cm}
+ =  \bigl|\int_{\G} \left(\frac{\qw[\text{mode}~\qw] - \qw[\text{mode}~\priorw]}{\qw[\text{mode}~\priorw]}\right) \qG d\G \bigr| =
+\end{multline*}
 \textit{заменяя моду на матожидание (по условию теоремы)}
-\[  = \left|\int_{\G} \left( \frac{\qw[\E_{\qw}\w]}{\qw[\mathbf{m}]} -  \frac{\qw[\E_{\priorw} \w]}{\qw[\mathbf{m}]} \right) \qG d\G\right| \leq 
+\[  = \left|\int_{\G} \left( \frac{\qw[\E_{\qw}\w] - \qw[\E_{\priorw} \w]}{\qw[\mathbf{m}]}\right)  \qG d\G\right| \leq 
 \]
 \textit{занося модуль под знак интеграла}
 \[
 \leq 
-\int_{\G} \left|\frac{\qw[\E_{\qw} \w)]}{{\qw[\mathbf{m}]}} -   \frac{\qw[\E_{\priorw} \w]}{\qw[\mathbf{m}]}\qG d\G\right| \leq
+\int_{\G} \left|\frac{\qw[\E_{\qw} \w)] - \qw[\E_{\priorw} \w]}{{\qw[\mathbf{m}]}} \qG d\G\right| \leq
 \]
 \textit{используя липшецевость функции }$\qw$
 \[
-\frac{C_l}{\min_{\tetaw \in \Uteta} \qw[\mathbf{m}]}\int_{\G}  |\E_{\qw}\w - \E_{\priorw}\w|\qG d\G  \leq
+\frac{C_l}{\min_{\Gamma \in \Gb, \tetaw \in \Uteta} \qw[\mathbf{m}]}\int_{\G}  |\E_{\qw}\w - \E_{\priorw}\w|\qG d\G  \leq
 \]
 \textit{расписывая матожидание через интеграл}
 \[
     \leq \frac{C_l}{\min_{\tetaw \in \Uteta} \qw[\mathbf{m}]} \iint_{\G,\w} |\w| \cdot |\qw - \priorw|\qG d\w d\G,
 \] 
+что и требовалось доказать.
 \end{proof}
 
 
