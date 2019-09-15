@@ -11,19 +11,19 @@
 Моделью классификации  $\mathbf{f}$ выступает суперпозиция подмоделей, аналогичная~\eqref{eq:softmax_example}:
 \begin{equation}
 \label{eq:wisdm_superposition}
- \mathbf{f}(\mathbf{W}, \mathbf{x}) = \mathbf{f}_1(\mathbf{f}_2(\dots \mathbf{f}_{|V|}(\mathbf{x}))): \mathbb{R}^n \to [0,1]^R,
+ \mathbf{f}(\mathbf{w}, \mathbf{x}) = \mathbf{f}_0(\mathbf{f}_1(\dots \mathbf{f}_{|V|-1}(\mathbf{x}))): \mathbb{R}^n \to [0,1]^R,
 \end{equation}
-где $\mathbf{f}_v, v \in \{1,\dots,{|V|}\}$ --- модели, параметрическое семейство вектор-функции; $\mathbf{W}$ --- вектор параметров моделей;
-$c$-ю компоненту $\mathbf{f}(\mathbf{x}, \mathbf{W})[c]$ вектора $\mathbf{f}(\mathbf{x},\mathbf{W})$ будем интерпретировать как вероятность отнесения объекта $\mathbf{x}_i$ к классу с меткой $c$~\eqref{eq:proba_softmax}.
+где $\mathbf{f}_v, v \in \{0,\dots,{|V|-1}\}$ --- модели, параметрическое семейство вектор-функции; $\mathbf{w}$ --- вектор параметров моделей;
+$c$-ю компоненту $\mathbf{f}(\mathbf{x}, \mathbf{w})[c]$ вектора $\mathbf{f}(\mathbf{x},\mathbf{w})$ будем интерпретировать как вероятность отнесения объекта $\mathbf{x}_i$ к классу с меткой $c$~\eqref{eq:proba_softmax}.
 
-Требуется минимизировать функцию ошибки $L$ на обучающей выборке $\mathfrak{D}$,
-где $L$ --- сумма отрицательных логарифмов правдоподобия по всем объектам выборки
+Требуется максимизировать функцию $L$ на обучающей выборке $\mathfrak{D}$,
+где $L$ --- сумма логарифмов правдоподобия по всем объектам выборки
 \[
-\mathbf{W}^{*} = \argmin_\mathbf{W} L(\mathbf{W}|\mathfrak{D}),
+\mathbf{w}^{*} = \argmax_\mathbf{w} L(\mathbf{w}|\mathfrak{D}),
 \]
 где
 \[
- L(\mathbf{W}|\mathfrak{D}) = -\sum_{i=1}^m \sum_{с=1}^R [y_i = с] \text{log} p(y_i=с|\mathbf{x}_i,\mathbf{W}).
+ L(\mathbf{w}|\mathfrak{D}) = \sum_{i=1}^m \sum_{с=1}^R [y_i = с] \text{log} p(y_i=с|\mathbf{x}_i,\mathbf{w}).
 \]
 
 \textbf{Структура сети глубокого обучения. }
@@ -31,7 +31,7 @@ $c$-ю компоненту $\mathbf{f}(\mathbf{x}, \mathbf{W})[c]$ вектор
 ограниченной машины Больцмана, автокодировщика и двуслойной нейросети с softmax-классификатором.
 Модель~\eqref{eq:wisdm_superposition} в данном случае выглядит следующим образом:
 \[
-    \mathbf{f}(\mathbf{W}, \mathbf{x}) = \mathbf{f}_\text{SM} \circ \mathbf{f}_\text{AE} \circ  \mathbf{f}_\text{RBM}(\mathbf{x}),
+    \mathbf{f}(\mathbf{w}, \mathbf{x}) = \mathbf{f}_\text{SM} \circ \mathbf{f}_\text{AE} \circ  \mathbf{f}_\text{RBM}(\mathbf{x}),
 \]
 где $\mathbf{f}_\text{RBM}, \mathbf{f}_\text{AE}, \mathbf{f}_\text{SM}$ --- модели ограниченной машины Больцмана, автокодировщика и двуслойной нейронной сети соответственно.
 
@@ -68,8 +68,11 @@ $c$-ю компоненту $\mathbf{f}(\mathbf{x}, \mathbf{W})[c]$ вектор
 Параметры модели~\eqref{eq:rbm_model} оптимизируются следующим образом:
 \begin{equation}
 \label{eq:rbm}
-{\mathbf{W}}^{*}_\text{RBM},{\mathbf{b}}^{*}_\text{vis}, {\mathbf{b}}^{*}_\text{hid} = \argmax_{{\mathbf{W}_\text{RBM}},{\mathbf{b}}_\text{vis}, {\mathbf{b}}_\text{hid} } p(\mathbf{X}, [{\mathbf{W}_\text{RBM}},{\mathbf{b}}_\text{vis}, {\mathbf{b}}_\text{hid}]) = \prod_{i=1}^m \sum_{\mathbf{h}\in \{0,1\}^{n'}} \frac{1}{Z} \text{exp}\bigl(-E(\mathbf{\mathbf{x}}_i,\mathbf{h)}\bigr).
+{\mathbf{W}}^{*}_\text{RBM},{\mathbf{b}}^{*}_\text{vis}, {\mathbf{b}}^{*}_\text{hid} = \argmax_{{\mathbf{W}_\text{RBM}},{\mathbf{b}}_\text{vis}, {\mathbf{b}}_\text{hid} } p(\mathbf{X}, [{\mathbf{W}_\text{RBM}},{\mathbf{b}}_\text{vis}, {\mathbf{b}}_\text{hid}]) =
 \end{equation}
+\[
+= \prod_{i=1}^m \sum_{\mathbf{h}\in \{0,1\}^{n'}} \frac{1}{Z} \text{exp}\bigl(-E(\mathbf{\mathbf{x}}_i,\mathbf{h)}\bigr).
+\]
 В данной работе используется модифицированная версия ограниченной машины Больцмана, позволяющая работать с небинарными входными данными~\cite{gbrbm}. В этой модификации функция $E$~\eqref{eq:energy} задается следующим образом:
 \[
 E(\mathbf{x},\mathbf{h}) = \frac{(\mathbf{x} - \mathbf{b}_\text{vis})^2}{2\hat{\boldsymbol{\sigma}}^2} -\mathbf{h}^\mathsf{T} \cdot \mathbf{b}_\text{hid} - \frac{\mathbf{h}}{\hat{\boldsymbol{\sigma}}}^\mathsf{T}\mathbf{W}_\text{RBM}\mathbf{x},
@@ -112,7 +115,7 @@ $$  \mathbf{f}_\text{dec} \circ \mathbf{f}_\text{enc}(\mathbf{x}) = \boldsymbol{
 \]
 где $c$-я компонента $f_\text{SM}(\mathbf{x})[c]$ вектора $\mathbf{f}_\text{SM}(\mathbf{x})$ интерпретируется как вероятность принадлежности объекта $\mathbf{x}$ классу $c$. Итоговая функция классификации~\eqref{eq:wisdm_superposition} ставит в соответствие  объекту $\mathbf{x}$ метку класса $y$, где $y$ --- класс, к которому принадлежит $\mathbf{x}$ с наибольшей вероятностью:
 $$
- f(\mathbf{W},\mathbf{x})[c] = \begin{cases}
+ f(\mathbf{w},\mathbf{x})[c] = \begin{cases}
   1,\text{ если }c = \argmax_{c'} {f}_\text{SM}(\mathbf{f}_\text{AE}(\mathbf{f}_\text{RBM}(\mathbf{x}))[c'],\\
   0 \text{ иначе.}
 	\end{cases}

@@ -451,7 +451,7 @@ $l = 50$ для синтетической выборки,  $l=10$ для выб
 
 Рассматривалась нейросеть с 10 нейронами на скрытом слое:
 \[
-    \mathbf{f} = \mathbf{w}_2 \cdot \textbf{relu}(\mathbf{w}_1\mathbf{X} + \mathbf{b}_1) +\mathbf{b}_2,
+    \mathbf{f} = \mathbf{w}_2 \cdot \textbf{relu}((\mathbf{w}_1)^{\T}\mathbf{X} + \mathbf{b}_1) +\mathbf{b}_2,
 \]
 где $\mathbf{w}_1, \mathbf{b}_1$ --- параметры первого слоя нейросети,
 $\mathbf{w}_2, \mathbf{b}_2$ --- параметры второго слоя нейросети,
