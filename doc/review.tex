@@ -412,12 +412,12 @@ z={({0.5*cos(45)},{0.5*sin(45)})},
 В данной работе задача выбора структуры модели и параметров модели ставится как двухуровневая задача оптимизации:
 \begin{equation}
 \label{eq:optim_problem}
-	\h^{*} = \argmin_{\h  \in \Hb} \Val[][][][\teta^{*}],
+	\h^{*} = \argmax_{\h  \in \Hb} \Val[][][][\teta^{*}],
 \end{equation}
 где $\teta^{*}$ --- решение задачи оптимизации
 \begin{equation}
 \label{eq:optim_problem_in}
-   \teta^{*} = \argmin_{\teta \in \Tetab} \Loss.
+   \teta^{*} = \argmax_{\teta \in \Tetab} \Loss.
 \end{equation}
 
 \begin{defin}
@@ -432,13 +432,13 @@ z={({0.5*cos(45)},{0.5*sin(45)})},
     \boldsymbol{\theta} = [\mathbf{w}, \boldsymbol{\Gamma}].
 \]
 Пусть также задано априорное распределение $\prior$.
-Положим в качестве функции $\Loss$ минус логарифм апостериорной вероятности модели:
+Положим в качестве функции $\Loss$  логарифм апостериорной вероятности модели:
 \[
-    \Loss = -\sum_{\mathbf{x},y \in \mathfrak{D}_\text{train}} \log p(y, \mathbf{w}, \boldsymbol{\Gamma}|\mathbf{x}, \lam).
+    \Loss = \sum_{\mathbf{x},y \in \mathfrak{D}_\text{train}} \log p(y, \mathbf{w}, \boldsymbol{\Gamma}|\mathbf{x}, \lam).
 \]
-Положим в качестве функции $\Val$  минус логарифм правдоподобия выборки при условии параметров $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$:
+Положим в качестве функции $\Val$   логарифм правдоподобия выборки при условии параметров $\mathbf{w}$ и структуры $\boldsymbol{\Gamma}$:
 \[
-    \Val = -\sum_{\mathbf{x},y \in \mathfrak{D}_\text{valid}} \log~p(y|\x, \mathbf{w}, \boldsymbol{\Gamma}, \lam).
+    \Val = \sum_{\mathbf{x},y \in \mathfrak{D}_\text{valid}} \log~p(y|\x, \mathbf{w}, \boldsymbol{\Gamma}, \lam).
 \]
 Оптимизация параметров и структуры производится по обучающей выборке. Гиперпараметры $\mathbf{h}$ выступают в качестве регуляризатора, чья оптимизация производится по валидационной выборке. Подобная оптимизация позволяет предотвратить переобучение модели~\cite{hyper}.
 \end{example}
@@ -554,7 +554,7 @@ z={({0.5*cos(45)},{0.5*sin(45)})},
 Частным случаем оператора оптимизации является оператор стохастического спуска:
 \begin{equation}
 \label{eq:sgd_operator}
-    \TLoss  = \boldsymbol{\theta} - \lambda_{\text{lr}} \nabla \Loss,
+    \TLoss  = \boldsymbol{\theta} - \lambda_{\text{lr}} \nabla (-\Loss),
 \end{equation}
 где $\lambda_{\text{lr}}$ --- шаг градиентного спуска, $\hat{\mathbf{y}}, \hat{\mathbf{X}}$ --- случайная подвыборка заданной мощности выборки $\mathfrak{D}$.
 
@@ -804,7 +804,7 @@ $\boldsymbol{\theta}^{*}$ рассматривается как рекурсив
 
 В работе~\cite{l2l} рассматирвается задача восстановления параметров модели по параметрам  другой модели, чьи параметры были получены оптимизацией функции потерь на выборке меньшей мощности. Задачу можно рассматривать как задачу нахождения параметров некоторого оператора оптимизации $T$, действующего на параметры $\teta^0$, где $\boldsymbol{\theta}^0$ --- параметры модели, оптимизированной на небольшой выборке.  Предлагается функция оптимизации:
 \[
-   \TLoss  = \argmin ||\hat{\boldsymbol{\theta}} -  \boldsymbol{\theta}^0||_2^2 + \lambda \Loss[][\hat{\y}][\hat{\X}],
+   \TLoss  = \argmin \left(||\hat{\boldsymbol{\theta}} -  \boldsymbol{\theta}^0||_2^2 - \lambda \Loss[][\hat{\y}][\hat{\X}]\right),
 \]
 где $\boldsymbol{\theta}$ --- параметры модели, обученной по полной выборке $\mathfrak{D}$, $\hat{\mathfrak{D}}$ --- выборка меньшей мощности, ${\lambda}$ --- настраиваемый метапараметр.
 

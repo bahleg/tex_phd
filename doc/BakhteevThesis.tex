@@ -349,14 +349,15 @@
 
 \begin{document}
 \input{defs}
+\iffalse
 \input{dis_title}
 \tableofcontents{}%это оглавление
 \input{dis_intro}
 \clearpage
-
+\fi
 \chapter{Постановка задачи последовательного выбора моделей}
 \input{review}
-\iffalse
+
 \clearpage
 \chapter{Выбор модели с использованием вариационного вывода}
 \input{var_inf}
@@ -367,14 +368,14 @@
 \chapter{Оптимизация гиперпараметров в задаче выбора модели}
 \input{hyperparams}
 \clearpage
-\fi
+\iffalse
 \chapter{Выбор субоптимальной структуры модели}
 \input{arch_search}
-\iffalse
+\fi
 \clearpage
 \chapter{Анализ прикладных задач порождения и выбора моделей глубокого обучения}
 \input{applied}
-\fi
+
 
 \clearpage
 \addcontentsline{toc}{section}{Заключение}
