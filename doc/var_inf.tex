@@ -96,11 +96,11 @@ $\mathbf{H}$ --- гессиан функции потерь $L$ модели:
 $\mathbf{f}_0, \dots, \mathbf{f}_{|V|-1}$ --- дифференцируемые функции, $\mathbf{f}_\textnormal{|V|-1}$ --- многомерная логистическая функция:
 \begin{equation}
 \label{eq:proba_softmax}
-	\mathbf{f}_\textnormal{|V|-1} = \frac{\mathbf{f}_{|V|-2}(\dots \mathbf{f}_1(\mathbf{x}))}{\sum_{c=1}^R \textnormal{exp}\bigl( {f}[c]_{|V|-2}(\dots \mathbf{f}_1(\mathbf{x})) \bigr)},
+	\mathbf{f}_\textnormal{|V|-1} = \frac{\mathbf{f}_{|V|-2}(\dots \mathbf{f}_1(\mathbf{x}))}{\sum_{c=1}^R \textnormal{exp}\bigl( {f}_{|V|-2}[c](\dots \mathbf{f}_1(\mathbf{x})) \bigr)},
 \end{equation}
 где ${f}_{|V|-2}[c]$ --- $c$-я компонента функции $\mathbf{f}_{|V|-2}$. Компонента $c$ вектора $\mathbf{f}_{|V|-1}$ определяет вероятность принадлежности объекта $\mathbf{x}$ к классу $c$. Логарифм правдоподобия зависимой переменной аналогично~\eqref{eq:example1} имеет вид
 \[
-	\textnormal{log} p({y}|\mathbf{x}, \mathbf{w}) =  \textnormal{log}~{f}^{y}_{|V|-1} (\mathbf{f}_{|V-2|}(\dots \mathbf{f}_1(\mathbf{x}))).
+	\textnormal{log} p({y}|\mathbf{x}, \mathbf{w}) =  \textnormal{log}~{f}^{y}_{|V|-1} (\mathbf{f}_{|V-2|}(\dots \mathbf{f}_0(\mathbf{x}))).
 \]
 
 Данная модель описывает многослойную сеть, аналогичную моделям семейства, представленного на Рис.~\ref{fig:scheme_mlp}.
@@ -277,28 +277,28 @@ $$
 Представим неравенство~\eqref{eq:var_elbo}
 \begin{equation}
 \label{eq:var_elbo_entropy}
- \textnormal{log}~p(\mathbf{y}|\mathbf{X},\mathbf{h}) \geq \int_\mathbf{w} q(\mathbf{w})\textnormal{log}~\frac{p(\mathbf{y},\mathbf{w}|\mathbf{X}, \mathbf{h})}{q(\mathbf{w})}d\mathbf{w} =  \mathsf{E}_{q(\mathbf{w)}}\bigl(\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h})\bigr) - \mathsf{S}\bigl({q(\mathbf{w)}}\bigr),
+ \textnormal{log}~p(\mathbf{y}|\mathbf{X},\mathbf{h}) \geq \int_\mathbf{w} q(\mathbf{w})\textnormal{log}~\frac{p(\mathbf{y},\mathbf{w}|\mathbf{X}, \mathbf{h})}{q(\mathbf{w})}d\mathbf{w} =  \mathsf{E}_{q(\mathbf{w)}} \textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h}) - \mathsf{S}\bigl({q(\mathbf{w)}}\bigr),
 \end{equation}
 где $\mathsf{S}$ --- энтропия распределения:
 \[
 \mathsf{S}\bigl({q(\mathbf{w)}}\bigr) = - \int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~q(\mathbf{w})d\mathbf{w},
 \]
 $$p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h}) = p (\mathbf{w}| \mathbf{h}) p (\mathbf{y}|\mathbf{X}, \mathbf{w}, \mathbf{h}),$$
-$\mathsf{E}_{q(\mathbf{w)}}\bigl(\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h})\bigr)$ --- матожидание логарифма вероятности $\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h})$:
+$\mathsf{E}_{q(\mathbf{w)}}\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h})$ --- матожидание логарифма вероятности $\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h})$:
 \[
-	\mathsf{E}_{q(\mathbf{w)}}\bigl(\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h})\bigr) = \int_\mathbf{w} \textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h}) q(\mathbf{w}) d\mathbf{w}.
+	\mathsf{E}_{q(\mathbf{w)}}\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h})  = \int_\mathbf{w} \textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h}) q(\mathbf{w}) d\mathbf{w}.
 \]
 
 Оценка распределений производится при оптимизации параметров. Оптимизация выполняется в режиме мультистарта~\cite{multi}, т.е. при запуске оптимизации параметров модели из нескольких разных начальных приближений. Основная проблема такого подхода~---~вычисление энтропии $\mathsf{S}$ распределений $q(\mathbf{w}) \in \mathfrak{Q}$. Ниже представлен метод получения оценок энтропии~\eqref{eq:entropy} ~$\mathsf{S}$ и оценок обоснованности~\eqref{eq:var_elbo_entropy}.
 
 Запустим $r$ процедур оптимизаций модели $\mathbf{f}$ из разных начальных приближений:
 \[
-	L( \boldsymbol{\theta}| \mathbf{h}, \mathbf{X}, \mathbf{y}) = -\sum_{l=1}^r \text{log}p(\mathbf{y}, \mathbf{w}^l|\mathbf{X}, \mathbf{h})  \to \min, \quad \boldsymbol{\theta} = [\mathbf{w}^1, \dots, \mathbf{w}^r],
+	L( \boldsymbol{\theta}| \mathbf{h}, \mathbf{X}, \mathbf{y}) = \sum_{l=1}^r \text{log}p(\mathbf{y}, \mathbf{w}^l|\mathbf{X}, \mathbf{h})  \to \max, \quad \boldsymbol{\theta} = [\mathbf{w}^1, \dots, \mathbf{w}^r],
 \] 
 где $r$ --- число оптимизаций,
 \begin{equation}
 \label{eq:loss_func}
-\text{log}p(\mathbf{y}, \mathbf{w}^l|\mathbf{X}, \mathbf{h}) = -\sum_{i=1}^m \textnormal{log}p({y}_i, \mathbf{w}^l |\mathbf{x}_i, \mathbf{h}) = -\textnormal{log}~p(\mathbf{w}^l|\mathbf{h}) - \sum_{i=1}^m \textnormal{log}p({y}_i |\mathbf{x}_i, \mathbf{w}^l, \mathbf{h}).
+\text{log}p(\mathbf{y}, \mathbf{w}^l|\mathbf{X}, \mathbf{h}) = \sum_{i=1}^m \textnormal{log}p({y}_i, \mathbf{w}^l |\mathbf{x}_i, \mathbf{h}) = \textnormal{log}~p(\mathbf{w}^l|\mathbf{h}) + \sum_{i=1}^m \textnormal{log}p({y}_i |\mathbf{x}_i, \mathbf{w}^l, \mathbf{h}).
 \end{equation}
 
 Пусть начальные приближения параметров $\mathbf{w}^1, \dots, \mathbf{w}^r$ порождены из некоторого начального распределения $q^0(\mathbf{w})$:
@@ -330,7 +330,7 @@ $\mathsf{E}_{q(\mathbf{w)}}\bigl(\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mat
 \label{eq:ineq}
 \lambda_{\text{lr}}<\frac{1}{C_L}, \quad \lambda_{\text{lr}} < \bigl(\max_{l \in \{1,\dots,r\}}\lambda_\textnormal{max} (\mathbf{H}(\mathbf{w}^l))\bigr)^{-1}, 
 \end{equation}
-где $\lambda_\textnormal{max}$ --- наибольшее по модулю собственное значение гессиана  $\mathbf{H}$ функции потерь $L$.
+где $\lambda_\textnormal{max}$ --- наибольшее по модулю собственное значение гессиана  $\mathbf{H}$ минус функции потерь $-L$.
 
 При выполнении неравенств~\eqref{eq:ineq} разность энтропий распределений $q'(\mathbf{w}), q(\mathbf{w})$ на смежных шагах почти наверное сходится к следующему выражению: 
 \begin{equation}
@@ -510,7 +510,7 @@ $$\mathbf{r}_0 \sim \mathcal{N}(\mathbf{0}, \mathbf{I}), \quad \mathbf{r}_1 = \m
 \label{eq:model}
 	\mathbf{f}(\mathbf{w}, \mathbf{X}) =   (\mathbf{w}_0^{1,2})^{\T}  \textbf{softplus}\bigl((\mathbf{w}_0^{0,1})^{\T} \mathbf{X}  \bigr)  ,
 \end{equation}
-где $\mathbf{w}_0^{0,1}  \in \mathbb{R}^{n\times n_1}$ --- матрица параметров скрытого слоя нейросети, $\mathbf{w}_0^{1,2} \in \mathbb{R}^{n_1\times 1}$ --- матрица параметров выходного слоя нейросети, {$\textbf{softplus}(\mathbf{X}) = \textbf{log}\bigl(1+\textbf{exp}(\mathbf{X})\bigr)$}.
+где $\mathbf{w}_0^{0,1}  \in \mathbb{R}^{n\times n_1}$ --- матрица параметров скрытого слоя нейросети, $\mathbf{w}_0^{1,2} \in \mathbb{R}^{n_1\times 1}$ --- матрица параметров выходного слоя нейросети, $n_1$ --- размер скрытого слоя,  {$\textbf{softplus}(\mathbf{X}) = \textbf{log}\bigl(1+\textbf{exp}(\mathbf{X})\bigr)$}.
 
 {Для выборки Boston также было рассмотрено множество моделей с тремя скрытыми слоями, построенных аналогично однослойной модели~\eqref{eq:model}. Размер каждого слоя равнялся 50.}
 
