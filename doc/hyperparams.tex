@@ -2,7 +2,7 @@
 
 Одна из проблем построения моделей глубокого обучения --- большое число параметров модели~\cite{hinton_rbm}, которое достигает нескольких миллионов, а оптимизация модели достигает десятков дней~\cite{suts}. Задача выбора модели глубокого обучения включает в себя выбор стратегии построения модели, эффективной по вычислительным ресурсам. Проблема оптимизации параметров модели глубокого обучения является вычислительно сложной в силу невыпуклости оптимизируемой функции потерь. Поэтому задача поиска параметров оптимизации является важной, и нахождение оптимальныых гиперпараметров сильно влияет на итоговое качество модели. 
 
-В данной работе сравниваются градиентные методы оптимизации гиперпараметров. Основным достоинством подобных алгоритмов является их возможность одновременной оптимизации значительного числа гиперпараметров. В качестве базового алгоритма выступает алгоритм выбора гиперпараметров модели с использованием случайного поиска.  В работах\cite{hyper_mad,hyper_hoag,greed_hyper} в качестве целевой функции потерь рассматривается потеря на валидационной подвыборке с $L_2$ регуляризацией. В данной работе рассматривается общая задачи оптимизации гиперпараметров. Рассматриваеые алгоритмы и целевые функции потерь реализованы и представлены в качестве библиотеки для оптимизации гиперпараметров моделей~\cite{pyfos}. Основным теоретическим вкладом данной главы является анализ рассматриваемых алгоритмов оптимизации гиперпараметров при использовании функции потерь общего вида, а также исследование качества и устойчивости итоговых моделей в случае использования кросс-валидации и вариационной оценки обоснованности.  В экспериментальной части в качестве критерия выбора модели выступают вариационная нижняя оценка обоснованности модели и ошибка на валидационной части выборки. В отличие от~\cite{hyper_hoag}, где также производится сравнение алгоритмов оптимизации гиперпараметров, в данной работе исследуется поведение алгоритмов на выборках большой мощности, таких как WISDM~\cite{wisdm} и MNIST~\cite{mnist}.
+В данной работе сравниваются градиентные методы оптимизации гиперпараметров. Основным достоинством подобных алгоритмов является их возможность одновременной оптимизации значительного числа гиперпараметров. В качестве базового алгоритма выступает алгоритм выбора гиперпараметров модели с использованием случайного поиска.  В работах~\cite{hyper_mad,hyper_hoag,greed_hyper} в качестве целевой функции потерь рассматривается потеря на валидационной подвыборке с $L_2$ регуляризацией. В данной работе рассматривается общая задачи оптимизации гиперпараметров. Рассматриваеые алгоритмы и целевые функции потерь реализованы и представлены в качестве библиотеки для оптимизации гиперпараметров моделей~\cite{pyfos}. Основным теоретическим вкладом данной главы является анализ рассматриваемых алгоритмов оптимизации гиперпараметров при использовании функции потерь общего вида, а также исследование качества и устойчивости итоговых моделей в случае использования кросс-валидации и вариационной оценки обоснованности.  В экспериментальной части в качестве критерия выбора модели выступают вариационная нижняя оценка обоснованности модели и ошибка на валидационной части выборки. В отличие от~\cite{hyper_hoag}, где также производится сравнение алгоритмов оптимизации гиперпараметров, в данной работе исследуется поведение алгоритмов на выборках большой мощности, таких как WISDM~\cite{wisdm} и MNIST~\cite{mnist}.
 Численные эксперименты показывают, что при значительном количестве гиперпараметров, сопоставимым с количеством параметров модели, рассматриваемые алгоритмы предпочтительнее стохастических. 
 
 
@@ -13,7 +13,7 @@
 \[
 	\mathbf{f}(\mathbf{w}, \mathbf{x}):\mathbb{W} \times \mathbb{X} \to \mathbb{Y}, \quad \mathbf{w} \in \mathbb{W}.
 \]
-Как и в предыдущем разделе, будем полагать, что структура модели $\boldsymbol{\Gamma}$ для вероятностной модели глубокого обучения $\mathbf{f}$ определена однозначно и метапараметры $\lam$ определены однозначно:
+Как и в предыдущем разделе, будем полагать, что структура модели $\boldsymbol{\Gamma}$ для вероятностной модели глубокого обучения $\mathbf{f}$ и метапараметры $\lam$ определены однозначно:
 \[
     \prior = p(\w,\G|\h), \quad \priorw = p(\w|\h),\quad    \LL = p(\y|\X,\w).
 \]
@@ -23,7 +23,7 @@
 \label{eq:prior}
 	\mathbf{w} \sim \mathcal{N}(\mathbf{0}, \mathbf{A}^{-1}),
 \end{equation}
-где $\mathbf{A}^{-1} = \text{diag}[\alpha_1, \dots, \alpha_u]^{-1}$ --- матрица ковариаций диагонального вида.
+где $\mathbf{A}^{-1} = \text{diag}[\alpha_1, \dots, \alpha_u]^{-1}$ --- матрица ковариаций диагонального вида, где $u$ --- количество параметров $\w$ модели $\model$. 
 
 
 Задача оптимизации гиперпараметров зависит как от критерия выбора модели, так и от метода оптимизации параметров модели.
@@ -88,7 +88,7 @@ $$L(\boldsymbol{\theta}|  \mathbf{h},  \mathbf{X}, \mathbf{y}) = Q(\mathbf{h}|  
 
 Запустим $K$ оптимизаций модели, каждую на своей части выборки. Положим $\boldsymbol{\theta} = [\mathbf{w}_1, \dots, \mathbf{w}_K]$, где $\mathbf{w}_1, \dots, \mathbf{w}_K$ --- параметры модели при оптимизациях $1, \dots, K$.
  
-Положим функцию $L$ равной  среднему значению логарифма апостериорной вероятности по всем $k-1$ разбиениям $\mathfrak{D}$:
+Положим функцию $L$ пропорциональной  среднему значению логарифма апостериорной вероятности по всем $k-1$ разбиениям $\mathfrak{D}$:
 \begin{equation}
 L = \frac{1}{K}\sum_{k=1}^K \bigl(\frac{K}{K-1}\text{log}p(\mathbf{y}_k|\mathbf{X}_k, \mathbf{w}_k) + \text{log}p(\mathbf{w}_k|\mathbf{h})\bigr).
 \label{eq:cv}
@@ -110,15 +110,14 @@ Q = \frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathbf{y} \setminus \mathbf{y}_k|\math
 \label{eq:hyper_elbo}
 \end{equation}
 \[
-\approx \sum_{i=1}^m \text{log}~p({y}_i|\mathbf{x}_i, \mathbf{w}_i) - D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{h})\bigr) = -L = -Q,
+\approx \sum_{i=1}^m \text{log}~p({y}_i|\mathbf{x}_i, \mathbf{w}_i) - D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{h})\bigr) = L = Q,
 \]
 где $q$ --- нормальное распределение с диагональной матрицей ковариаций:
 \begin{equation}
 	q \sim \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q),
 \label{eq:diag}
 \end{equation}
-где $\mathbf{A}_q = \text{diag}[\alpha^q_1, \dots, \alpha^q_u]^{-1}$ --- диагональная матрица ковариаций, $\boldsymbol{\mu}_q$ --- вектор средних компонент,
-где $u$ --- общее количество параметров.
+где $\mathbf{A}_q = \text{diag}[\alpha^q_1, \dots, \alpha^q_u]^{-1}$ --- диагональная матрица ковариаций, $\boldsymbol{\mu}_q$ --- вектор средних компонент.
 Расстояние $D_\text{KL}$ между двумя гауссовыми величинами задается как 
 \[
 	D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{h})\bigr) = \frac{1}{2} \bigl( \text{Tr} [\mathbf{A}\mathbf{A}^{-1}_q] + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^\mathsf{T}\mathbf{A}(\boldsymbol{\mu} - \boldsymbol{\mu}_q) - u +\text{ln}~|\mathbf{A}^{-1}| - \text{ln}~|\mathbf{A}_q^{-1}| \bigr).
@@ -147,7 +146,7 @@ Q = \frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathbf{y} \setminus \mathbf{y}_k|\math
 Случайный поиск & стохастический & простота реализации& Алгоритм неэффективен при большом количестве гиперпараметров (проклятие размерности)  \\ \hline
 Жадный алгоритм~\cite{greed_hyper} & градиентный & Возможность одновременной оптимизации параметров и гиперпараметров & Жадность алгоритма \\ \hline
 HOAG~\cite{hyper_hoag} & градиентный & Быстрая сходимость & Алгоритм требователен к настройкам параметров \\ \hline 
-DrMAD~\cite{hyper_mad} & градиентный & Алгоритм учитывает алгоритм оптимизации параметров модели и его параметры & Алгоритм страдает от проблем неустойчиовтси градиентного спуска (градиентный взрыв и затухание); Алгоритм работает в очень жетских предположениях. \\ \hline
+DrMAD~\cite{hyper_mad} & градиентный & Алгоритм учитывает алгоритм оптимизации параметров модели и его параметры & Алгоритм страдает от проблем неустойчиовтси градиентного спуска (градиентный взрыв и затухание); Алгоритм работает в строгих предположениях о линейности траектории оптимизации гиперпараметров.\\ \hline
 \end{tabularx}
 
 \caption{Преимщуества и недостатки рассматриваемых алгоритмов}
@@ -200,7 +199,7 @@ $ \lambda_{\text{lr}}$ --- длина шага градиентного спус
 где $\boldsymbol{\theta}^0$ --- начальное значение параметров $\boldsymbol{\theta}$.
 В дальнейшем для удобства будем применять сокращенные формы $Q(\mathbf{h}| \boldsymbol{\theta}), L(\boldsymbol{\theta}| \mathbf{h}), T(\boldsymbol{\theta}, \mathbf{h}).$
 
-Оптимизационную задачу~\eqref{eq:hyper_optim} предлагается решать с использованием градиентного спуска. Вычисление градиента от функции $Q( T^\eta(\boldsymbol{\theta}_0| \mathbf{h}))$ по гиперпараметрам $\mathbf{h}$ является вычислительно сложным в силу внутренней процедуры оптимизации $\boldsymbol{\theta}^{*} = T(\boldsymbol{\theta}_0, \mathbf{h})$. 
+Оптимизационную задачу~\eqref{eq:hyper_optim} предлагается решать с использованием градиентного спуска. Вычисление градиента от функции $Q( T^\eta(\boldsymbol{\theta}_0| \mathbf{h}))$ по гиперпараметрам $\mathbf{h}$ является вычислительно сложным в силу внутренней процедуры оптимизации $\boldsymbol{\theta}^{*} = T(\boldsymbol{\theta}_0| \mathbf{h})$. 
 Общая схема  оптимизации гиперпараметров представлена следующим образом:
 \begin{enumerate}
 \item От 1 до  $l$:
@@ -216,7 +215,7 @@ $ \lambda_{\text{lr}}$ --- длина шага градиентного спус
 В качестве  правила обновления вектора гиперпараметров $\mathbf{h}$ на каждом шаге оптимизации~\eqref{eq:gd} выступает градиентный спуск с учетом обновления параметров $\boldsymbol{\theta}$ на данном шаге:
 \begin{equation}
 \label{eq:greed}
-\mathbf{h}' =	 \mathbf{h} -  \lambda_{\text{lr}}^{\mathbf{h}} \nabla_{\mathbf{h}}  \left(-Q \bigl(\mathbf{h}, T(\boldsymbol{\theta}^{0}, \mathbf{h})\bigr)\right) = \mathbf{h} -  \lambda_{\text{lr}}^{\mathbf{h}} \nabla_{\mathbf{h}}  \left(-Q\bigl(\mathbf{h}, \boldsymbol{\theta} -  \lambda_{\text{lr}} \nabla \left(-L(\boldsymbol{\theta}| \mathbf{h}))\right)\right),
+\mathbf{h}' =	 \mathbf{h} -  \lambda_{\text{lr}}^{\mathbf{h}} \nabla_{\mathbf{h}}  \left(-Q \bigl(\mathbf{h}, T(\boldsymbol{\theta}| \mathbf{h})\bigr)\right) = \mathbf{h} -  \lambda_{\text{lr}}^{\mathbf{h}} \nabla_{\mathbf{h}}  \left(-Q\bigl(\mathbf{h}, \boldsymbol{\theta} -  \lambda_{\text{lr}} \nabla \left(-L(\boldsymbol{\theta}| \mathbf{h}))\right)\right),
 \end{equation}
 где $ \lambda_{\text{lr}}^{\mathbf{h}}$ --- длина шага оптимизации гиперпараметров.
 Псевдокод жадного алгоритма оптимизации гиперпараметров приведен на Рис.~\ref{alg:greedy}.
@@ -226,56 +225,57 @@ $ \lambda_{\text{lr}}$ --- длина шага градиентного спус
 \[
 \nabla_{\mathbf{h}} Q \bigl(T^\eta(\boldsymbol{\theta}^0, \mathbf{h})\bigr) = \nabla_{\mathbf{h}} Q( \mathbf{h}| \boldsymbol{\theta}) - \left(\nabla^2_{\boldsymbol{\theta}, \mathbf{h}} (-L(\boldsymbol{\theta}| \mathbf{h}))\right)^\text{T}\mathbf{H}(\boldsymbol{\theta})^{-1}\nabla_{\boldsymbol{\theta}} Q( \mathbf{h}| \boldsymbol{\theta}),
 \]
-где $\mathbf{H}$ --- гессиан функции $-L$ по вариационным параметрам $\boldsymbol{\theta}$.
+где $\mathbf{H}$ --- гессиан функции $(-L)$ по вариационным параметрам $\boldsymbol{\theta}$.
 
 Процедура получения приближенного значения градиента гиперпараметров $\nabla_{\mathbf{h}} Q$  производится итеративно.
 \begin{enumerate}
-\item Провести $\eta$ шагов оптимизации: $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0, \mathbf{h})$.
-\item Решить линейную систему для вектора $\boldsymbol{\lambda}$: $\mathbf{H}(\boldsymbol{\theta})\boldsymbol{\lambda} =  \nabla_{\boldsymbol{\theta}} Q(\boldsymbol{\theta}| \mathbf{h})$.
-\item Приближенное значение градиентов гиперпараметра вычисляется как $\hat{\nabla}_{\mathbf{h}}Q = \nabla_{\mathbf{h}}Q(\boldsymbol{\theta}| \mathbf{h}) +\nabla_{\boldsymbol{\theta}, \mathbf{h}} L(\boldsymbol{\theta}| \mathbf{h})^T\boldsymbol{\lambda}$.
+\item Провести $\eta$ шагов оптимизации: $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0| \mathbf{h})$.
+\item Решить линейную систему для вектора $\boldsymbol{\lambda}$: $\mathbf{H}(\boldsymbol{\theta})\boldsymbol{\lambda} =  \nabla_{\boldsymbol{\theta}} Q(\mathbf{h}|\boldsymbol{\theta})$.
+\item Приближенное значение градиентов гиперпараметра вычисляется как $\hat{\nabla}_{\mathbf{h}}Q = \nabla_{\mathbf{h}}Q(\mathbf{h}|\boldsymbol{\theta}) +\nabla_{\boldsymbol{\theta}, \mathbf{h}} L(\boldsymbol{\theta}| \mathbf{h})^T\boldsymbol{\lambda}$.
 \end{enumerate}
 
 Итоговое правило обновления:
 \begin{equation}
 \label{eq:update_hyper}
-\mathbf{h}' = \mathbf{h} +  \lambda_{\text{lr}}^{\mathbf{h}} \hat{\nabla}_{\mathbf{h}}Q.
+\mathbf{h}' = \mathbf{h} - \lambda_{\text{lr}}^{\mathbf{h}} \hat{\nabla}_{\mathbf{h}} (-Q) = \mathbf{h} +  \lambda_{\text{lr}}^{\mathbf{h}} \hat{\nabla}_{\mathbf{h}}Q.
 \end{equation}
 
 В данной работе для приближенного решения  шага 2 алгоритма HOAG используется стохастический градиентный спуск в силу сложности вычисления гессиана $\mathbf{H}(\boldsymbol{\theta})$.
 Псевдокод алгоритма HOAG приведен на Рис.~\ref{alg:hoag}.
 
 \textbf{Алгоритм DrMad. }
-Для получения градиента от оптимизируемой функции $Q$ как от функции от начальных параметров $\boldsymbol{\theta}^0$ предлагаетя пошагово восстановить $\eta$ шагов оптимизации $T(\boldsymbol{\theta}^0)$ в обратном порядке аналогично методу обратного распространения ошибок. Для упрощения данной процедуры вводится предположение,что траектория изменения параметров $\boldsymbol{\theta}$ линейна:
+Для получения градиента от оптимизируемой функции $Q$ как от функции от начальных параметров $\boldsymbol{\theta}^0$ предлагаетя пошагово восстановить $\eta$ шагов оптимизации $T(\boldsymbol{\theta}^0|\h)$ в обратном порядке аналогично методу обратного распространения ошибок. Для упрощения данной процедуры вводится предположение,что траектория изменения параметров $\boldsymbol{\theta}$ линейна:
 \begin{equation}
 \label{eq:mad_lin}
-\boldsymbol{\theta}^\tau = \boldsymbol{\theta}^0 + \frac{\tau}{\eta} (T(\boldsymbol{\theta})- \boldsymbol{\theta}^0).
+\boldsymbol{\theta}^\tau = \boldsymbol{\theta}^0 + \frac{\tau}{\eta} \left(T(\boldsymbol{\theta}|\h)- \boldsymbol{\theta}^0\right).
 \end{equation}
 
 Алгоритм вычисления приближенного значения градиента $\nabla \mathbf{h}$ является частным случаем алгоритма обратного распространения ошибки и представим в следующем виде:
 \begin{enumerate}
-\item Провести $\eta$ шагов оптимизации: $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0, \mathbf{h})$.
-\item Положим $\hat{\nabla} \mathbf{h} = \nabla_\mathbf{h} Q( \mathbf{h}, \boldsymbol{\theta}).$ 
+\item Провести $\eta$ шагов оптимизации: $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0| \mathbf{h})$.
+\item Положим $\hat{\nabla} \mathbf{h} = \nabla_\mathbf{h} \left(-Q( \mathbf{h}| {\boldsymbol{\theta}}^\eta)\right).$
+\item Положим $\hat{\nabla} \teta = \nabla_{\teta} \left(-Q( \mathbf{h}| {\boldsymbol{\theta}}^\eta)\right).$  
 \item Положим $d\mathbf{v} = \mathbf{0}.$
 \item Для $\tau = \eta \dots 1 $ повторить:
 \item Вычислить значения параметров $\boldsymbol{\theta}^\tau$\eqref{eq:mad_lin}.
-\item $d\mathbf{v} =   \lambda_{\text{lr}} \hat{\nabla}_{\boldsymbol{\theta}}$.
-\item $\hat{\nabla} \mathbf{h} =  \hat{\nabla} \mathbf{h} - d\mathbf{v}\nabla_{\mathbf{h}} \nabla_{\boldsymbol{\theta}} Q$.
-\item $\hat{\nabla} \boldsymbol{\theta}  = \hat{\nabla} \boldsymbol{\theta}  - d\mathbf{v}\nabla_{\boldsymbol{\theta}} \nabla_{\boldsymbol{\theta}} Q$.
+\item $d\mathbf{v} =   \lambda_{\text{lr}} \hat{\nabla} {\boldsymbol{\theta}}$.
+\item $\hat{\nabla} \mathbf{h} =  \hat{\nabla} \mathbf{h} - d\mathbf{v}\nabla_{\mathbf{h}} \nabla_{\boldsymbol{\theta}} (-L(\teta|\h))$.
+\item $\hat{\nabla} \boldsymbol{\theta}  = \hat{\nabla} \boldsymbol{\theta}  - d\mathbf{v}\nabla_{\boldsymbol{\theta}} \nabla_{\boldsymbol{\theta}} (-L(\teta|\h))$.
 \end{enumerate}
 
 Итоговое правило обновления гиперпараметров аналогично~\eqref{eq:update_hyper}.
-Псевдокод общего алгоритма оптимизации гиперпараметров приведен на Рис.~\ref{alg:hyperparam_optim}.
+Псевдокод общего алгоритма оптимизации гиперпараметров приведен на Рис.~\ref{alg:drmad}.
 
 В работе~\cite{hyper_mad} отмечается неустойчивость алгоритма при высоких значениях длины шага градиентного спуска $ \lambda_{\text{lr}}$. Поэтому вместо исходного правила~\eqref{eq:mad_lin} в данной работе первые 5\% значений параметров не рассматриваются, а также учитывается только каждый $\tau_k$ шаг оптимизации:
 \begin{equation}
 \label{eq:mad_lin2}
-\boldsymbol{\theta}^\tau = \boldsymbol{\theta}^{\tau_0} + \frac{\tau}{\eta} (T(\boldsymbol{\theta})-\boldsymbol{\theta}^{\tau_0}), \quad \tau \in \{\tau_0,\dots,\eta\}, \tau \text{ mod } \tau_k = 0,
+\boldsymbol{\theta}^\tau = \boldsymbol{\theta}^{\tau_0} + \frac{\tau}{\eta} (T(\boldsymbol{\theta}|\h)-\boldsymbol{\theta}^{\tau_0}), \quad \tau \in \{\tau_0,\dots,\eta\}, \tau \text{ mod } \tau_k = 0,
 \end{equation}
 где $\tau_0 = [0.05 \cdot \eta]$.
 
 Иллюстративный пример поведения представленных методов представлен на Рис.~\ref{fig:traj}. Жадный алгоритм, соответствющий красной линии на графике, оптимизирует гиперпараметры во время процедуры оптимизация вариационных параметров $\boldsymbol{\theta}$. Алгоритм HOAG оптимизирует гиперпараметры после каждой процедуры оптимизации вариационных параметров. Алгоритм DrMAD использует линеаризованную аппроксимацию траектории оптимизации вариационных параметров $\boldsymbol{\theta}$. 
 
-\begin{figure}
+\begin{figure}[tbh!]
 %GENERAL
     \begin{algorithmic}[1]
 \REQUIRE $\mathbf{X}, \mathbf{y}, p(\mathbf{w}|\mathbf{h}), \boldsymbol{\theta}^0$;
@@ -294,7 +294,7 @@ $ \lambda_{\text{lr}}$ --- длина шага градиентного спус
 
 \end{figure}
 
-\begin{figure}
+\begin{figure}[tbh!]
 %GREED
          \begin{algorithmic}[1]
 \REQUIRE $\mathbf{X}, \mathbf{y}, p(\mathbf{w}|\mathbf{h}), \boldsymbol{\theta}^0$;
@@ -316,7 +316,7 @@ $ \lambda_{\text{lr}}$ --- длина шага градиентного спус
 \end{figure}
 
 
-\begin{figure}
+\begin{figure}[tbh!]
  \begin{algorithmic}[1]
 \REQUIRE $\mathbf{X}, \mathbf{y}, p(\mathbf{w}|\mathbf{h}), \boldsymbol{\theta}^0$;
 \REQUIRE количество итераций $l$ градиентной оптимизации гиперпараметров; 
@@ -324,7 +324,7 @@ $ \lambda_{\text{lr}}$ --- длина шага градиентного спус
 \ENSURE оптимальные значения параметров $\mathbf{h}$;
 \FOR{$r=1,\dots,l$}
 \STATE провести оптимизацию вариационных параметров;
-\STATE Решить линейную систему для вектора $\boldsymbol{\lambda}$: $\mathbf{H}(\boldsymbol{\theta})\boldsymbol{\lambda} =  \nabla_{\boldsymbol{\theta}} Q( \mathbf{h},\boldsymbol{\theta})$.
+\STATE Решить линейную систему для вектора $\boldsymbol{\lambda}$: $\mathbf{H}(\boldsymbol{\theta})\boldsymbol{\lambda} =  \nabla_{\boldsymbol{\theta}} Q( \mathbf{h}|\boldsymbol{\theta})$.
 \STATE $\hat{\nabla}_{\mathbf{h}}Q = \nabla_{\mathbf{h}}Q(\mathbf{h}|\boldsymbol{\theta}) +\nabla_{\boldsymbol{\theta}, \mathbf{h}} L(\boldsymbol{\theta}| \mathbf{h})^T\boldsymbol{\lambda}$;
 \STATE $\mathbf{h} = \mathbf{h} + \lambda_{\text{lr}}\hat{\nabla}_{\mathbf{h}}Q$.
 \ENDFOR
@@ -337,7 +337,7 @@ $ \lambda_{\text{lr}}$ --- длина шага градиентного спус
 %DRMAD
 
 
-\begin{figure}
+\begin{figure}[tbh!]
  \begin{algorithmic}[1]
 \REQUIRE $\mathbf{X}, \mathbf{y}, p(\mathbf{w}|\mathbf{h}), \boldsymbol{\theta}^0$;
 \REQUIRE количество итераций $l$ градиентной оптимизации гиперпараметров; 
@@ -345,13 +345,14 @@ $ \lambda_{\text{lr}}$ --- длина шага градиентного спус
 \ENSURE оптимальные значения параметров $\mathbf{h}$;
 \FOR{$r=1,\dots,l$}
 \STATE $\boldsymbol{\theta} = T(\boldsymbol{\theta}_0, \mathbf{h})$.
-\STATE $\hat{\nabla} \mathbf{h} = \nabla_\mathbf{h} Q( \mathbf{h}| \boldsymbol{\theta}).$ 
+\STATE $\hat{\nabla} \teta = \nabla_{\teta} \left(-Q( \mathbf{h}| {\boldsymbol{\theta}}^\eta)\right).$  
+\STATE $\hat{\nabla} \mathbf{h} = \nabla_\mathbf{h} \left(-Q( \mathbf{h}| {\boldsymbol{\theta}}^\eta)\right).$ 
 \STATE $d\mathbf{v} = \mathbf{0}.$
 \FOR{$\tau=\eta,\dots,1$}
 \STATE Вычислить значения параметров $\boldsymbol{\theta}^\tau$\eqref{eq:mad_lin}.
-\STATE $d\mathbf{v} =   \lambda_{\text{lr}} \hat{\nabla}_{\boldsymbol{\theta}}$.
-\STATE $\hat{\nabla} \mathbf{h} =  \hat{\nabla} \mathbf{h} + d\mathbf{v}\nabla_{\mathbf{h}} \nabla_{\boldsymbol{\theta}} Q$.
-\STATE $\hat{\nabla} \boldsymbol{\theta}  = \hat{\nabla} \boldsymbol{\theta}  + d\mathbf{v}\nabla_{\boldsymbol{\theta}} \nabla_{\boldsymbol{\theta}} Q$.
+\STATE $d\mathbf{v} =   \lambda_{\text{lr}} \hat{\nabla} {\boldsymbol{\theta}}$.
+\STATE $\hat{\nabla} \mathbf{h} =  \hat{\nabla} \mathbf{h} - d\mathbf{v}\nabla_{\mathbf{h}} \nabla_{\boldsymbol{\theta}} \left(-L(\teta|\h)\right)$.
+\STATE $\hat{\nabla} \boldsymbol{\theta}  = \hat{\nabla} \boldsymbol{\theta}  - d\mathbf{v}\nabla_{\boldsymbol{\theta}} \nabla_{\boldsymbol{\theta}} \left(-L(\teta|\h)\right)$.
 \ENDFOR
 \STATE $\mathbf{h} = \mathbf{h} - \hat{\nabla} \mathbf{h}.$
 \ENDFOR

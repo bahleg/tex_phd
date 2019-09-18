@@ -23,7 +23,7 @@ $c$-ю компоненту $\mathbf{f}(\mathbf{x}, \mathbf{w})[c]$ вектор
 \]
 где
 \[
- L(\mathbf{w}|\mathfrak{D}) = \sum_{i=1}^m \sum_{с=1}^R [y_i = с] \text{log} p(y_i=с|\mathbf{x}_i,\mathbf{w}).
+ L(\mathbf{w}|\mathfrak{D}) = \sum_{i=1}^m \sum_{с=1}^R [y_i = c] \text{log} p(y_i=с|\mathbf{x}_i,\mathbf{w}).
 \]
 
 \textbf{Структура сети глубокого обучения. }
@@ -270,20 +270,20 @@ $$\PP(\bw|\mathbf{h}) \sim \NNN(\boldsymbol{\mu}, \mathbf{A}^{-1}),$$
 \begin{enumerate}
 	\item Матрица ковариаций скалярна: $\mathbf{A}^{-1}_q = \alpha_q\II$.
 	В этом случае дивергенция выглядит следующим образом:$$
-	\DKL\bigl(\NNN(\boldsymbol{\mu}_q,\mathbf{A}^{-1}_q)||\NNN(\bmupr,\mathbf{A}^{-1})\bigr) = \sum\limits_{j=1}^{|\mathbf{w}|}\big(\log\frac{\alpha}{\alpha_q} + \frac{(\mu-\boldsymbol{\mu}_{q}[j])^2 + \alpha_q^2 + \alpha^2}{2\alpha^2}\big),
+	\DKL\bigl(\NNN(\boldsymbol{\mu}_q,\mathbf{A}^{-1}_q)||\NNN(\bmupr,\mathbf{A}^{-1})\bigr) = \sum\limits_{j=1}^{|\Wb|}\big(\log\frac{\alpha}{\alpha_q} + \frac{(\mu-\boldsymbol{\mu}_{q}[j])^2 + \alpha_q^2 + \alpha^2}{2\alpha^2}\big),
 	$$
 где $\boldsymbol{\mu}_{q}[j]$ --- $i$-я компонента вектора $\boldsymbol{\mu_q}$.
 
-	По значениям параметров $\alpha_q$ и $\boldsymbol{\mu}_q$ вариационного распределения  вычислим оптимальные параметры априорного. Из условия $$\frac\partial{\partial\mu}\DKL = \sum_{j=1}^{|\mathbf{w}|}\frac{\mu-\boldsymbol{\mu}_{q}[j]}{\alpha^2}=0$$ получаем выражения для $\mu$ на следующей итерации $${\mu}' = \frac{1}{|\mathbf{w}|}\sum_{j=1}^{|\mathbf{w}|}\boldsymbol{\mu}_{q}[j].$$
-	Аналогично $$\frac\partial{\partial \alpha^2}\DKL = \sum_{j=1}^{|\mathbf{w}|} \frac1{2\alpha^2}-\frac{(\mu-\boldsymbol{\mu}_{q}[j])^2 + \alpha_q^2}{2\alpha^4}=0 \Rightarrow$$ $$ \Rightarrow \ \hat{\alpha}^2 = \frac{1}{|\mathbf{w}|}\sum_{i=1}^{|\mathbf{w}|} (\mu-{\boldsymbol{\mu}_{q}[j]})^2 + \alpha_q^2.$$
+	По значениям параметров $\alpha_q$ и $\boldsymbol{\mu}_q$ вариационного распределения  вычислим оптимальные параметры априорного. Из условия $$\frac\partial{\partial\mu}\DKL = \sum_{j=1}^{|\Wb|}\frac{\mu-\boldsymbol{\mu}_{q}[j]}{\alpha^2}=0$$ получаем выражения для $\mu$ на следующей итерации $${\mu}' = \frac{1}{|\Wb|}\sum_{j=1}^{|\Wb|}\boldsymbol{\mu}_{q}[j].$$
+	Аналогично $$\frac\partial{\partial \alpha^2}\DKL = \sum_{j=1}^{|\Wb|} \frac1{2\alpha^2}-\frac{(\mu-\boldsymbol{\mu}_{q}[j])^2 + \alpha_q^2}{2\alpha^4}=0 \Rightarrow$$ $$ \Rightarrow \ \hat{\alpha}^2 = \frac{1}{|\Wb|}\sum_{i=1}^{|\Wb|} (\mu-{\boldsymbol{\mu}_{q}[j]})^2 + \alpha_q^2.$$
 
 	\item Матрица ковариаций диагональна: $\mathbf{A}^{-1}_q = \text{diag}(\boldsymbol{\alpha}_q^2)$.	
 
-	В этом случае \[\DKL\bigl(\NNN(\boldsymbol{\mu}_q,\mathbf{A}^{-1}_q)||\NNN(\bmupr,\mathbf{A}^{-1})\bigr)  = \sum\limits_{j=1}^{|\mathbf{w}|}(\log\frac{\alpha}{\boldsymbol{\alpha}_q[j]} + \frac{(\mu-\boldsymbol{\mu}_{q}[j])^2 + \boldsymbol{\alpha}_q[j]^2 + \alpha^2}{2\alpha^2}).\]
+	В этом случае \[\DKL\bigl(\NNN(\boldsymbol{\mu}_q,\mathbf{A}^{-1}_q)||\NNN(\bmupr,\mathbf{A}^{-1})\bigr)  = \sum\limits_{j=1}^{|\Wb|}(\log\frac{\alpha}{\boldsymbol{\alpha}_q[j]} + \frac{(\mu-\boldsymbol{\mu}_{q}[j])^2 + \boldsymbol{\alpha}_q[j]^2 + \alpha^2}{2\alpha^2}).\]
 	Значения параметров априорного распределения для следующей итерации вычисляются следующим образом:
-\[ \text{из} \ \frac\partial{\partial\mu}\DKL = \sum\limits_{j=1}^{|\mathbf{w}|}\frac{\mu-\boldsymbol{\mu}_{q}[j]}{\alpha^2}=0 \ \text{получаем} \ \hat{\mu} = \frac{1}{|\mathbf{w}|}\sum\limits_{j=1}^{|\mathbf{w}|} \boldsymbol{\mu}_{q}[j],\]
-\[ \text{из} \ \frac\partial{\partial \alpha^2}\DKL = \sum\limits_{j=1}^{|\mathbf{w}|} \frac1{2\alpha^2}-\frac{(\mu-\boldsymbol{\mu}_{q}[j])^2 + \boldsymbol{\alpha}[j]^2}{2\alpha^4}=0\] получаем 
-\[\hat{\alpha}^2 = \frac{1}{|\mathbf{w}|}\sum\limits_{j=1}^{|\mathbf{w}|} (\mu-\boldsymbol{\mu}_{q}[j])^2 + \boldsymbol{\alpha}_q[j]^2.\]
+\[ \text{из} \ \frac\partial{\partial\mu}\DKL = \sum\limits_{j=1}^{|\Wb|}\frac{\mu-\boldsymbol{\mu}_{q}[j]}{\alpha^2}=0 \ \text{получаем} \ \hat{\mu} = \frac{1}{|\Wb|}\sum\limits_{j=1}^{|\Wb|} \boldsymbol{\mu}_{q}[j],\]
+\[ \text{из} \ \frac\partial{\partial \alpha^2}\DKL = \sum\limits_{j=1}^{|\Wb|} \frac1{2\alpha^2}-\frac{(\mu-\boldsymbol{\mu}_{q}[j])^2 + \boldsymbol{\alpha}[j]^2}{2\alpha^4}=0\] получаем 
+\[\hat{\alpha}^2 = \frac{1}{|\Wb|}\sum\limits_{j=1}^{|\Wb|} (\mu-\boldsymbol{\mu}_{q}[j])^2 + \boldsymbol{\alpha}_q[j]^2.\]
 \end{enumerate}
 
 
@@ -485,9 +485,9 @@ $$\xi \sim \mathcal{U}(\mathcal{A})$$
 Для гауссовского распределения с диагональной матрицей ковариации получаем:
 $$p(w_j|\mathbf{h}) = \frac{1}{\sqrt[]{2\boldsymbol{\alpha}_q[j]^2}}\exp({-\frac{(w_j-\mu_j)^2}{2\boldsymbol{\alpha}_q[j]^2}}).$$
 Разделим плотность вероятности в нуле к плотности в математическом ожидании~\eqref{eq:rho_graves}
-$$ \frac{p(w_j=0|\mathbf{h})}{p(w_j=\mu_j|\mathbf{h})}= \exp({-\frac{\mu_j^2}{2\alpha_j^2}}),$$
+$$ \frac{p(w_j=0|\mathbf{h})}{p(w_j=\mu_j|\mathbf{h})}= \exp\left({-\frac{\mu_j^2}{2\alpha_q[j]^2}}\right),$$
 и поставим следующую задачу оптимизации:
-$$\xi = \argmin_{j\in \mathcal{A}} \left|\frac{\mu_j}{\alpha_j}\right|,$$
+$$\xi = \argmin_{j\in \mathcal{A}} \left|\frac{\mu_j}{\alpha_q[j]}\right|,$$
 где~$\xi$ --- индекс наименее релевантного, удаляемого параметра.
 
 \textbf{Предлагаемый метод определения релевантности параметров нейросети. }
