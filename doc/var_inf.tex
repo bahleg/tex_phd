@@ -112,7 +112,7 @@ $\mathbf{f}_0, \dots, \mathbf{f}_{|V|-1}$ --- дифференцируемые �
 {В качестве функции, приближающей логарифм интеграла~\eqref{eq:model_evidence}, будем рассматривать его нижнюю оценку, полученную при помощи неравенства Йенсена~\cite{bishop}. Получим нижнюю оценку логарифма обоснованности модели, используя неравенство}
 \begin{equation} 
 \label{eq:var_elbo}
-\textnormal{log}~p(\mathbf{y}|\mathbf{X},\mathbf{h})  = \int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~\frac{p(\y|\X,\w)}{q(\mathbf{w})}d\mathbf{w} + \textnormal{D}_\textnormal{KL}  \bigl(q(\mathbf{w})||p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h})\bigr) \geq	
+\textnormal{log}~p(\mathbf{y}|\mathbf{X},\mathbf{h})  = \int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~\frac{p(\y,\w|\X)}{q(\mathbf{w})}d\mathbf{w} + \textnormal{D}_\textnormal{KL}  \bigl(q(\mathbf{w})||p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h})\bigr) \geq	
 \end{equation} 
 $$
 \geq \int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~\frac{p(\y|\X,\w)}{q(\mathbf{w})}d\mathbf{w} =
