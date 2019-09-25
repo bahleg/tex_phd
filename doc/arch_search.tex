@@ -104,7 +104,7 @@ p(\lim_{\lamT \to 0} {\gamma}^{j,k}_{l}= 1|\s^{j,k}, \lamT)=\frac{s^{j,k}_l}{\su
 \[
  \nabla_{\tetaw} \E_{\q} \log \LL = \nabla_{\tetaw} \E_{\boldsymbol{\varepsilon}} \log \LL [][][\mathbf{g}(\boldsymbol{\varepsilon})] =
 \]
-\[= \int_{\boldsymbol{\varepsilon}}\nabla_{\tetaw} \log\LL [][][\mathbf{g}(\boldsymbol{\varepsilon})] p(\boldsymbol{\varepsilon}) d\boldsymbol{\varepsilon}=\E_{\boldsymbol{\varepsilon}} \nabla_{\teta} \log\LL [][][\mathbf{g}(\boldsymbol{\varepsilon})].\]
+\[= \int_{\boldsymbol{\varepsilon}}\nabla_{\tetaw} \log\LL [][][\mathbf{g}(\boldsymbol{\varepsilon})] p(\boldsymbol{\varepsilon}) d\boldsymbol{\varepsilon}=\E_{\boldsymbol{\varepsilon}} \nabla_{\tetaw} \log\LL [][][\mathbf{g}(\boldsymbol{\varepsilon})].\]
 Таким образом, распределение, позволяющее произвести репараметризацию, является более удобным для вычисления интегральных оценок вида $ \nabla_{\tetaw} \E_{\q} \log \LL$, а также позволяет повысить точность приближенного вычисления значений таких функций~\cite{reparametrization}.
 Анализ репараметризации для генеративных моделей глубокого обучения представлен в~\cite{reparametrization_blog}.
 % отсюда: http://gregorygundersen.com/blog/2018/04/29/reparameterization/
@@ -590,7 +590,7 @@ $$
 \label{eq:optim_ml}
     \Loss =  \E_{\q} \log~\LL.
 \end{equation}
-Данное обобщение~\eqref{eq:optim_ml} эквивалентно  критерию максимального правдоподобия при выборе в качестве $\q$ эмпирического распределения параметров~\eqref{eq:loss_func} и структуры.
+Данное обобщение~\eqref{eq:optim_ml} эквивалентно  критерию максимального правдоподобия при выборе в качестве $\q$ распределения, основанного на запуске нескольких  оптимизаций параметров~\eqref{eq:loss_func} и структуры.
 Метод не предполагает оптимизации гиперпараметров $\h$. Для формального соответствия данной задачи задаче выбора модели~\eqref{eq:optim_problem},\eqref{eq:optim_problem_in}, т.е. двухуровневой задачи оптимизации, положим $\Loss=\Val:$
 \[
     \Loss =  \E_{\q}\log \LL \to \max_{\teta \in \Uteta},
@@ -1667,7 +1667,7 @@ $\lamLL = 0.01, \lamCQ = 1, \lamCL = 100, \lamS = [-1, -1], \lamT = 1.0.$
 \]
 Данные структуры соответствуют распределениям структур, сконцентрированным близко к моделям $\model_0, \model_2$.
 Гистограмма итоговых распределений для данной задачи оптимизации представлена на Рис.~\ref{fig:structure_comb_example}.
-График показывает, что в отличие от оптимизации с $\lamS=\mathbf{0}$, которая представлена на Рис.~\ref{fig:fig_triangle_hist}~д), при использовании данного слагаемого вариационное распределение $\qG$ сконцентрировано у модели $\model_1$.
+График показывает, что в отличие от оптимизации с $\lamS=\mathbf{0}$, которая представлена на Рис.~\ref{fig:fig_triangle_hist},~д, при использовании данного слагаемого вариационное распределение $\qG$ сконцентрировано у модели $\model_1$.
 Заметим, что данная регуляризация  влияет напрямую только на априорное распределение структур $\priorG$, а не на вариационное распределение $\qG$, поэтому итоговое распределение $\qG$ изменяется значительно только при близких значениях суммы остальных слагаемых обобщающей задачи оптимизации~\eqref{eq:qopt}, \eqref{eq:lopt}.
 
 
