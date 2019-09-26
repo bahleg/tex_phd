@@ -96,9 +96,9 @@ $\mathbf{H}$ --- гессиан минус функции потерь $(-L)$ м
 $\mathbf{f}_0, \dots, \mathbf{f}_{|V|-1}$ --- дифференцируемые функции, $\mathbf{f}_\textnormal{|V|-1}$ --- многомерная логистическая функция:
 \begin{equation}
 \label{eq:proba_softmax}
-	\mathbf{f}_\textnormal{|V|-1} = \frac{\mathbf{f}_{|V|-2}(\dots \mathbf{f}_1(\mathbf{x}))}{\sum_{c=1}^R \textnormal{exp}\bigl( {f}_{|V|-2}[c](\dots \mathbf{f}_1(\mathbf{x})) \bigr)},
+	\mathbf{f}_\textnormal{|V|-1} = \frac{\mathbf{f}_{|V|-2}(\dots \mathbf{f}_1(\mathbf{x}))}{\sum_{c=1}^R \textnormal{exp}\bigl( \mathbf{f}_{|V|-2}[c](\dots \mathbf{f}_1(\mathbf{x})) \bigr)},
 \end{equation}
-где ${f}_{|V|-2}[c]$ --- $c$-я компонента функции $\mathbf{f}_{|V|-2}$. Компонента $c$ вектора $\mathbf{f}_{|V|-1}$ определяет вероятность принадлежности объекта $\mathbf{x}$ к классу $c$. Логарифм правдоподобия зависимой переменной аналогично~\eqref{eq:example1} имеет вид
+где $\mathbf{f}_{|V|-2}[c]$ --- $c$-я компонента функции $\mathbf{f}_{|V|-2}$. Компонента $c$ вектора $\mathbf{f}_{|V|-1}$ определяет вероятность принадлежности объекта $\mathbf{x}$ к классу $c$. Логарифм правдоподобия зависимой переменной аналогично~\eqref{eq:example1} имеет вид
 \[
 	\textnormal{log} p({y}|\mathbf{x}, \mathbf{w}) =  \textnormal{log}~{f}^{y}_{|V|-1} (\mathbf{f}_{|V-2|}(\dots \mathbf{f}_0(\mathbf{x}))).
 \]
