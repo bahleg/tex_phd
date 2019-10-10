@@ -1,0 +1,406 @@
+\documentclass{dissert}
+\usepackage{cmap}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{tabularx}
+\usepackage[noend]{algorithmic}
+\usepackage{tikz}
+\usepackage{tikz,fullpage}
+\usepackage{lastpage}
+\usepackage[shortlabels]{enumitem}
+\usepackage{subcaption}
+\usepackage{mathbbol}
+\usepackage{amssymb}
+\usepackage{xargs}             % AMS Math
+
+\DeclareUnicodeCharacter{00A0}{ } % При наборе текста с планшета появляются невидимые символы. ЭТо костыль.
+\DeclareSymbolFontAlphabet{\mathbb}{AMSb}%
+\DeclareSymbolFontAlphabet{\amsmathbb}{bbold}%
+
+%https://tex.stackexchange.com/questions/163451/total-number-of-citations
+\usepackage{totcount}
+\newtotcounter{citnum} %From the package documentation
+\def\oldbibitem{} \let\oldbibitem=\bibitem
+\def\bibitem{\stepcounter{citnum}\oldbibitem}
+
+
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{positioning}
+
+
+\def\algorithmicrequire{\textbf{Вход:}}
+\def\algorithmicensure{\textbf{Выход:}}
+\def\algorithmicif{\textbf{если}}
+\def\algorithmicthen{\textbf{то}}
+\def\algorithmicelse{\textbf{иначе}}
+\def\algorithmicelsif{\textbf{иначе если}}
+\def\algorithmicfor{\textbf{для}}
+\def\algorithmicforall{\textbf{для всех}}
+\def\algorithmicdo{}
+\def\algorithmicwhile{\textbf{пока}}
+\def\algorithmicrepeat{\textbf{повторять}}
+\def\algorithmicuntil{\textbf{пока}}
+\def\algorithmicloop{\textbf{цикл}}
+\def\algorithmicreturn{\textbf{вернуть}}
+% переопределение стиля комментариев
+\def\algorithmiccomment#1{\quad// {\sl #1}}
+
+
+%\usepackage[cp1251]{inputenc}
+\renewcommand{\rmdefault}{cmr}
+\usepackage{dsfont} % for indicator function
+\usepackage[russian]{babel}
+
+\usepackage{color}
+\usepackage{caption}
+
+\usepackage{float}
+%\usepackage{slashbox}
+%пакеты и команды, необходимость в которых может возникнуть по ходу работы (Вы можете добавлять свои):
+\usepackage{indentfirst}%для отступов
+    \usepackage{subfig}
+
+\usepackage{geometry}
+\geometry{left=2.5cm}
+\geometry{right=1.0cm}
+\geometry{top=2.0cm}
+\geometry{bottom=2.0cm}
+\renewcommand{\baselinestretch}{1.0}
+
+%\usepackage[backend=biber,style=alphabetic]{biblatex}    
+
+%\usepackage{geometry}
+%\emergencystretch=25pt%для борьбы с переполнениями за счет разреж. слов в абзаце
+%\righthyphenmin=2% для разрешения переноса двух последних букв
+%\arrayrulewidth=.75pt% регулируем толщину линий в табл.
+%\usepackage[dvips]{graphicx}%для включения PS файлов
+%\usepackage[final]{epsfig}
+\usepackage{multicol}%для организации многоколоночного текста (предм. указатель)
+%\usepackage{subcaption}
+
+\usepackage{indentfirst}
+\usepackage{amsmath}
+%\usepackage{enumerate}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amscd}
+\usepackage{hhline}
+%\usepackage{multirow}
+\usepackage{graphicx, epsfig}
+%\usepackage{epic}
+\usepackage{amscd}
+%\usepackage{ecltree}
+\usepackage{color}
+\usepackage[dvips,all]{xy}
+%\usepackage{setspace}
+%\usepackage{makeidx}
+%пакет для вкл символов напр номер
+%\usepackage{textcomp}
+%\usepackage{amsfonts}
+%\usepackage{afterpage}% Полезно для полного заполнения страниц перед большими таблицами
+%\usepackage{longtable}%Для таблиц на нескольких страницах
+%\usepackage{cite}
+%\usepackage{rawfonts}
+%\usepackage{oldlfont}%доступ к шрифтам через устаревшие команды
+\usepackage{array}
+%\renewcommand{\bibname}{Список литературы}
+\renewcommand{\contentsname}{Содержание}
+\renewcommand{\contentsdesc}{Стр.}
+\renewcommand{\chaptername}{Глава}
+
+
+%%% Библиография %%%
+\makeatletter
+\bibliographystyle{utf8gost71u}     % Оформляем библиографию по ГОСТ 7.1 (ГОСТ Р 7.0.11-2011, 5.6.7)
+%\renewcommand{\@biblabel}[1]{#1.}   % Заменяем библиографию с квадратных скобок на точку
+\makeatother
+
+%\def\BibUrl#1.{}
+%\bibliographystyle{gost2008} 
+\theoremstyle{definition}
+\newtheorem{theorem}{Теорема}
+\newtheorem{lemma}{Лемма}
+\newtheorem{defin}{Определение}
+\newtheorem{utv}{Утверждение}
+\newtheorem{example}{Пример}
+
+
+\def\bbljan{Январь}
+\def\bblfeb{Февраль}
+\def\bblmar{Март}
+\def\bblapr{Апрель}
+\def\bblmay{Май}
+\def\bbljun{Июнь}
+\def\bbljul{Июль}
+\def\bblaug{Август}
+\def\bblsep{Сентябрь}
+\def\bbloct{Октябрь}
+\def\bblnov{Ноябрь}
+\def\bbldec{Декабрь}
+
+
+\renewcommand{\thesubfigure}{\asbuk{subfigure}}
+
+\graphicspath{{pic/}}
+ 
+%smerdov
+
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\PP}{p}
+\newcommand{\DD}{{\mathfrak{D}}}
+\newcommand{\FF}{{\mathcal{F}}}
+%\newcommand{\AAA}{{\mathcal{A}}}
+\newcommand{\FFF}{{\mathfrak{F}}}
+\newcommand{\NNN}{{\mathcal{N}}}
+\newcommand{\WW}{{\mathbb{W}}}
+\newcommand{\bw}{{\textbf{w}}}
+\newcommand{\ba}{{\textbf{a}}}
+\newcommand{\bb}{{\textbf{b}}}
+\newcommand{\bx}{{\textbf{x}}}
+\newcommand{\II}{{\textbf{I}}}
+%\newcommand{\bmu}{{\boldsymbol{\mu}}}
+\newcommand{\bbf}{{\textbf{f}}}
+\newcommand{\by}{{\textbf{y}}}
+\newcommand{\bm}{{\textbf{m}}}
+\newcommand{\bW}{{\textbf{W}}}
+\newcommand{\bWs}{{\textbf{W}_{\textbf{s}}}}
+\newcommand{\bU}{{\textbf{U}}}
+\newcommand{\bV}{{\textbf{V}}}
+\newcommand{\bh}{{\textbf{h}}}
+\newcommand{\bu}{{\textbf{u}}}
+\newcommand{\bbW}{{\textbf{b}_{\textbf{W}}}}
+\newcommand{\bbU}{{\textbf{b}_{\textbf{U}}}}
+\newcommand{\bbV}{{\textbf{b}_{\textbf{V}}}}
+\newcommand{\bs}{{\boldsymbol{\sigma}}}
+\newcommand{\al}{{\alpha}}
+\newcommand{\bal}{\boldsymbol{\alpha}}
+\newcommand{\bbt}{\boldsymbol{\beta}}
+%\newcommand{\bA}{\mathbf{A^\text{-1}}}
+\newcommand{\bApr}{\mathbf{A^\text{-1}_{\text{pr}}}}
+\newcommand{\bAps}{\mathbf{A^\text{-1}_{\text{ps}}}}
+\newcommand{\bmupr}{\boldsymbol{\mu}}
+\newcommand{\bmups}{\textbf{m}}
+\newcommand{\DKL}{\mathit{D}_{\text{KL}}}
+
+
+% opers
+\DeclareMathOperator*{\indicator}{\mathds{1}}
+\DeclareMathOperator*{\softmax}{softmax}
+\DeclareMathOperator*{\idx}{idx}
+\DeclareMathOperator*{\pos}{pos}
+\DeclareMathOperator*{\AUCH}{AUCH}
+\DeclareMathOperator*{\tf}{tf}
+\DeclareMathOperator*{\ntf}{ntf}
+\DeclareMathOperator*{\idf}{idf}
+\DeclareMathOperator*{\ndf}{ndf}
+\DeclareMathOperator*{\similarity}{sim}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\const}{const}
+\DeclareMathOperator*{\dBeta}{Beta}
+\DeclareMathOperator*{\dDir}{Dir}
+\DeclareMathOperator*{\Tr}{Tr}
+\DeclareMathOperator*{\dDP}{DP}
+\DeclareMathOperator*{\dMult}{Mult}
+\DeclareMathOperator*{\dBern}{Bern}
+\DeclareMathOperator*{\dCRP}{CRP}
+\DeclareMathOperator*{\dKL}{KL}
+\DeclareMathOperator*{\diag}{diag}
+\newcommand{\dd}[1]{\mathrm{d}{#1}}
+
+% BOLD
+\newcommand{\bmatr}{{\mathbf{B}}}
+\newcommand{\cmatr}{{\mathbf{C}}}
+\newcommand{\hmatr}{{\mathbf{H}}}
+\newcommand{\fmatr}{{\mathbf{F}}}
+\newcommand{\mmatr}{{\mathbf{M}}}
+\newcommand{\xmatr}{{\mathbf{X}}}
+\newcommand{\pmatr}{{\mathbf{P}}}
+\newcommand{\xmatrt}{{\tilde{\mathbf{X}}}}
+\newcommand{\imatr}{{\mathbf{I}}}
+\newcommand{\vmatr}{{\mathbf{V}}}
+\newcommand{\wmatr}{{\mathbf{W}}}
+\newcommand{\umatr}{{\mathbf{U}}}
+\newcommand{\zmatr}{{\mathbf{Z}}}
+\newcommand{\zmatrt}{{\tilde{\mathbf{Z}}}}
+\newcommand{\Tmatr}{\mathbf{T}}
+\newcommand{\lambdamatr}{{\mathbf{\Lambda}}}
+\newcommand{\phimatr}{\mathbf{\Phi}}
+\newcommand{\sigmamatr}{\mathbf{\Sigma}}
+\newcommand{\thetamatr}{\boldsymbol{\Theta}}
+
+\newcommand{\zbt}{{\tilde{\mathbf{z}}}}
+\newcommand{\mub}{{\boldsymbol{\mu}}}
+\newcommand{\alphab}{{\boldsymbol{\alpha}}}
+\newcommand{\thetab}{\boldsymbol{\theta}}
+\newcommand{\iotab}{\boldsymbol{\iota}}
+\newcommand{\zetab}{\boldsymbol{\zeta}}
+\newcommand{\xib}{\boldsymbol{\xi}}
+\newcommand{\xibt}{\tilde{\boldsymbol{\xi}}}
+\newcommand{\xit}{\tilde{\xi}}
+\newcommand{\betab}{{\boldsymbol{\beta}}}
+\newcommand{\phib}{{\boldsymbol{\phi}}}
+\newcommand{\psib}{{\boldsymbol{\psi}}}
+\newcommand{\gammab}{{\boldsymbol{\gamma}}}
+\newcommand{\lambdab}{{\boldsymbol{\lambda}}}
+\newcommand{\varepsilonb}{{\boldsymbol{\varepsilon}}}
+\newcommand{\pib}{{\boldsymbol{\pi}}}
+
+
+\newcommand{\scl}{s_{\mathsf{c}}}
+\newcommand{\shi}{s_{\mathsf{h}}}
+\newcommand{\shib}{\mathbf{s}_{\mathsf{h}}}
+\newcommand{\MOD}{M}
+\newcommand{\entr}{\mathsf{H}}
+\newcommand{\REG}{\Omega}
+\newcommand{\Mquol}{V}
+%\newcommand{\prob}{\mathsf{P}}
+\newcommand{\prob}{p}
+\newcommand{\expec}{\mathsf{E}}
+
+% overline
+\newcommand{\xo}{{\overline{x}}}
+\newcommand{\yo}{{\overline{y}}}
+
+% bold overline
+\newcommand{\xbo}{{\overline{\mathbf{x}}}}
+
+
+
+
+
+\newcommand{\Amc}{{\mathcal{A}}}
+\newcommand{\Bmc}{{\mathcal{B}}}
+\newcommand{\Cmc}{{\mathcal{C}}}
+\newcommand{\Jmc}{{\mathcal{J}}}
+\newcommand{\Imc}{{\mathcal{I}}}
+\newcommand{\Kmc}{{\mathcal{K}}}
+\newcommand{\Lmc}{{\mathcal{L}}}
+\newcommand{\Mmc}{{\mathcal{M}}}
+\newcommand{\Nmc}{{\mathcal{N}}}
+\newcommand{\Pmc}{{\mathcal{P}}}
+\newcommand{\Tmc}{{\mathcal{T}}}
+\newcommand{\Vmc}{{\mathcal{V}}}
+\newcommand{\Wmc}{{\mathcal{W}}}
+
+
+\newcommand{\T}{\mathsf{T}}
+\newcommand{\deist}{\mathbb{R}}
+\newcommand{\ebb}{\mathbb{E}}
+
+%ALEX
+\newcommand{\Amatr}{\mathbf{A}}
+
+\newcommand{\Umatr}{\mathbf{U}}
+\newcommand{\zetavec}{\boldsymbol{\zeta}}
+
+
+%\renewcommand{\thesubfigure}{\asbuk{subfigure}}
+
+
+
+%different caption style: ``Fig.~N.~Caption text''
+\makeatletter
+\long\def\@makecaption#1#2{%
+  \vskip\abovecaptionskip
+  \sbox\@tempboxa{#1.~#2}%
+  \ifdim \wd\@tempboxa >\hsize
+    #1.~#2\par
+  \else
+    \global \@minipagefalse
+    \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
+  \fi
+  \vskip\belowcaptionskip}
+\makeatother
+
+\reversemarginpar
+
+%\captionsetup[figure]{labelformat=gostfigure, justification=centering}
+%\captionsetup[subfigure]{labelformat=gostfigure, justification=centering}
+%\captionsetup[table]{labelformat=gostfigure, justification=centering}
+
+
+
+%\renewcommand{\thesubfigure}{\asbuk{subfigure}}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+
+
+%different caption style: ``Fig.~N.~Caption text''
+\makeatletter
+\long\def\@makecaption#1#2{%
+  \vskip\abovecaptionskip
+  \sbox\@tempboxa{#1.~#2}%
+  \ifdim \wd\@tempboxa >\hsize
+    #1.~#2\par
+  \else
+    \global \@minipagefalse
+    \hb@xt@\hsize{\hfil\box\@tempboxa\hfil}%
+  \fi
+  \vskip\belowcaptionskip}
+\makeatother
+
+\reversemarginpar
+
+%\captionsetup[figure]{labelformat=gostfigure, justification=centering}
+%\captionsetup[subfigure]{labelformat=gostfigure, justification=centering}
+%\captionsetup[table]{labelformat=gostfigure, justification=centering}
+
+
+\begin{document}
+\input{defs}
+
+\input{dis_title}
+\tableofcontents{}%это оглавление
+\input{dis_intro}
+\clearpage
+
+\chapter{Постановка задачи последовательного выбора моделей}
+\input{review}
+
+\clearpage
+\chapter{Выбор модели с использованием вариационного вывода}
+\input{var_inf}
+
+\clearpage
+
+
+\chapter{Оптимизация гиперпараметров в задаче выбора модели}
+\input{hyperparams}
+\clearpage
+\chapter{Выбор оптимальной структуры модели}
+\input{arch_search}
+
+\clearpage
+\chapter{Анализ прикладных задач порождения и выбора моделей глубокого обучения}
+\input{applied}
+
+
+\clearpage
+\addcontentsline{toc}{section}{Заключение}
+\input{dis_conclusion}
+
+
+\clearpage
+
+
+\addcontentsline{toc}{chapter}{Список оcновных обозначений}
+\chapter*{Список оcновных обозначений}
+\input{notations}
+\clearpage 
+ 
+\addcontentsline{toc}{section}{Список иллюстраций}
+\listoffigures
+
+\clearpage
+\addcontentsline{toc}{section}{Список таблиц}
+\listoftables
+
+\clearpage
+
+\addcontentsline{toc}{section}{Список литературы}
+%\renewcommand{\bibname}{Список использованных источников}
+%\addcontentsline{toc}{chapter}{Список использованных источников}
+\bibliographystyle{gost71u}
+\bibliography{dis_literature}
+\end{document}
