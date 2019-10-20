@@ -747,7 +747,709 @@ $\boldsymbol{\theta}^{*}$ рассматривается как рекурсив
 \end{equation}
 
 Решение задачи оптимизации~\eqref{eq:hyperoptim_operator} при~\eqref{eq:param_trace} является вычислительно сложным, поэтому применяются методы, аппроксимирующие применение градиентных методов при~\eqref{eq:param_trace}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+В \textbf{главе 2} рассматривается задача выбора моделей глубокого обучения субоптимальной сложности. Вводятся вероятностные предположения о распределении параметров. В качестве сложности модели выступает \textit{обоснованность модели}~\eqref{eq:evidence}. Для получения оценки обоснованности применяются вариационные методы с использованием градиентных алгоритмов оптимизации. 
+Предполагается, что структура  $\boldsymbol{\Gamma}$  модели глубокого обучения $\mathbf{f}$  и метапараметры $\lam$ определены однозначно:
+\[
+    \prior = p(\w,\G|\h), \quad \priorw = p(\w|\h),\quad    \LL = p(\y|\X,\w).
+\]
 
+\begin{defin} Сложностью модели $\mathbf{f}$ назовем обоснованность модели:
+\begin{equation}
+\label{eq:model_evidence}
+	p(\mathbf{y}|\mathbf{X},\mathbf{h}) = \int_{\mathbf{w} \in \mathbb{W}} p(\y|\X,\w)p(\mathbf{w}|\mathbf{h})d\mathbf{w}.
+\end{equation}
+\end{defin}
+
+
+\begin{defin}Модель  $\mathbf{f}$ назовем оптимальной среди моделей $M$, если достигается максимум интеграла~\eqref{eq:model_evidence}.
+\end{defin}
+
+Требуется найти оптимальную модель $\mathbf{f}$ из заданного множества моделей $M$, а также значения ее параметров $\mathbf{w}$, доставляющие максимум апостериорной вероятности
+\begin{equation}
+\label{eq:var_inf_posterior}
+	p(\mathbf{w}|\mathbf{y},\mathbf{X},\mathbf{h}) = \frac{p(\y|\X,\w)p(\mathbf{w}|\mathbf{h})}{p(\mathbf{y}|\mathbf{X}, \mathbf{h})}.
+\end{equation}
+
+Интеграл обоснованности~\eqref{eq:model_evidence} модели является трудновычислимым для данного семейства моделей. Одним из методов вычисления приближенного значения обоснованности является получение вариационной оценки обоснованности.  
+
+{
+\begin{defin} Вариационной оценкой логарифма обоснованности модели~\eqref{eq:model_evidence} $\textnormal{log}~p(\mathbf{y}|\mathbf{X},\mathbf{h})$ называется оценка $\textnormal{log}~\hat{p}(\mathbf{y}|\mathbf{X},\mathbf{h})$, полученная аппроксимацией неизвестного апостериорного распределения $p(\mathbf{w}| \mathbf{y}, \mathbf{X}, \mathbf{h})$ заданным распределением $q(\mathbf{w})$.
+\end{defin}
+}
+
+
+Будем рассматривать задачу нахождения вариационной оценки как задачу оптимизации. Пусть задано множество распределений $\mathfrak{Q} =\{q(\mathbf{w})\}$. Сведем задачу нахождения наиболее близкой вариационной нижней оценки интеграла~\eqref{eq:model_evidence} к оптимизации вида
+\[
+     \hat{q}(\mathbf{w}) = \argmax_{q \in \mathfrak{Q}}  \int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~\frac{p(\mathbf{y},\mathbf{w}|\mathbf{X},\mathbf{h})}{q(\mathbf{w})}d\mathbf{w}.
+\]  
+В данной работе в качестве множества $\mathfrak{Q}$ рассматривается нормальное распределение и распределение параметров, неявно получаемое оптимизацией градиентными методами. 
+
+Оценка~\eqref{eq:var_elbo} является нижней, поэтому может давать некорректные оценки для обоснованности~\eqref{eq:model_evidence}. Для того, чтобы оценить величину этой ошибки, докажем следующее утверждение.
+
+\begin{theorem}[\cite{bishop}]\label{st:st1} Пусть задано множество $\mathfrak{Q} = \{q(\mathbf{w})\}$ непрерывных распределений. Максимизация вариационной нижней оценки $$\int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~\frac{p(\mathbf{y},\mathbf{w}|\mathbf{X},\mathbf{h})}{q(\mathbf{w})}d\mathbf{w}$$  логарифма интеграла~\eqref{eq:model_evidence}  эквивалентна минимизации расстояния Кульбака--Лейблера между распределением $q(\mathbf{w}) \in \mathfrak{Q}$ и апостериорным распределением параметров $p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h})$:
+\begin{equation}
+\label{eq:optim}
+    \hat{q} = \argmax_{q \in \mathfrak{Q}} \int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~\frac{p(\mathbf{y},\mathbf{w}|\mathbf{X},\mathbf{h})}{q(\mathbf{w})}d\mathbf{w} \Leftrightarrow 	
+    \hat{q} = \argmin_{q \in  \mathfrak{Q}} \textnormal{D}_\textnormal{KL}  \bigl(q(\mathbf{w})||p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h})\bigr),
+\end{equation}
+
+\[
+	\textnormal{D}_\textnormal{KL}  \bigl(q(\mathbf{w})||p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h})\bigr) =  \int_\mathbf{w} q(\mathbf{w}) \log \left(\frac{q(\mathbf{w})}{p(\mathbf{w}|\mathbf{y}, \mathbf{X}, \mathbf{h})}\right) d\mathbf{w}.
+\]
+
+\end{theorem}
+\begin{defin} Пусть задано множество распределений $\mathfrak{Q}$. Модель $\mathbf{f}$ назовем субоптимальной на множестве моделей $M$, если модель доставляет максимум нижней вариационной оценке интеграла~\eqref{eq:optim}
+\begin{equation}
+\label{eq:var_elbo2}
+	\max_{q \in \mathfrak{Q}}\int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~\frac{p(\mathbf{y},\mathbf{w}|\mathbf{X},\mathbf{h})}{q(\mathbf{w})}d\mathbf{w}.
+\end{equation}
+\end{defin}
+
+В качестве множества $\mathfrak{Q} = \{q(\mathbf{w})\}$ рассматривается параметрическое семейство нормальных распределений с диагональными матрицами ковариаций:
+\begin{equation}
+\label{eq:diag}
+	q \sim \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q),\quad\boldsymbol{\theta}=[\boldsymbol{\mu}_q, \textbf{diag}(\mathbf{A}^{-1}_q)]
+\end{equation}
+где $\mathbf{A}_q$ --- диагональная матрица ковариаций, $\boldsymbol{\mu}_q$ --- вектор средних компонент.
+
+В качестве множества распределений $\mathfrak{Q} = \{q(\mathbf{w})\}$, аппроксимирующих неизвестное распределение $\textnormal{log}~p(\mathbf{y}|\mathbf{X},\mathbf{h})$, используются распределения параметров, полученные в ходе их оптимизации.
+
+Представим неравенство~\eqref{eq:var_elbo}
+\begin{equation}
+\label{eq:var_elbo_entropy}
+ \textnormal{log}~p(\mathbf{y}|\mathbf{X},\mathbf{h}) \geq \int_\mathbf{w} q(\mathbf{w})\textnormal{log}~\frac{p(\mathbf{y},\mathbf{w}|\mathbf{X}, \mathbf{h})}{q(\mathbf{w})}d\mathbf{w} =  \mathsf{E}_{q(\mathbf{w)}} \textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h}) - \mathsf{S}\bigl({q(\mathbf{w)}}\bigr),
+\end{equation}
+где $\mathsf{S}$ --- энтропия распределения:
+\[
+\mathsf{S}\bigl({q(\mathbf{w)}}\bigr) = - \int_{\mathbf{w}} q(\mathbf{w})\textnormal{log}~q(\mathbf{w})d\mathbf{w},
+\]
+$$p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h}) = p (\mathbf{w}| \mathbf{h}) p (\mathbf{y}|\mathbf{X}, \mathbf{w}),$$
+$\mathsf{E}_{q(\mathbf{w)}}\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h})$ --- матожидание логарифма вероятности $\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h})$:
+\[
+	\mathsf{E}_{q(\mathbf{w)}}\textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h})  = \int_\mathbf{w} \textnormal{log~}p (\mathbf{y}, \mathbf{w}|\mathbf{X}, \mathbf{h}) q(\mathbf{w}) d\mathbf{w}.
+\]
+
+Оценка распределений производится при оптимизации параметров. Оптимизация выполняется в режиме мультистарта~\cite{multi}, т.е. при запуске оптимизации параметров модели из нескольких разных начальных приближений. Основная проблема такого подхода~---~вычисление энтропии $\mathsf{S}$ распределений $q(\mathbf{w}) \in \mathfrak{Q}$. Ниже представлен метод получения оценок энтропии~\eqref{eq:entropy} ~$\mathsf{S}$ и оценок обоснованности~\eqref{eq:var_elbo_entropy}.
+
+Запустим $r$ процедур оптимизаций модели $\mathbf{f}$ из разных начальных приближений:
+\[
+	L( \boldsymbol{\theta}| \mathbf{h}, \mathbf{X}, \mathbf{y}) = \sum_{l=1}^r \text{log}p(\mathbf{y}, \mathbf{w}^l|\mathbf{X}, \mathbf{h})  \to \max, \quad \boldsymbol{\theta} = [\mathbf{w}^1, \dots, \mathbf{w}^r],
+\] 
+где $r$ --- число оптимизаций,
+\begin{equation}
+\label{eq:loss_func}
+\text{log}p(\mathbf{y}, \mathbf{w}^l|\mathbf{X}, \mathbf{h}) = \sum_{i=1}^m \textnormal{log}p({y}_i, \mathbf{w}^l |\mathbf{x}_i, \mathbf{h}) = \textnormal{log}~p(\mathbf{w}^l|\mathbf{h}) + \sum_{i=1}^m \textnormal{log}p({y}_i |\mathbf{x}_i, \mathbf{w}^l, \mathbf{h}).
+\end{equation}
+
+Пусть начальные приближения параметров $\mathbf{w}^1, \dots, \mathbf{w}^r$ порождены из некоторого начального распределения $q^0(\mathbf{w})$:
+\[ 
+	\mathbf{w}^1, \dots, \mathbf{w}^r \sim q^0(\mathbf{w}). 
+\]
+
+
+Для дальнейшего описания метода введем понятие оператора градиентного спуска, являющегося частным случаем оператора оптимизации~\eqref{eq:optim_operator}.
+\begin{defin}
+Оператором градиентного спуска назовем оператор оптимизации вида
+\begin{equation}
+\label{eq:sgd}
+	\TLoss  = \boldsymbol{\theta} - \lambda_{\text{lr}} \nabla (-\Loss), 
+\end{equation}
+где  $\lambda_{\text{lr}}$ --- длина шага градиентного спуска.
+\end{defin}
+В данной главе будем рассматривать распределения, полученные из нескольких точек старта оптимизации параметров $\w$ модели $\model$. Для удобства будем использовать $L(\w)$ как эквивалентную форму записи $\Loss$ для $\teta = [\w]^\text{T},$ и $T(\w)$  как эквивалентную форму записи $\TLoss$. 
+
+\begin{theorem}~Пусть $T$ --- оператор градиентного спуска,
+ $L$ --- функция потерь, градиент $\nabla L$ которой имеет константу Липшица $C_L$.  Пусть $\teta = [\mathbf{w}^1,\dots,\mathbf{w}^r]^\text{T}$ ---  начальные приближения оптимизации модели, где $r$ --- число начальных приближений. Пусть $\lambda_{\text{lr}}$ --- длина шага градиентного спуска, такая что
+\begin{equation}
+\label{eq:ineq}
+\lambda_{\text{lr}}<\frac{1}{C_L}, \quad \lambda_{\text{lr}} < \bigl(\max_{l \in \{1,\dots,r\}}\lambda_\textnormal{max} (\mathbf{H}(\mathbf{w}^l))\bigr)^{-1}, 
+\end{equation}
+где $\lambda_\textnormal{max}$ --- наибольшее по модулю собственное значение гессиана  $\mathbf{H}$ минус функции потерь $(-L)$.
+
+При выполнении неравенств~\eqref{eq:ineq} разность энтропий распределений $q'(\mathbf{w}), q(\mathbf{w})$ на смежных шагах почти наверное сходится к следующему выражению: 
+\begin{equation}
+\label{eq:entropy}
+	\mathsf{S}\bigl(q'(\mathbf{w})) -  \mathsf{S}\bigl(q(\mathbf{w}))  \approx  \frac{1}{r}\sum_{l=1}^r \bigl(-\lambda_{\text{lr}} \textnormal{Tr}[\mathbf{H}(\mathbf{w}'^l)] - \lambda_{\text{lr}} \textnormal{Tr}[\mathbf{H}(\mathbf{w}'^l)\mathbf{H}(\mathbf{w}'^l)]  \bigr) + o_{\lambda_{\text{lr}}^2 \to 0}(1).
+\end{equation}
+\end{theorem}
+
+
+\begin{theorem}\label{st:st2}
+Оценка~\eqref{eq:var_elbo_entropy} на шаге оптимизации $\tau$ представима в виде
+\begin{equation}
+\label{eq:ev_grad_full}
+\textnormal{log}~\hat{p}(\mathbf{y}|\mathbf{X}, \mathbf{h}) \approx \frac{1}{r} \sum_{g = 1}^r L(\mathbf{w}^l_\tau| \mathbf{X}, \mathbf{y})  + 
+\end{equation}
+\[
++\mathsf{S}\big(q^0(\mathbf{w})\bigr) + \frac{1}{r}\sum_{b=1}^\tau\sum_{l=1}^r \bigl(-\lambda_{\text{lr}} \textnormal{Tr}[\mathbf{H}(\mathbf{w}_b^l)] - \lambda_{\text{lr}}^2 \textnormal{Tr}[\mathbf{H}(\mathbf{w}_b^l)\mathbf{H}(\mathbf{w}_b^l)]  \bigr) 
+\]
+с точностью до слагаемых вида $o_{\lambda_{\text{lr}}^2 \to 0}(1)$,
+где $\mathbf{w}_b^l$ --- $l$-я реализация параметров модели на шаге оптимизации $b$, $q^0(\mathbf{w})$ --- начальное распределение.
+\end{theorem}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+В \textbf{главе 3} рассматривается задача оптимизации гиперпараметров модели глубокого обучения. Для оптимизации гиперпараметров модели предлагаются алгоритмы, основанные на градиентном спуске. Так как сложность рассматриваемых алгоритмах сопоставима со сложностью оптимизации параметров модели, предлагается оптимизировать параметры и гиперпараметры в единой процедуре. Для выбора адекватных значений гиперпараметров вводятся вероятностные предположения о распределении параметров. В качестве оптимизируемой функции выступает байесовская обоснованность модели и кросс-валидация.
+Как и в предыдущей главе, предполагается, что структура модели $\boldsymbol{\Gamma}$ для вероятностной модели глубокого обучения $\mathbf{f}$ и метапараметры $\lam$ определены однозначно:
+\[
+    \prior = p(\w,\G|\h), \quad \priorw = p(\w|\h),\quad    \LL = p(\y|\X,\w).
+\]
+
+Пусть априорное распределение параметров имеет вид
+\begin{equation}
+\label{eq:prior}
+	\mathbf{w} \sim \mathcal{N}(\mathbf{0}, \mathbf{A}^{-1}),
+\end{equation}
+где $\mathbf{A}^{-1} = \text{diag}[\alpha_1, \dots, \alpha_u]^{-1}$ --- матрица ковариаций диагонального вида, где $u$ --- количество параметров $\w$ модели $\model$. 
+
+требуется найти параметры ${\boldsymbol{\theta}}^{*}$ и гиперпараметры $\mathbf{h}^{*}$ модели, доставляющие максимум следующей функции:
+\begin{equation}
+\label{eq:main}
+    \mathbf{h}^{*} = \argmax_{\mathbf{h} \in \mathbb{H}} \Val,
+\end{equation}
+\begin{equation}
+\label{eq:main2}
+	\boldsymbol{\theta}^{*}(\mathbf{h}) =  \argmax_{\boldsymbol{\theta} \in \Tetab} \Loss,
+\end{equation}
+где $L,Q$ --- функции потерь и валидации.
+
+Рассмотрим вид переменной $\boldsymbol{\theta}$ и функций $L, Q$ для различных методов выбора модели и оптимизации ее параметров.
+
+\textbf{Базовый метод. }
+Пусть оптимизация параметров и гиперпараметров производится по всей выборке $\mathfrak{D}$ по одной и той же функции $L=Q$:
+$$L(\boldsymbol{\theta}|  \mathbf{h},  \mathbf{X}, \mathbf{y}) = Q(\mathbf{h}|  \boldsymbol{\theta}, \mathbf{X}, \mathbf{y} ) = \text{log}p(\mathbf{y}, \mathbf{w} | \mathbf{X}, \mathbf{h}) = \text{log} p(\mathbf{y}|\mathbf{X}, \mathbf{w})+\text{log}p(\mathbf{w}|\mathbf{h}).$$
+
+Вариационным параметрам $\boldsymbol{\theta}$ модели $\mathbf{f}$  соответствует вектор параметров модели: 
+\[
+\boldsymbol{\theta} = \mathbf{w}.
+\]
+
+\textbf{Кросс-валидация. }
+Разобьем выборку $\mathfrak{D}$ случайно на $K$ равных частей:
+\[
+\mathfrak{D} = \mathfrak{D}_1 \sqcup \dots \sqcup \mathfrak{D}_k, \mathfrak{D}_k = \{\mathbf{X}_k, \mathbf{y}_k\}, \quad k=1,\dots,K.
+\]
+
+
+Запустим $K$ оптимизаций модели, каждую на своей части выборки. Положим $\boldsymbol{\theta} = [\mathbf{w}_1, \dots, \mathbf{w}_K]$, где $\mathbf{w}_1, \dots, \mathbf{w}_K$ --- параметры модели при оптимизациях $1, \dots, K$.
+ 
+Положим функцию $L$ пропорциональной  среднему значению логарифма апостериорной вероятности по всем $k-1$ разбиениям $\mathfrak{D}$:
+\begin{equation}
+L = \frac{1}{K}\sum_{k=1}^K \bigl(\frac{K}{K-1}\text{log}p(\mathbf{y}_k|\mathbf{X}_k, \mathbf{w}_k) + \text{log}p(\mathbf{w}_k|\mathbf{h})\bigr).
+\label{eq:cv}
+\end{equation}
+
+Положим функцию $Q$ равной среднему значению правдоподобия выборки по частям выборки $\mathfrak{D}_k$, на которых не проходила оптимизация параметров:
+\[
+Q = \frac{1}{k}\sum_{q=1}^k k\text{log}p(\mathbf{y} \setminus \mathbf{y}_k|\mathbf{X}_k \setminus \mathbf{X}, \mathbf{w}_q).
+\]
+где операция <<$\mathbf{X} \setminus \mathbf{X}_k$>> определяется как взятие описаний всех объектов $\mathbf{X}$ за исключением описаний объектов из $\mathbf{X}_k$.
+
+
+\textbf{Вариационная оценка обоснованности. }
+Положим $L=Q$, равной вариационной оценке обоснованности модели:
+\begin{equation} 
+\text{log}~p(\mathbf{y}|\mathbf{X},\mathbf{h})  
+\geq 
+-\text{D}_\text{KL} \bigl(q(\mathbf{w})||p(\mathbf{w}|\mathbf{h})\bigr) + \int_{\mathbf{w}} q(\mathbf{w})\text{log}~{p(\mathbf{y}|\mathbf{X},\mathbf{w})} d \mathbf{w}  \approx
+\label{eq:hyper_elbo}
+\end{equation}
+\[
+\approx \sum_{i=1}^m \text{log}~p({y}_i|\mathbf{x}_i, \mathbf{w}_i) - D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{h})\bigr) = L = Q,
+\]
+где $q$ --- нормальное распределение с диагональной матрицей ковариаций:
+\begin{equation}
+	q \sim \mathcal{N}(\boldsymbol{\mu}_q, \mathbf{A}^{-1}_q),
+\label{eq:diag}
+\end{equation}
+где $\mathbf{A}_q = \text{diag}[\alpha^q_1, \dots, \alpha^q_u]^{-1}$ --- диагональная матрица ковариаций, $\boldsymbol{\mu}_q$ --- вектор средних компонент.
+Расстояние $D_\text{KL}$ между двумя гауссовыми величинами задается как 
+\[
+	D_\text{KL}\bigl(q (\mathbf{w}) || p (\mathbf{w}|\mathbf{h})\bigr) = \frac{1}{2} \bigl( \text{Tr} [\mathbf{A}\mathbf{A}^{-1}_q] + (\boldsymbol{\mu} - \boldsymbol{\mu}_q)^\mathsf{T}\mathbf{A}(\boldsymbol{\mu} - \boldsymbol{\mu}_q) - u +\text{ln}~|\mathbf{A}^{-1}| - \text{ln}~|\mathbf{A}_q^{-1}| \bigr).
+\]
+В качестве вариационных параметров $\boldsymbol{\theta}$ выступают параметры распределения $q$:
+\[
+\boldsymbol{\theta} = [\alpha_1, \dots, \alpha_u, {\mu}_1,\dots,{\mu}_u].
+\]
+
+
+
+
+\section{Градиентные методы оптимизации гиперпараметров}
+В данном разделе приводится описание рассматриваемых градиентных методов.
+Краткая характеристика и основные преимущества каждого из представленных методов отображены в Табл.~\ref{table:algo_descr},~\ref{table:algo_descr2}.
+
+\begin{table}[tbh!]
+\small
+% Алгоритм & Тип алгоритм & Время & Плюсы & Минусы 
+
+\begin{tabularx}{\textwidth}{|X|X|X|X|}
+\hline
+\bf Алгоритм & \bf Тип алгоритма & \bf Преимущества алгоритма & \bf Недостатки алгоритма  \\ 
+Случайный поиск & стохастический & простота реализации& Алгоритм неэффективен при большом количестве гиперпараметров (проклятие размерности)  \\ \hline
+Жадный алгоритм~\cite{greed_hyper} & градиентный & Возможность одновременной оптимизации параметров и гиперпараметров & Жадность алгоритма \\ \hline
+HOAG~\cite{hyper_hoag} & градиентный & Быстрая сходимость & Алгоритм требователен к настройкам параметров \\ \hline 
+DrMAD~\cite{hyper_mad} & градиентный & Алгоритм учитывает алгоритм оптимизации параметров модели и его параметры & Алгоритм страдает от проблем неустойчивости градиентного спуска (градиентный взрыв и затухание); Алгоритм работает в строгих предположениях о линейности траектории оптимизации гиперпараметров.\\ \hline
+\end{tabularx}
+
+\caption{Преимущества и недостатки рассматриваемых алгоритмов}
+\label{table:algo_descr}
+
+\end{table}
+
+
+\begin{table}[tbh!]
+\small
+% Алгоритм & Тип алгоритм & Время & Плюсы & Минусы 
+
+\begin{tabularx}{\textwidth}{|X|X|X|X|}
+\hline
+\bf Алгоритм & \bf Тип & \bf Сложность итерации оптимизации & \bf Предположения \\ 
+\hline
+Случайный поиск & стохастический & $O(\eta |\Tetab|\cdot |\hat{\mathfrak{D}}|)$& -  \\ \hline
+Жадный алгоритм~\cite{greed_hyper} & градиентный & $O(\eta |\Tetab|\cdot|\Hb|\cdot |\hat{\mathfrak{D}}|)$ & $\mathbf{H}(\boldsymbol{\theta}) = \mathbf{I}$  \\ \hline
+HOAG~\cite{hyper_hoag} & градиентный & $O(\eta |\Tetab|\cdot|\Hb| \cdot |\hat{\mathfrak{D}}| + \text{o}),$ где $o$ ---сложность решения системы линейных уравнений& Первая производная $Q$  и вторая производная $L$  являются липшицевыми функциями  $\text{det}\mathbf{H} \neq \mathbf{0}$;  \\ \hline
+DrMAD~\cite{hyper_mad} & градиентный &$O(\eta |\Tetab|\cdot|\Hb| \cdot|\hat{\mathfrak{D}}|)$ & Траектория оптимизации вариационных параметров $\boldsymbol{\theta}$ = $\boldsymbol{\theta}^0, \dots \boldsymbol{\theta}^\eta$  линейна \\ \hline
+\end{tabularx}
+
+\caption{Сложность и предположения для различных алгоритмов оптимизации гиперпараметров}
+\label{table:algo_descr2}
+
+\end{table}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+В \textbf{главе 4}  рассматривается задача выбора структуры модели глубокого обучения. Предлагается ввести вероятностные предположения о распределении параметров и распределении структуры модели. В качестве оптимизируемой функции для гиперпараметров модели предлагается обобщенная функция ее обоснованности. Показывается, что данная функция оптимизирует ряд критериев выбора структуры модели: метод максимального правдоподобия, последовательное увеличение и снижению сложности модели, полный перебор структуры модели, а также получение максимума вариационной оценки обоснованности модели.
+
+Определим априорные распределения параметров и структуры модели следующим образом.
+Пусть для каждого ребра $(j,k) \in E$ и каждой базовой функции $\mathbf{g}^{j,k}_l$ параметры модели $\w^{j,k}_l$ распределены нормально с нулевым средним:
+\[
+    \w^{j,k}_l \sim \mathcal{N}\bigl(\mathbf{0}, (\gamma^{j,k}_l)^2(\A^{j,k}_l)^{-1}\bigr),
+\]
+где $ (\A^{j,k}_l)^{-1}$ --- диагональная матрица, $l \in \{0,\dots,K^{j,k}-1\}$, где $K^{j,k}$ --- количество базовых функций для ребра $K^{j,k}$. Априорное распределение $p(\w|\G, \h)$ параметров $\w^{j,k}_l$ зависит не только от гиперпараметров $\A_k^{j,k}$, но и от структурного параметра $\gamma^{j,k}_l \in (0,1)$.
+
+
+В качестве априорного распределения для структуры $\G$ предлагается использовать произведение распределений Gumbel-Softmax ($\mathcal{GS}$)~\cite{gumbel}:
+\[
+    \priorG = \prod_{(j,k) \in E} p(\g^{j,k}|\s^{j,k}, \lamT), \quad 
+\]
+где для каждого структурного параметра $\g^{j,k}$ с количеством базовых функций $K^{j,k}$ вероятность $p(\g^{j,k}|\s^{j,k}, \lamT)$ определена следующим образом:
+\begin{multline}
+\label{eq:gs_pdf}
+    p(\g^{j,k}|\s^{j,k}, \lamT) = (K^{j,k}-1)!(\lamT)^{K^{h,j}-1}\prod_{l=0}^{K^{j,k}-1} s^{j,k}_l(\g^{j,k}_l)^{-\lamT -1} \times \\ \times \left(\sum_{l=0}^{K^{j,k}-1} s^{j,k}_l(\g^{j,k}_l)^{-\lamT}\right)^{-K^{j,k}},
+\end{multline}
+где $\s^{j,k} \in (0,\infty)^K{^{j,k}}$ --- гиперпараметр, отвечающий за смещенность плотности распределения относительно точек симплекса на $K^{j,k}$ вершинах, $\lamT > 0$ --- метапараметр температуры, отвечающий за концентрацию плотности вблизи вершин симплекса или в центре симплекса.
+
+TODO: GS, репараметризация
+
+В качестве регуляризатора для матрицы $(\mathbf{A}^{j,k}_l)^{-1}$ предлагается использовать обратное гамма-распределение:
+\[
+    (\A^{j,k}_l)^{-1} \sim \text{inv-gamma}(\lambda_1,\lambda_2),
+\]
+где $\lambda_1,\lambda_2 \in \lam$ --- метапараметры оптимизации. 
+
+Таким образом, предлагаемая вероятностная модель содержит следующие компоненты:
+\begin{enumerate}
+\item Параметры $\w$ модели, распределенные нормально.
+\item Структура модели $\G$, содержащая все структурные параметры $\{\g^{j,k}, (j,k) \in E\}$, распределенные по распределению Gumbel-Softmax.
+\item Гиперпараметры $\h = [\text{diag}(\A), \s]$, где $\A$ --- конкатенация матриц $\A^{j,k}, (j,k) \in E,$ $\s$ --- конкатенация параметров Gumbel-Softmax распределений $\s^{j,k}, (j,k) \in E$, где $E$ --- множество ребер, соответствующих графу рассматриваемого параметрического семейства моделей $\F$.
+\item Метапараметры: $\lam = [\lambda_1, \lambda_2, \lamT].$ Эти параметры не подлежат оптимизации и задаются экспертно. 
+\end{enumerate}
+
+В качестве критерия выбора гиперпараметров предлагается использовать апостериорную вероятность гиперпараметров:
+\begin{equation}
+\label{eq:optimal_hyper}
+    \posth \propto \EV \priorh \to \max_{\h \in \Hb}.
+\end{equation}
+Структура модели и параметры модели выбираются на основе полученных значений гиперпараметров:
+\[
+    \w^*,\G^* = \argmax_{\w \in \Wb, \G \in \Gb} p(\w, \G|\y, \X, \h^*, \lam ),
+\]
+где $\h^*$ --- решение задачи оптимизации~\eqref{eq:optimal_hyper}.
+
+Для вычисления обоснованности модели $$\EV = \iint_{\G, \w}\LL \priorw \priorG d\G d\w$$ из~\eqref{eq:optimal_hyper} предлагается использовать нижнюю вариационную оценку обоснованности.
+
+\begin{theorem}
+Пусть $\q = \qw \qG$ --- вариационное распределение c параметрами $\teta= [\tetaw, \tetaG ]$, аппроксимирующее апостериорное распределение структуры и параметров:
+\[
+    \q \approx \post,
+\]
+\[
+    \qw  \approx \postw,
+\]
+\[
+    \qG \approx \postG.
+\]
+
+Тогда справедлива следующая оценка:
+\begin{equation}
+\label{eq:full_elbo}
+\log \EV \geq
+\end{equation}
+\[
+ \E_{\q}  \log \LL - \KL{\qG}{\priorG} - 
+\]
+\[
+ - \KL{\qw}{\priorw},
+\]
+где $\KL{\qw}{\priorw}$ вычисляется по формуле условной дивергенции:
+\[
+\KL{\qw}{\priorw} = \E_{\G \sim \qG} \E_{\w \sim \qw} \log \left(\frac{\qw}{\priorw}\right).
+\]
+\end{theorem}
+
+
+Для анализа сложности полученной модели введем понятие \textit{параметрической сложности}. 
+\begin{defin} 
+Параметрической сложностью  $C_p(\teta|\Uh, \lam)$ модели с вариационными параметрами $\teta$ на компакте $\Uh \subset \Hb$ назовем минимальную дивергенцию между вариационным и априорным распределением:
+\[
+C_p(\teta|\Uh, \lam) = \min_{\h \in \Uh} \KL{\q}{\prior}.
+\]
+\end{defin}
+
+Одним из критериев удаления неинформативных параметров в вероятностных моделях является отношение вариационной плотности параметров в нуле к вариационной плотности параметра в моде распределения~\eqref{eq:rho_graves}:
+\begin{defin}
+Относительной вариационной   плотностью параметра $w \in \w$  при условии структуры $\G$ и гиперпараметров $\h$ назовем отношение вариационной плотности в моде априорного распределения параметра к вариационной плотности в моде вариационного распределения параметра:
+\[
+\rho(w|\G,\tetaw, \h,\lam)=\frac{\qw[\text{mode}~\priorw[w]]}{\qw[\text{mode}~{\qw[w]}]}.
+\]
+Относительной вариационной плотностью вектора параметров $\mathbf{w}$ назовем следующее выражение:
+\begin{equation}
+\label{eq:rho_general}
+    {\rho}(\w|\G, \tetaw, \h,\lam) = \prod_{w \in \w}\rho(w|\G,\tetaw,\h,\lam).
+\end{equation}
+
+\end{defin}
+
+\begin{theorem}
+Пусть выполнены условия Леммы~\ref{lem:cp_bound} и  Леммы~\ref{lem:pinsk}.
+Тогда справедливо следующее выражение:
+\[
+   \lim_{i \to \infty} \E_{\qG[][{\tetaG[i]}]} {\rho}(\w|\G, {\tetaw[i]}, {\h[i]}, \lam)^{-1} = 1.
+\]
+
+\end{theorem}
+
+Рассмотрим основные статистические критерии выбора вероятностных моделей. 
+\begin{enumerate}
+\item Критерий максимального правдоподобия:
+\[\log \LL \to \max_{\w \in \Uw, \G \in \UG}.\]
+Для использования данного критерия в качестве задачи выбора модели предлагается следующее обобщение:
+\begin{equation}
+\label{eq:optim_ml}
+    \Loss =  \E_{\q} \log~\LL.
+\end{equation}
+Данное обобщение~\eqref{eq:optim_ml} эквивалентно  критерию максимального правдоподобия при выборе в качестве $\q$ распределения, основанного на запуске нескольких  оптимизаций параметров~\eqref{eq:loss_func} и структуры.
+Метод не предполагает оптимизации гиперпараметров $\h$. Для формального соответствия данной задачи задаче выбора модели~\eqref{eq:optim_problem},\eqref{eq:optim_problem_in}, т.е. двухуровневой задачи оптимизации, положим $\Loss=\Val:$
+\[
+    \Loss =  \E_{\q}\log \LL \to \max_{\teta \in \Uteta},
+\]
+\[
+    \Val =  \E_{\q}\log \LL \to \max_{\h \in \Uh}.
+\]
+
+
+
+\item Метод максимальной апостериорной вероятности. 
+\[\log \LL \prior \to \max_{\w  \in \Uw, \G \in \UG}.\]
+Аналогично предыдущему методу сформулируем вариационное обобщение данной задачи:
+\begin{equation}
+\label{eq:optim_map}
+\Loss = \Val = 
+\end{equation}
+\[
+ = \E_{\q} \bigl( \log\LL + \log\prior \bigr).
+\]
+Т.к. в рамках данной задачи~\eqref{eq:optim_map} не предполагается оптимизации гиперпараметров $\h$, положим параметры распределения $\prior$ фиксированными:
+\[
+   \lam = [\lambda_1, \lambda_2, \lamT, \s, \text{diag}(\A)].
+\]
+
+\item Полный перебор структуры:
+\begin{equation}
+\label{eq:optim_struct}
+    \Loss = \Val = \E_{\q} \log \LL [\qG = p']
+\end{equation}
+где $p'$ --- некоторое распределение на структуре $\G$, выступающее в качестве метапараметра.
+
+
+
+
+\item Критерий Акаике:
+\[
+   \text{AIC} =  2\log \LL - 2|\Wb| \to \max.
+\]
+В случае, если рассматриваемые модели принадлежат одному параметрическому семейству моделей $\F$, то количество параметров у всех рассматриваемых моделей  совпадает. Тогда критерий Акаике совпадает с критерием максимального правдоподобия. Для использования критерия Акаике для сравнения моделей, принадлежащих одному параметрическому семейству~$\F$ предлагается следующая переформулировка:
+\begin{equation}
+\label{eq:optim_aic}
+    \Loss = \Val = \E_{\q}\log \LL - 
+\end{equation}
+\[
+ - |\{w: \KL{\q}{\prior}<\lambda_\text{prune}\}|,
+\]
+где 
+\begin{equation}\label{eq:aic_compl}\h=\argmin_{\h' \in \Uh} \KL{\q}{\prior},\end{equation} $\lambda_{\text{prune}}$ --- метапараметр алгоритма, $\Uh  \subset \Hb$ --- область определения задачи по гиперпараметрам. Предложенное обобщение~\eqref{eq:optim_aic} применимо только в случае, если выражение~\eqref{eq:aic_compl} определено однозначно, т.е. существует единственный вектор гиперпараметров  $\h \in \Uh,$ доставляющий минимум дивергенции $\KL{\q}{\prior}.$
+
+\item Информационный критерий Шварца:
+\[
+    \text{BIC} = 2\log \LL - |\Wb| \log m   \to \max.
+\]
+Переформулируем данный критерий аналогично критерию AIC:
+\begin{equation}
+\label{eq:optim_bic}
+    \Loss = \Val =  
+\end{equation}
+\[
+\log \E_{\q}\LL - 0.5 \log m |\{w: \KL{\q}{\prior}<\lambda_{\text{prune}}\}|,
+\]
+метапараметр $\lambda_{\text{prune}}$ определен аналогично~\eqref{eq:aic_compl}.
+
+\item Метод вариационной оценки обоснованности:
+\begin{equation}
+\label{eq:optim_elbo_method}   
+    \Loss = 
+\end{equation}
+\[
+= \E_{\q} \log \LL - \KL{\q}{\prior} + 
+\]
+\[
++\log\priorh \to \max_{\teta \in \Uteta},
+\]
+\[
+     \Val = 
+\]
+\[
+= \E_{\q} \log \LL - \KL{\q}{\prior} +
+\]
+\[+ \log\priorh \to \max_{\h \in \Uh},
+\]
+В рамках данной задачи функции $\Loss$ и $\Val$ совпадают, все гиперпараметры $\h$ подлежат оптимизации.
+
+\item Валидация на отложенной выборке:
+\begin{equation}
+\label{eq:optim_hold_out}
+    \Loss = \E_{\q} \log \LL[\y_\text{train}][\X_\text{train}] + \log \prior \to \max_{\teta \in \Uteta},
+\end{equation}
+\[
+    \Val = \E_{\q} \log \LL[\y_\text{test}][\X_\text{test}] \to \max_{\h \in \Uh},
+\]
+где $(\X_\text{train}, \y_\text{train}), (\X_\text{test}, \y_\text{test})$ --- разбиение выборки на обучающую и контрольную подвыборку.
+В рамках данной задачи, все гиперпараметры $\h$ подлежат оптимизации.
+
+\end{enumerate}
+
+\begin{defin}
+Двухуровневую задачу оптимизации будем называть \textit{обобщающей} на компакте $$U = \Utetaw \times \UtetaG \times \Uh \times \Ulam \subset \Tetawb \times \TetaGb \times \Hb \times \Lamb,$$ если она удовлетворяет следующим критериям.
+\begin{enumerate}
+\item Область определения каждого параметра $w \in \w$, гиперпараметра $h \in \h$ и метапараметра $\lambda \in \lam$ не  является пустым множеством и не является точкой.
+\item Для каждого значения гиперпараметров $\h$ оптимальное решение нижней задачи оптимизации~\eqref{eq:optim_problem_in} 
+\[
+\teta^{*}(\h) = \argmax_{\teta \in \Tetab} \Loss
+\]
+определено однозначно при любых значениях метапараметров $\lam \in \Ulam$.
+
+\item Критерий максимизации правдоподобия выборки: существует $\lam \in \Ulam$ и  $K_1>0$,$$K_1 < \max_{\h_1,\h_2 \in \Uh} \Val[\h_1][][][\teta^{*}(\h_1)] - \Val[\h_2][][][\teta^{*}(\h_2)],$$ такие что для любых векторов гиперпараметров $\h_1, \h_2 \in \Uh,$ удовлетворяющих неравенству $$\Val[\h_1][][][\teta^{*}(\h_1)] - \Val[\h_2][][][\teta^{*}(\h_2)] > K_1,$$ выполняется неравенство $$\E_{\q[\teta^{*}(\h_1)]}\log\LL > \E_{\q[\teta^{*}(\h_2)]}\log\LL.$$
+
+\item Критерий минимизации параметрической сложности:  существует  $\lam \in \Ulam$ и $K_2>0,$ $$K_2 < \max_{\h_1, \h_2 \in \Uh} \Val[\h_1][][][\teta^{*}(\h_1)] - \Val[\h_2][][][\teta^{*}(\h_2)],$$ такие что для любых векторов гиперпараметров $\h_1,\h_2 \in \Uh$, удовлетворяющих неравенству $$\Val[\h_1][][][\teta^{*}(\h_1)] - \Val[\h_2][][][\teta^{*}(\h_2)]>K_2,$$ параметрическая сложность первой модели меньше, чем второй: $$C_p(\teta^{*}(\h_1)|\Uh,\lam)<C_p(\teta^{*}(h_2)|\Uh,\lam).$$
+
+\item Критерий приближения оценки обоснованности: существует значение гиперпараметров $\lam$, такое что значение функций потерь $\Val$ как сложной функции от $\Loss$ пропорционально вариационной оценки обоснованности модели: $$\Val[][][][\teta^{*}(\h)] \propto $$
+$$\propto
+\E_{\q[\teta'(\h)]}\log\LL - \KL{\q[\teta'(\h)]}{\prior} + \log\priorh$$ для всех $\h \in \Uh,$
+где в качестве гиперпараметров $\h$ рассматриваются все гиперпараметры модели, вне зависимости от критерия и особенности его оптимизации гиперпараметров: $$\h = [\A, \s],$$
+где $$\teta'(\h) = \argmax_{\teta \in \Uh} \E_{\q[\teta]}\log\LL - \KL{\q[\teta]}{\prior}.$$
+
+\item Критерий перебора оптимальных структур: существует константа $K_3>0$, такая что существует хотя бы одна пара гиперпараметров $\h_1, \h_2 \in \Uh,$ удовлетворяющая неравенствам:
+$$\KL{\priorG[][\h_1]}{\priorG[][\h_2]} > K_3,\KL{\priorG[][\h_2]}{\priorG[][\h_1]}>K_3$$ и набор метапараметров $\lam$, такие что для произвольных локальных оптимумов  $\h_1,\h_2$ задачи оптимизации $\Val$, полученных при метапараметрах $\lam$ и удовлетворяющих неравенствам $$\KL{\priorG[][\h_1]}{\priorG[][\h_2]} > K_3, \KL{\priorG[][\h_2]}{\priorG[][\h_1]}>K_3,$$$$\Val[\h_1] > \Val[\h_2],$$  существует значение метапараметров $\lam' \neq \lam$, такие что
+\begin{enumerate}
+\item соответствие между вариационными параметрами $\teta^{*}(\h_1),\teta^{*}(\h_2)$ сохраняется при  $\lam'$,
+\item выполняется неравенство $\Val[\h_1][][][][\lam'] < \Val[\h_2][][][][\lam']$.
+\end{enumerate}
+
+
+\item Критерий непрерывности: функции $\Loss$ и $\Val$ непрерывны по метапараметрам $\lam \in \Ulam$.
+\end{enumerate}
+\end{defin}
+Первый критерий является техническим и используется для исключения из рассмотрения вырожденных задач оптимизации.  
+Второй критерий говорит о том, что решение первого и второго уровня должны быть согласованы и определены однозначно.
+Критерии 3-5 определяют возможные критерии оптимизации, которые должны приближаться обобщающей задачей.
+Критерий 6 говорит о возможности перехода между различными структурами модели. Данный критерий говорит о том, что мы можем перейти от одного набора гиперпараметров $\h_1$ к другим $\h_2$, если они соответствуют локальным оптимумам задачи оптимизации, и дивергенция соответствующих априорных  распределений на структурах $\priorG$ значимо высока. При этом соответствующие вариационные распределения $\qG$ могут оказаться достаточно близки, несмотря на значимые различия априорных распределений. Поэтому возможным дополнением этого критерия был бы критерий, позволяющий переходить от структуры к структуре, если соответствующие распределения $\qG$ различаются значимо.
+Последний критерий говорит о том, что обобщающая задача должна позволять производить переход между различными методами выбора  параметров и структуры модели непрерывно.
+
+\begin{theorem}Рассмотренные задачи~\eqref{eq:optim_ml},\eqref{eq:optim_map},\eqref{eq:optim_struct},\eqref{eq:optim_aic},\eqref{eq:optim_bic},\eqref{eq:optim_hold_out} не являются обобщающими.
+\end{theorem}
+
+\begin{theorem}
+Пусть $q_{\boldsymbol{\Gamma}}$ --- абсолютно непрерывное распределение с дифференцируемой плотностью, такой что:
+\begin{enumerate}
+\item Градиент плотности $\nabla_{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}} q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}})$ является ненулевым почти всюду.
+\item Выражение $\nabla_{\boldsymbol{\theta}_{\boldsymbol{\Gamma}}} q(\boldsymbol{\Gamma}|\boldsymbol{\theta}_{\boldsymbol{\Gamma}}) \text{log}~p(\boldsymbol{\Gamma}|\mathbf{h}, \boldsymbol{\lambda})$ ограничено на $U_{\boldsymbol{\theta}}$ абсолютно непрерывной случайной величиной, не зависящей от $\G$, с конечным первым моментом.
+\end{enumerate}
+Тогда задача~\eqref{eq:optim_elbo_method} не является обобщающей.
+\end{theorem}
+
+
+В качестве обобщающей задачи оптимизации предлагается оптимизационную задачу следующего вида:
+\begin{equation}
+\label{eq:qopt}
+\h^{*} = \argmax_{\h} \Val = 
+\end{equation}
+\[
+= \lamLL \E_{\q[\teta^{*}]} \log\LL - 
+\]
+\[
+    - \lamCQ \KL{\q[\teta^{*}]}{\prior} - 
+\]
+\[
+    - \sum_{p' \in \mathfrak{P},\lambda \in \lamS} \lambda\KL{\q[\teta^{*}]}{p'} + \log\priorh, 
+\]
+\begin{equation}
+\label{eq:lopt}
+%\tag{$L^{*}$}
+{\teta}^{*} = \argmax_{\teta} \Loss = 
+\end{equation}
+\[=
+\E_{\q} \log \LL - \lamCL \KL{\q[\teta^{*}]}{\prior},
+\]
+где $\mathfrak{P}$ --- непустое множество распределений на структуре $\G$, $\lamCQ, \lamCL, \lamS$  --- некоторые числа. Множество распределений $\mathfrak{P}$ отвечает за перебор структур $\G$ в процессе оптимизации модели.
+В предельном случае, когда температура $\lamT$ близка к нулю, а множество $\mathfrak{P}$ состоит из распределений, близких к дискретным, соответствующим всем возможным структурам, калибровка $\lamS$ порождает последовательность задач оптимизаций, схожую с перебором структур. Рассмотрим следующий пример. 
+
+\begin{theorem}
+Пусть
+\begin{enumerate}%[label={\arabic*)}] 
+
+\item Задан компакт  $U = \Utetaw \times \UtetaG \times \Uh \times \Ulam,$ где априорное распределение $\prior$ и распределение $\priorh$ непрерывны на $\Uh \times \Ulam$.
+
+\item Задано непустое множество  $\mathfrak{P}$ абсолютно непрерывных распределений на структуре, чьи плотности непрерывны и не принимают нулевое значение, где хотя бы одно распределение $p_1 \in \mathfrak{P}$ является Gumbel-Softmax распределением, и для каждого значения $\s \in \Uh, \lamT \in \Ulam$, существует значение параметров распределения $p_1$, такое что $p_1 = \priorG$. Параметры распределений $p \in \mathfrak{P}$ принадлежат множеству метапараметров $\lam \in \Ulam$.
+
+\item Вариационное распределение $\q$ является  абсолютно непрерывным, плотность которого непрерывна по метапараметрам $\boldsymbol{\lambda} \in \Ulam$ и не принимает нулевое значение.
+
+\item Область определения каждого параметра $w \in\w$, гиперпараметра $h \in \h$ и метапараметра $\lambda \in \lam$ не является пустым и не является точкой.
+
+\item Для каждого значения гиперпараметров $\h \in \Uh$ оптимальное решение нижней задачи оптимизации $\teta^{*}$ определено однозначно на $\Uteta = \Utetaw \times \UtetaG$ при любых значениях метапараметров $\lam \in \Ulam$.
+
+\item Область значений метапараметров $\lamLL, \lamCQ, \lamCL, \lamS$ включает отрезок от нуля до единицы.
+
+\item Существует значение метапараметров $$\lambda_1>0, \lambda_2>0, \lamLL>0  \in \Ulam,$$ такое что
+\[
+\max_{\h \in \Uh} \log \priorh -\min_{\h \in \Uh}\log \priorh < \max_{\h \in \Uh} \Val - \min_{\h \in \Uh} \Val
+\] 
+при $\lamS = \mathbf{0}, \lamCQ = 0$.
+
+\item Существует значение метапараметров $$\lamCL>0, \lamCQ>0, \lambda_1>0, \lambda_2>0, \lamT>0 \in \Ulam,$$ такое что 
+\[
+    \max_{\h \in \Uh} \frac{1}{\lamCQ}\log  \priorh - \min_{\h \in \Uh} \frac{1}{\lamCQ}\log  \priorh +
+\]
+\[
+ + \max_{\h \in \Uh} \min_{\teta \in \Uteta} \KL{\q}{\prior} -
+\]
+\[ -\min_{\h \in \Uh, \teta \in \Uteta}  \KL{\q}{\prior} + \max_{\teta \in \Uteta}\frac{1}{\lamCL}\E_{\q} \log \LL - 
+\]
+\[
+ - \min_{\teta \in \Uteta}\frac{1}{\lamCL}\E_{\q} \log \LL  <
+\]
+\[ 
+< \max_{\teta \in \Uteta, \h \in \Uh} \KL{\q}{\prior} -
+\]
+\[
+-\min_{\teta \in \Uteta, \h \in \Uh} \KL{\q}{\prior}
+\]
+при $\lamS = \mathbf{0}, \lamLL = 0.$
+
+\item Существуют значения метапараметров $\lamCQ>0,\lamLL>0, \lambda_1>0, \lambda_2>0, \lamT>0  \in \Ulam,$ такие что существуют гиперпараметры $\h_1, \h_2 \in \Uh$:
+\[
+\KL{\prior[][][\h_1]}{\prior[][][\h_2]} > 
+\]
+\[
+>\frac{\max_{\h} \Val - \min_{\h} \Val }{m_{\lambda}},
+\]
+\[
+\KL{\prior[][][\h_2]}{\prior[][][\h_1]} >
+\]
+\[
+> \frac{\max_{\h} \Val - \min_{\h} \Val }{m_{\lambda}}
+\]
+при $\lamS = \mathbf{0},$ где $m_{\lambda}$ --- максимальное значение $\lamS$ перед распределением $p_1$ из первого условия теоремы.
+
+\end{enumerate}
+Тогда задача~\eqref{eq:qopt} является обобщающей на $U$.
+\end{theorem}
+
+
+
+Следующие теоремы говорят о соответствии предлагаемой обобщающей задачи вероятностной модели. В частности, задача оптимизации параметров и гиперпараметров соответствует двухуровневому байесовскому выводу.
+\begin{theorem}
+Пусть ${\lamCQ} = \lamCL=\lamLL = 1, \lamS=\mathbf{0}$. Тогда:
+\begin{enumerate}
+\item Задача оптимизации~\eqref{eq:qopt} доставляет максимум апостериорной вероятности гиперпараметров с использованием вариационной оценки обоснованности:
+\[
+    \E_{\q}\log \LL - \KL{\q}{\prior} +
+\]
+\[
++ \log \prior \to \max_{\h}.
+\]
+\item Вариационное распределение $\q$ приближает апостериорное распределение $\post$ наилучшим образом:
+\[
+    \KL{\q}{\post} \to \min_{\teta}.
+\]
+
+
+\item Если существуют такие значения параметров $\tetaw, \tetaG,$ что $\postw = \qw, \postG = \qG,$
+то решение задачи оптимизации $\Loss$ доставляет эти значения вариационных параметров.  
+\end{enumerate}
+\end{theorem}
+
+Докажем, что варьирование коэффициента $\lamCL$ приводит к оптимизации вариационной оценки обоснованности для выборки из той же генеральной совокупности, но другой мощности.
+\begin{theorem}
+\label{th:elbo_size}
+Пусть $m \gg 0$, $\lamCL > 0, \frac{m}{\lamCL}   \in \mathbb{N}, \frac{m}{\lamCL}  \gg 0.$ Тогда оптимизация функции
+\[
+\Loss = \E_{\q} \log \LL - \lamCL\KL{\q}{\prior}
+\]
+ эквивалентна оптимизации вариационной оценки обоснованности  $$\E_{\q} \log \LL[\hat{\y}][\hat{\X}] - \KL{\q}{\prior}$$
+для произвольной случайной подвыборки $\hat{\y}, \hat{\X}$ мощности $\frac{m}{{\lamCL}}$ из генеральной совокупности.
+\end{theorem}
+
+
+\begin{theorem}
+Пусть
+\begin{enumerate}
+\item Выполнены условия Леммы~\ref{lem:cp}.
+\item Функция $\Val[][\teta_2]$ является вогнутой по $\h \in \Uh$ при  $\lamCQ = {\lamCQ}_2$.
+\item Решение задачи~\eqref{eq:cp_theorem_kl}  единственно при  $\lamCQ = {\lamCQ}_2$.
+\item Все стационарные точки $\teta \in \Uteta$  функции $\Loss$ являются решениями нижней задачи оптимизации при  $\lamCQ = {\lamCQ}_2$ с обратимым гессианом.
+\item Значения $\priorh$ приблизительно равны на $\Uh$:
+\[
+    \priorh[\h_1] \approx \priorh[\h_2] \text{ для всех }\h_1, \h_2 \in \Uh. 
+\]
+\end{enumerate}
+Тогда справедлива следующая оценка разности параметрических сложностей:
+\[
+    C_p(\teta_1|\Uh, \lam_1) - C_p(\teta_2|\Uh, \lam_2)  < \frac{\lamCL }{\lamCQ} ({\lamCQ}_2- \lamCL) \times  
+\]
+\[
+ \times \max_{\h \in \Uh, \teta \in \Uteta}  \nabla_{\teta, \h} (\KL{\q}{[\prior})^\mathsf{T}  \nabla_{\teta}^2(\Loss[][][][][\lam_2])^\mathsf{-1} \times
+\]
+\[\times \nabla_{\teta} \KL{\q}{\prior} \max_{\h_1, \h_2 \in \Uh} ||\h_1 - \h_2||.
+\]
+\end{theorem}
+
+\begin{theorem}
+\label{theorem:onelvl}
+Пусть $\frac{\lamCQ}{\lamLL} = \lamCL$. 
+Тогда задача оптимизации~\eqref{eq:qopt} представима в виде одноуровневой задачи оптимизации:
+\[
+\lamLL \E_{\q}\LL - \lamCQ \KL{\q}{\prior} -
+\]
+\[
+-\sum_{p' \in \mathfrak{P}, \lambda \in \lamS} \KL{\priorG}{p'} - \log \priorh \to \max_{\h, \teta}. 
+\]
+\end{theorem}
+
+
+В \textbf{главе 5} продемонстрировано применение предложенных методов к прикладным задачам классификации и регрессии, определения схожести предложений на основе их векторных представлений, а также к задачам прореживания моделей глубокого обучения.
 
 \vspace{0.5cm}
 \textbf{В заключении} представлены основные результаты диссертационной работы.
